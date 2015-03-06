@@ -1,0 +1,81 @@
+/*参数表*/
+
+create table sys_param(
+`param_code` varchar(50) not null, 
+`param_name`  varchar(50) not null,
+`param_value` varchar(50) not null,
+`root_code`  varchar(50),
+`des`  varchar(250),
+`seq` varchar(10),
+`iseff` char(1) not null default '0',
+`create_time` timestamp not null default current_timestamp,
+`last_update` timestamp,
+primary key(`param_code`) 
+);
+
+/*用户表*/
+
+create table sys_user(
+`id` int(10) not null auto_increment,
+`user_name` varchar(50) not null,
+`password` varchar(50)  not null,
+`sex` char(1),
+`position` varchar(10),
+`phone` varchar(100),
+`addr` varchar(200),
+`zipcode`  varchar(10),
+`iseff` char(1) not null default '0',
+`create_time` timestamp not null default current_timestamp,
+`last_update` timestamp,
+ primary key(`id`) 
+);
+
+/*部门表*/
+create table sys_deparment(
+`id` int(10) not null auto_increment,
+`name` varchar(50) not null,
+`des` varchar(250) ,
+`rootid` int(10) comment '上一层的部门构架', 
+`iseff` char(1) not null default '0',
+`create_time` timestamp not null default current_timestamp,
+`last_update` timestamp,
+ primary key(`id`) 
+);
+
+/*角色表*/
+create table sys_role(
+`id` int(10) not null auto_increment,
+`name` varchar(50) not null,
+`menu_id` varchar(250) comment '可以操作的菜单ID,多个时以逗号分开', 
+`iseff` char(1) not null default '0',
+`create_time` timestamp not null default current_timestamp,
+`last_update` timestamp,
+ primary key(`id`) 
+);
+
+/*用户权限关系表*/
+create table sys_role_relation(
+`id` int(10) not null auto_increment,
+`name` varchar(50) not null,
+`type` char(2) not null default '0' comment '0:代表用户,1:代表部门',
+`objectid` int(10) not null default '0' comment '根据type来分别用户或者部门',
+`des` varchar(250) ,
+`iseff` char(1) not null default '0',
+`create_time` timestamp not null default current_timestamp,
+`last_update` timestamp,
+ primary key(`id`) 
+)
+
+/*用户部门关系表*/
+create table sys_user_dep_relation(
+`userid` int(10) not null ,
+`depid` int(10) not null,  
+`des` varchar(250) ,
+`iseff` char(1) not null default '0',
+`create_time` timestamp not null default current_timestamp,
+`last_update` timestamp,
+ primary key(`userid`,`depid`) 
+)
+ 
+http://hi.baidu.com/zhouzuorong/blog/item/439be234970759365ab5f538.html
+
