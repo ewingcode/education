@@ -1,0 +1,137 @@
+.btn_add {
+	background-image: url(../images/add.gif) !important;
+}
+
+.btn_search {
+	background-image: url(../images/search.png) !important;
+}
+
+.btn_query {
+	background-image: url(../images/search.png) !important;
+}
+
+.btn_save {
+	background-image: url(../images/btn-save.png) !important;
+}
+
+.btn_cancel {
+	background-image: url(../images/cancel.png) !important;
+}
+
+.btn_reset {
+	background-image: url(../images/reset.png) !important;
+}
+.btn_communicate {
+	background-image: url(../images/communicate.png) !important;
+}
+
+.btn_remove {
+	height: 16px;
+	width: 25px;
+	background-repeat: no-repeat;
+	background-image: url(../images/remove.png) !important;
+}
+
+.btn_detail {
+	height: 16px;
+	width: 25px;
+	background-repeat: no-repeat;
+	background-image: url(../images/details.gif) !important;
+}
+
+.btn_setting {
+	height: 16px;
+	width: 25px;
+	background-repeat: no-repeat;
+	background-image: url(../images/setting.gif) !important;
+}
+
+.btn_edit {
+	height: 16px;
+	width: 25px;
+	background-repeat: no-repeat;
+	background-image: url(../images/edit.gif) !important;
+}
+
+.btn_accept {
+	height: 16px;
+	width: 25px;
+	background-repeat: no-repeat;
+	background-image: url(../images/ok.png) !important;
+}
+
+.btn_reject {
+	height: 16px;
+	width: 25px;
+	background-repeat: no-repeat;
+	background-image: url(../images/cancel.png) !important;
+}
+.message-red{ border:1px solid #d00; background:#ffe9e8; color:#d00;}
+
+.upload-icon {
+	background-image: url(../images/image_add.png) !important;
+}
+
+.msg .x-box-mc {
+	font-size: 14px;
+}
+
+#msg-div {
+	position: absolute;
+	left: 40%;
+	top: 10px;
+	width: 250px;
+	z-index: 20000;
+}
+
+.x-grid3-row-body p {
+	margin: 5px 5px 10px 5px !important;
+}
+
+/* 搜索框 start */
+.search-item {
+	font: normal 11px tahoma, arial, helvetica, sans-serif;
+	padding: 3px 10px 3px 10px;
+	border: 1px solid #fff;
+	border-bottom: 1px solid #eeeeee;
+	white-space: normal;
+	color: #555;
+}
+
+.search-item h3 {
+	display: block;
+	font: inherit;
+	font-weight: bold;
+	color: #222;
+}
+
+.search-item h3 span {
+	float: right;
+	font-weight: normal;
+	margin: 0 0 5px 5px;
+	width: 100px;
+	display: block;
+	clear: none;
+}
+/* 搜索框 end */
+
+/**首页个人中心CSS */
+.usercenter {
+    background-image:url(../images/user.gif) !important
+}
+.notice_pic {
+    background-image:url(../images/message.png) !important
+}
+.notice_red{  
+    border-style: solid;
+    border-color:red;
+    border-width: 1px;  
+    
+}
+.notice_black{ 
+    border-style: solid;
+    border-color:black;
+    border-width: 0px; 
+}
+
+ 
