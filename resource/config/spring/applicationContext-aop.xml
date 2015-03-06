@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                    http://www.springframework.org/schema/aop 
+                    http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+	default-autowire="byName" default-lazy-init="true">
+	<aop:config>
+		<!-- 配置拦截的类或者包 Spring 2.0 可以用 AspectJ 的语法定义 Pointcut，这里拦截 action 包中的开头不是get或者set的所有方法-->
+		<aop:advisor id="methodTimeLog" advice-ref="methodTimeAdvice"
+			pointcut="execution(* com.asiainfo.ec.prm.components.xml..processXML(..))" />
+
+
+	</aop:config>
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<bean id="methodTimeAdvice" class="com.asiainfo.ec.prm.core.aop.MethodTimeAdvice">
+		<property name="processLogDao">
+			<ref bean="processLogDao" />
+		</property>
+	</bean>
+	
+	<!-- 
+	<bean id="beforeAdvice"
+		class="com.asiainfo.core.aop.BeforeAdvice">
+	</bean>
+	<bean id="afterAdvice" class="com.asiainfo.core.aop.AfterAdvice"></bean>
+	<bean id="compareInterceptor"
+		class="com.asiainfo.core.aop.CompareInterceptor">
+	</bean>
+	<bean id="freeMakerContentGenerator"
+		class="com.asiainfo.components.freemaker.FreeMakerContentGenerator">
+		<property name="encode" value="utf-8" />
+		<property name="templateDir" value="/freemaker/template" />
+	</bean>
+	<bean id="proxyFactoryBean"
+		class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces">
+			<value>com.asiainfo.syscommon.service.UserService</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>beforeAdvice</value>
+				<value>afterAdvice</value>
+				<value>compareInterceptor</value>
+			</list>
+		</property>
+		<property name="target">
+			<ref bean="userService" />
+		</property>
+
+	</bean>
+	 -->
+</beans>
