@@ -18,6 +18,9 @@
 		<property name="depId" type="java.lang.Integer">
 			<column name="dep_id" />
 		</property>
+		<property name="areaId" type="java.lang.Integer">
+			<column name="area_id" />
+		</property>
 		<property name="password" type="java.lang.String">
 			<column name="password" length="50" />
 		</property>

@@ -45,8 +45,17 @@ public class StudentInfo implements java.io.Serializable {
 	private String liketeacherstyle;
 	private String likecoursestyle;
 	private String livehabit;
+	private Integer areaId;
 
 	// Constructors
+
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
+	}
 
 	/** default constructor */
 	public StudentInfo() {

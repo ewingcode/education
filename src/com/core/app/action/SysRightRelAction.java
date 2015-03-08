@@ -3,8 +3,7 @@
  */
 package com.core.app.action;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -16,9 +15,10 @@ import com.core.app.action.base.BaseAction;
 import com.core.app.action.base.ResponseData;
 import com.core.app.action.base.ResponseUtils;
 import com.core.app.bean.CheckTreeObject;
-import com.core.app.model.SysMenu;
+import com.core.app.constant.SysRelRight;
+import com.core.app.service.SysAreaService;
+import com.core.app.service.SysMenuService;
 import com.core.app.service.SysRightRelService;
-import com.core.jdbc.DaoException;
 import com.core.json.JsonUtil;
 
 /**
@@ -29,7 +29,10 @@ public class SysRightRelAction extends BaseAction {
 	private static Logger logger = Logger.getLogger(SysMenuAction.class);
 	@Resource
 	private SysRightRelService sysRightRelService;
-
+	@Resource
+	private SysMenuService sysMenuService;
+	@Resource
+	private SysAreaService sysAreaService;
 	/**
 	 * 查找菜单权限关联树,并会显示已经关联的菜单
 	 * 
@@ -38,14 +41,24 @@ public class SysRightRelAction extends BaseAction {
 	public void querySettingTree() throws ActionException {
 		try {
 			String menuId = "0";
+			String right = request.getParameter("right");
 			String relId = request.getParameter("relId");
 			String type = request.getParameter("type");
-			List<Integer> menuRelList = sysRightRelService.queryRelMenu(type,
-					Integer.valueOf(relId));
-			CheckTreeObject treeObject = new CheckTreeObject();
-			treeObject.setId(Integer.valueOf(menuId));
-			queryChildTree(treeObject, treeObject.getId(), menuRelList);
-			String json = JsonUtil.tranBean2String(treeObject.getChildren())
+
+			SysRelRight relRight = SysRelRight
+					.fromValue(Integer.valueOf(right));
+			CheckTreeObject parentTree = new CheckTreeObject();
+			Set<Integer> menuRelList = sysRightRelService.queryRelMenu(type,
+					Integer.valueOf(right), Integer.valueOf(relId));
+			parentTree.setId(Integer.valueOf(menuId));
+			if (relRight.equals(SysRelRight.MENU)) {
+				sysMenuService.queryMenuChildTree(parentTree,
+						parentTree.getId(), menuRelList);
+			} else if (relRight.equals(SysRelRight.AREA)) {
+				sysAreaService.queryAreaChildTree(parentTree,
+						parentTree.getId(), menuRelList);
+			}
+			String json = JsonUtil.tranBean2String(parentTree.getChildren())
 					.toString();
 			if (!json.startsWith("[") && !json.endsWith("]")) {
 				json += "[" + json + "]";
@@ -71,12 +84,14 @@ public class SysRightRelAction extends BaseAction {
 			String relId = request.getParameter("relId");
 			String type = request.getParameter("type");
 			String menuId = request.getParameter("menuIds");
+			String right = request.getParameter("right");
 			String[] menuArrayStr = StringUtils.split(menuId, ",");
 			Integer[] menuArrayInt = new Integer[menuArrayStr.length];
 			for (int i = 0; i < menuArrayStr.length; i++) {
 				menuArrayInt[i] = Integer.valueOf(menuArrayStr[i].trim());
 			}
-			sysRightRelService.rightRelSetting(type, relId, menuArrayInt);
+			sysRightRelService.rightRelSetting(type, relId,
+					Integer.valueOf(right), menuArrayInt);
 			responseData = ResponseUtils.success("保存成功！");
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -85,37 +100,4 @@ public class SysRightRelAction extends BaseAction {
 		this.outResult(responseData);
 	}
 
-	private void queryChildTree(CheckTreeObject parentTree, int parentId,
-			List<Integer> menuRelList) throws DaoException {
-		List menuList = queryTreeData("parentid=" + parentId);
-		if (menuList.isEmpty()) {
-			parentTree.setLeaf(true);
-			return;
-		}
-		parentTree.setLeaf(false);
-		List childList = new ArrayList();
-		for (int i = 0; i < menuList.size(); i++) {
-			SysMenu sysMenu = (SysMenu) menuList.get(i);
-			int menuId = sysMenu.getId();
-			boolean isRel = menuRelList.contains(menuId) ? true : false;
-			CheckTreeObject treeObject = copy2TreeObject(sysMenu, isRel);
-			queryChildTree(treeObject, menuId, menuRelList);
-			childList.add(treeObject);
-		}
-		parentTree.setChildren(childList);
-
-	}
-
-	private CheckTreeObject copy2TreeObject(SysMenu sysMenu, boolean isRel) {
-		CheckTreeObject treeObject = new CheckTreeObject();
-		treeObject.setId(sysMenu.getId());
-		treeObject.setText(sysMenu.getName());
-		treeObject.setChecked(isRel);
-		treeObject.setHrefTarget(sysMenu.getUrl());
-		return treeObject;
-	}
-
-	private List queryTreeData(String sql) throws DaoException {
-		return baseModelService.find(sql, SysMenu.class);
-	}
 }

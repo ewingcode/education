@@ -3,10 +3,10 @@ var EditWindow = function(b) {
    this.primaryId = b;
 	var editform = this.editform();
 	var win =   new Ext.Window( {
-		id : "userEditForm",
-	    title: '用户编辑',
+		id : "areaEditForm",
+	    title: '区域编辑',
         width: 500,
-        height:400,
+        height:300,
         minWidth: 500,
         minHeight: 300,
         layout: 'fit',
@@ -60,15 +60,15 @@ var EditWindow = function(b) {
 }; 
 EditWindow.prototype.editform = function() {
 	if (this.primaryId != null && this.primaryId != "undefined") {
-		this.url="Public_SysUser_update.action";
+		this.url="Public_SysArea_update.action";
 	}else{
-		this.url="Public_SysUser_save.action";
+		this.url="Public_SysArea_save.action";
 	}
 	var editForm = new Ext.FormPanel( {
 		url :   this.url,
 		layout : "form",
 		autoDestroy:true,
-		id : "userForm",
+		id : "RoleForm",
 		frame : false,
 		border : false,  
 		bodyStyle : "padding:5px;",
@@ -79,61 +79,33 @@ EditWindow.prototype.editform = function() {
 		reader : new Ext.data.JsonReader( {
 			  successProperty : 'success',
 				root : 'result'
-			}, ['id','userName','addr', 'sex','position','phone','zipcode','iseff','password',"depId",'roleId','areaId' ]),
+			}, ['id','name','menu_id','iseff']),
 		items : [ { 
 			id : "id",
 			xtype : "hidden",
 			value :  this.primaryId == null ? "" :  this.primaryId
+		} ,{ 
+			id : "parentid",
+			xtype : "hidden",
+			value :  0
 		} , {
-			fieldLabel : "用户名称",
+			fieldLabel : "区域名称",
 			allowBlank : false, 
-			id : "userName",
-			listeners:{ 
-			   "blur": function(field){ 
-				 Ajax.syncRequest("Public_SysUser_query.action?condition=user_name='"+field.getValue()+"'",  
-						 function(data) {  
-					      if(data.result && data.result.length>=1){
-					    	  Common.ErrMegBox('该用户：'+field.getValue()+'名称已重复！');
-					    	  field.reset();
-					      }
-				 		}
-				  );  	
-				}
-			}
-		},
-		new SysParam.ComboBox('性别','sex', 'SEXTYPE',true)  ,
-		  new SysRole.ComboBox('roleId',true),
-		  new SysArea.ComboBox('areaId',true),
-		 new Department.ComboBox('depId',true),
+			id : "name"
+		}, 
 		{
-			fieldLabel : "地址",
-			allowBlank : false, 
-			id : "addr"
+			fieldLabel : "描述",
+			allowBlank : true, 
+			id : "des"
 		},
-		{
-			fieldLabel : "电话",
-			allowBlank : false, 
-			id : "phone"
-		},
-		{
-			fieldLabel : "邮编",
-			allowBlank : false, 
-			id : "zipcode"
-		},
-		 new SysParam.ComboBox('是否有效','iseff', 'ISEFF' ,true)
-		,{
-			fieldLabel : "密码",
-			allowBlank : false, 
-			id : "password",
-			hidden:true,
-			value:"111111"
-		}  ]
+		 new SysParam.ComboBox('是否有效','iseff', 'ISEFF' ,false)
+		 ]
 	});
 	if (this.primaryId != null && this.primaryId != "undefined") {
 		editForm.getForm().load(
 				{
 					deferredRender : false,
-					url :  "Public_SysUser_query.action?condition=id="+this.primaryId,
+					url :  "Public_SysArea_query.action?condition=id="+this.primaryId,
 					waitMsg : "正在载入数据...",
 					success : function(d, e) {
 					 

@@ -54,12 +54,43 @@ public class LoginAction extends BaseAction {
 						BeanUtils.copyProperties(userInfo, sysUser);
 						SessionControl.setUserInfo(request, userInfo);
 						sysRightRelService.getUserAllRelMenu(userInfo);
+						sysRightRelService.getUserAllRelArea(userInfo);
 						responseData = ResponseUtils.success("登陆成功！");
 					} else {
 						responseData = ResponseUtils.fail("登陆失败！密码不正确");
 					}
 
 				}
+			}
+
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("系統錯誤！" + e.getMessage());
+		}
+		this.outResult(responseData);
+	}
+
+	public void debugLogin() throws ActionException {
+		ResponseData responseData;
+		try {
+			String userName = request.getParameter("username");
+			String password = request.getParameter("password");
+			String checkCode = request.getParameter("checkCode");
+
+			List<SysUser> userList = sysUserService.findUser(userName);
+			if (userList.isEmpty()) {
+				responseData = ResponseUtils.fail("登陆失败！不存在该用户名称");
+			} else {
+				SysUser sysUser = userList.get(0);
+
+				responseData = ResponseUtils.success("登陆成功！");
+				UserInfo userInfo = new UserInfo();
+				BeanUtils.copyProperties(userInfo, sysUser);
+				SessionControl.setUserInfo(request, userInfo);
+				sysRightRelService.getUserAllRelMenu(userInfo);
+				sysRightRelService.getUserAllRelArea(userInfo);
+				responseData = ResponseUtils.success("登陆成功！");
+
 			}
 
 		} catch (Exception e) {

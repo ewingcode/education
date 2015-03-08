@@ -1,18 +1,24 @@
 package com.core.app.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.core.app.bean.UserInfo;
+import com.core.app.constant.SysRelRight;
+import com.core.app.control.SessionControl;
+import com.core.app.control.SessionException;
 import com.core.app.model.SysRightRel;
 import com.core.jdbc.BaseDao;
 import com.core.jdbc.DaoException;
-
+import com.util.SqlUtil;
 /**
  * 权限关联设置
  * 
@@ -46,12 +52,15 @@ public class SysRightRelService {
 	 * @return
 	 * @throws DaoException
 	 */
-	public List<Integer> getUserAllRelMenu(UserInfo userInfo)
+	public Set<Integer> getUserAllRelMenu(UserInfo userInfo)
 			throws DaoException {
-		List<Integer> allRelList = new ArrayList<Integer>();
-		List<Integer> userRelList = getUserRelMenu(userInfo);
-		List<Integer> roleRelList = getRoleRelMenu(userInfo);
-		List<Integer> depRelList = getDepRelMenu(userInfo);
+		Set<Integer> allRelList = new HashSet<Integer>();
+		Set<Integer> userRelList = getRelTargetList(userInfo.getId(),
+				RelType.User, SysRelRight.MENU);
+		Set<Integer> roleRelList = getRelTargetList(userInfo.getRoleId(),
+				RelType.role, SysRelRight.MENU);
+		Set<Integer> depRelList = getRelTargetList(userInfo.getDepId(),
+				RelType.Department, SysRelRight.MENU);
 		allRelList.addAll(userRelList);
 		allRelList.addAll(roleRelList);
 		allRelList.addAll(depRelList);
@@ -60,75 +69,62 @@ public class SysRightRelService {
 	}
 
 	/**
+	 * 获取用户下所有的权限菜单
+	 * 
+	 * @param userInfo
+	 * @return
+	 * @throws DaoException
+	 */
+	public Set<Integer> getUserAllRelArea(UserInfo userInfo)
+			throws DaoException {
+		Set<Integer> allRelList = new HashSet<Integer>();
+		Set<Integer> userRelList = getRelTargetList(userInfo.getId(),
+				RelType.User, SysRelRight.AREA);
+		Set<Integer> roleRelList = getRelTargetList(userInfo.getRoleId(),
+				RelType.role, SysRelRight.AREA);
+		Set<Integer> depRelList = getRelTargetList(userInfo.getDepId(),
+				RelType.Department, SysRelRight.AREA);
+		allRelList.addAll(userRelList);
+		allRelList.addAll(roleRelList);
+		allRelList.addAll(depRelList);
+		userInfo.setRelAreas(allRelList);
+		if (userInfo.getAreaId() != null && userInfo.getAreaId()>0)
+			userInfo.getRelAreas().add(userInfo.getAreaId());
+		return allRelList;
+	}
+	/**
 	 * 用户是否有该菜单的访问权限
+	 * 
 	 * @param userInfo
 	 * @param menuId
 	 * @return
 	 */
-	public boolean containRelMenu(UserInfo userInfo, Integer menuId) { 
-		 for (Integer id : userInfo.getRelMenus()) {
+	public boolean containRelMenu(UserInfo userInfo, Integer menuId) {
+		for (Integer id : userInfo.getRelMenus()) {
 			if (id.equals(menuId))
 				return true;
 		}
-		return false; 
-		//return true;
+		return false;
 	}
 
 	/**
-	 * 获取用户的权限菜单
+	 * 获取关联的权限对象列表
 	 * 
 	 * @param userInfo
 	 * @return
 	 * @throws DaoException
 	 */
-	public List<Integer> getUserRelMenu(UserInfo userInfo) throws DaoException {
-		List<Integer> memuList = new ArrayList<Integer>();
-		int userId = userInfo.getId();
+	public Set<Integer> getRelTargetList(Integer relId, RelType role,
+			SysRelRight right) throws DaoException {
+		Set<Integer> targetIds = new HashSet<Integer>();
 		List<SysRightRel> userRelList = baseDao.find(
-				"type='" + RelType.User.getType() + "' and rel_id=" + userId,
+				"rel_right=" + right.getValue() + " and type='"
+						+ role.getType() + "' and rel_id=" + relId,
 				SysRightRel.class);
 		for (SysRightRel sysRightRel : userRelList) {
-			memuList.add(sysRightRel.getMenuId());
+			targetIds.add(sysRightRel.getTargetId());
 		}
-		return memuList;
-	}
-
-	/**
-	 * 获取用户的角色菜单
-	 * 
-	 * @param userInfo
-	 * @return
-	 * @throws DaoException
-	 */
-	public List<Integer> getRoleRelMenu(UserInfo userInfo) throws DaoException {
-		List<Integer> memuList = new ArrayList<Integer>();
-		int roleId = userInfo.getRoleId();
-		List<SysRightRel> roleRelList = baseDao.find(
-				"type='" + RelType.role.getType() + "' and rel_id=" + roleId,
-				SysRightRel.class);
-		for (SysRightRel sysRightRel : roleRelList) {
-			memuList.add(sysRightRel.getMenuId());
-		}
-		return memuList;
-	}
-
-	/**
-	 * 获取用户的部门权限菜单
-	 * 
-	 * @param userInfo
-	 * @return
-	 * @throws DaoException
-	 */
-	public List<Integer> getDepRelMenu(UserInfo userInfo) throws DaoException {
-		List<Integer> memuList = new ArrayList<Integer>();
-		int depId = userInfo.getDepId();
-		List<SysRightRel> depRelList = baseDao.find("type='"
-				+ RelType.Department.getType() + "' and rel_id=" + depId,
-				SysRightRel.class);
-		for (SysRightRel sysRightRel : depRelList) {
-			memuList.add(sysRightRel.getMenuId());
-		}
-		return memuList;
+		return targetIds;
 	}
 
 	/**
@@ -140,14 +136,15 @@ public class SysRightRelService {
 	 * @throws DaoException
 	 */
 	@Transactional
-	public void rightRelSetting(String type, String relId, Integer[] menuIds)
-			throws DaoException {
-		baseDao.executeSql("delete from sys_right_rel where type='" + type
-				+ "' and rel_id=" + relId);
+	public void rightRelSetting(String type, String relId, Integer right,
+			Integer[] menuIds) throws DaoException {
+		baseDao.executeSql("delete from sys_right_rel where rel_right=" + right
+				+ " and type='" + type + "' and rel_id=" + relId);
 		for (Integer menuId : menuIds) {
 			SysRightRel sysRightRel = new SysRightRel();
+			sysRightRel.setRelRight(right);
 			sysRightRel.setType(type);
-			sysRightRel.setMenuId(menuId);
+			sysRightRel.setTargetId(menuId);
 			sysRightRel.setRelId(relId);
 			baseDao.save(sysRightRel);
 		}
@@ -155,7 +152,7 @@ public class SysRightRelService {
 	}
 
 	/**
-	 * 查询关联的菜单
+	 * 查询关联的对象
 	 * 
 	 * @param type
 	 * @param relId
@@ -163,15 +160,35 @@ public class SysRightRelService {
 	 * @throws DaoException
 	 */
 	@Transactional
-	public List<Integer> queryRelMenu(String type, int relId)
+	public Set<Integer> queryRelMenu(String type, Integer right, Integer relId)
 			throws DaoException {
-		List<Integer> menuList = new ArrayList<Integer>();
-		List<SysRightRel> relList = baseDao.find("type='" + type
-				+ "' and rel_id=" + relId, SysRightRel.class);
+		Set<Integer> targetList = new HashSet<Integer>();
+		List<SysRightRel> relList = baseDao.find(" rel_right=" + right
+				+ " and type='" + type + "' and rel_id=" + relId,
+				SysRightRel.class);
 		for (SysRightRel sysRightRel : relList) {
-			menuList.add(sysRightRel.getMenuId());
+			targetList.add(sysRightRel.getTargetId());
 		}
-		return menuList;
+		return targetList;
 
+	}
+
+	/**
+	 * 获取区域权限查询的sql查询条件
+	 * 
+	 * @param request
+	 * @return
+	 * @throws SessionException
+	 */
+	public String getAreaRightSql(HttpServletRequest request)
+			throws SessionException {
+		UserInfo userInfo = SessionControl.getUserInfo(request);
+		String sql = null;
+		Set<Integer> relArea = userInfo.getRelAreas();
+		if (userInfo.getAreaId() != null)
+			sql = " area_id in ("
+					+ SqlUtil.array2InCondition(relArea
+							.toArray(new Integer[relArea.size()])) + ")";
+		return sql;
 	}
 }

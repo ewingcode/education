@@ -125,7 +125,7 @@ var toolbar = new Ext.Toolbar( {
 			}
 		} ,{
 			iconCls : "btn_setting",
-			text : "设置权限",
+			text : "菜单设置权限",
 			xtype : "button",
 			 scale: 'medium',
 			handler : function() {
@@ -134,10 +134,24 @@ var toolbar = new Ext.Toolbar( {
 				return;
 				}
 			    gridPanel.getSelectionModel().each(function(e) {  
-					 new SysRel.viewWin(1,e.data.id);
+					 new SysRel.viewWin(1,e.data.id,0);
 				});  
 			}
-		}  ]
+		} ,{
+			iconCls : "btn_setting",
+			text : "区域设置权限",
+			xtype : "button",
+			 scale: 'medium',
+			handler : function() {
+			if(gridPanel.getSelectionModel().getCount()!=1){
+				Common.ErrMegBox('请选择一项进行操作');
+				return;
+				}
+			    gridPanel.getSelectionModel().each(function(e) {  
+					 new SysRel.viewWin(1,e.data.id,1);
+				});  
+			}
+		} ]
 	});  
  
 var gridPanel =  new Ext.grid.GridPanel( {

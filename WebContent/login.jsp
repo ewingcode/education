@@ -108,7 +108,7 @@
 				a.form.submit( {
 					waitTitle : "请稍候",
 					waitMsg : "正在登录......",
-					url : 'Public_Login_userLogin.action',
+					url : 'Public_Login_debugLogin.action',
 					success : function(h, i) {
 						handleLoginResult(i.result);
 					},

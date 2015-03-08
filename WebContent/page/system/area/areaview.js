@@ -1,13 +1,10 @@
 
-Ext.onReady(function() {   
-	 Frame.busiPage(formpanel,gridPanel);  
+Ext.onReady(function() {    
+	Frame.busiPage(formpanel,gridPanel);
+	 
 });
 
-var sexTypeStore = new SysParam.store("SEXTYPE");
-var positionStore = new SysParam.store("POSITION");
-var iseffStore = new SysParam.store("ISEFF");
-var depStore = new Department.store();
-var roleStore = new SysRole.store();
+ 
 var sm = new Ext.grid.CheckboxSelectionModel(); 
 var cm = new Ext.grid.ColumnModel(
 			{
@@ -20,52 +17,14 @@ var cm = new Ext.grid.ColumnModel(
 							hidden : true
 						},
 						{
-							header : "用户",
-							dataIndex : "userName"
-						},{
-							header : "角色",
-							dataIndex : "roleId",
-							 renderer: function(value) { 
-								return  SysRole.translate(value);    
-							}
-							 
-						},{
 							header : "区域",
-							dataIndex : "areaId", 
-							renderer: function(value) { 
-								return  SysArea.translate(value);    
-							}
-						},{
-							header : "部门",
-							dataIndex : "depId",
-							 renderer: function(value) { 
-								return  Department.translate(value);    
-							}
-							 
-						}, 
-						{
-							header : "性别",
-							dataIndex : "sex",
-							 renderer: function(value) { 
-								return  SysParam.translate(sexTypeStore,value);    
-							}
-							 
+							dataIndex : "name"
 						},
 						{
-							header : "电话",
-							dataIndex : "phone"
-						},
-						{
-							header : "邮编",
-							dataIndex : "zipcode"
-						},
-						{
-							header : "是否有效",
-							dataIndex : "iseff",
-							 renderer: function(value) { 
-								return  SysParam.translate(iseffStore,value);    
-							}
-						},
+							header : "区域描述",
+							dataIndex : "des"
+						} 
+						,
 					    {
 							header : "操作",
 			                xtype: 'actioncolumn',
@@ -101,7 +60,7 @@ var removeData = function(b) {
 	Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
 		if (c == "yes") {
 			Ext.Ajax.request( {
-				url : "Public_SysUser_delete.action",
+				url : "Public_SysArea_delete.action",
 				params : {
 					id : b
 				},
@@ -131,7 +90,7 @@ var removeData = function(b) {
 var store = new Ext.data.Store( {
 	// autoLoad : true,//是否自动加载
 	proxy : new Ext.data.HttpProxy( {
-		url : 'Public_SysUser_pageQuery.action'
+		url : 'Public_SysArea_pageQuery.action'
 	}),
 	reader : new Ext.data.JsonReader( {
 		root : 'result',
@@ -139,12 +98,11 @@ var store = new Ext.data.Store( {
 		remoteSort : true,
 		fields : [ 
 		   { name : "id", type : "int" }, 
-		"userName", "addr", "sex", "position","depId", "phone", "zipcode","iseff",'roleId','areaId' ]
+		"name", "des", "iseff" ]
 	})
-}); 
-
+});  
 var toolbar = new Ext.Toolbar( {
-		id : "userTopBar",  
+		id : "topBar",  
 		items : [ {
 			 iconCls : "btn_query",
 			text : "查询",
@@ -169,18 +127,10 @@ var toolbar = new Ext.Toolbar( {
 			handler : function() {
 			formpanel.form.reset();
 			}
-		},{
-			iconCls : "btn_reset",
-			text : "设置密码	",
-			xtype : "button",
-			 scale: 'medium',
-			handler : function() {
-				formpanel.form.reset();
-			}
 		}  ]
 	}); 
 var gridPanel =  new Ext.grid.GridPanel( {
-	id : "userGrid",
+	id : "depGrid",
 	tbar : toolbar,
 	store : store, 
 	trackMouseOver : true,
@@ -202,16 +152,14 @@ var gridPanel =  new Ext.grid.GridPanel( {
 		displayInfo : true,
 		displayMsg : ' 合共  {2} 条记录，正在显示第 {0} 到 {1} 的记录 ',
 		emptyMsg : "没有记录"
+		 
 	})
 });
 
 function loadGirdStore(){ 
-	  
 	store.setBaseParam('start',0); 
 	store.setBaseParam('limit',20); 
-	store.setBaseParam('_QUERY_s_rlike_user_name',Ext.getCmp('QUERY_user_name').getValue());  
-	store.setBaseParam('_QUERY_n_rlike_phone',Ext.getCmp('QUERY_phone').getValue());   
-	store.setBaseParam('_QUERY_n_rlike_addr',Ext.getCmp('QUERY_addr').getValue());   
+	store.setBaseParam('_QUERY_s_rlike_name',Ext.getCmp('QUERY_name').getValue()); 
 	store.reload(); 
 };
 
@@ -239,28 +187,10 @@ var formpanel =  new Ext.FormPanel( {
 			         
 					items : [
 					 {  
-						id:"QUERY_user_name", 
-						fieldLabel : "用户名称" 
-					}, { 
-						id:"QUERY_phone", 
-						fieldLabel : "电话"  
+						id:"QUERY_name", 
+						fieldLabel : "区域名称" 
 					} ]
-				  },
-				  {
-						xtype : "container",
-						columnWidth : 0.33,
-						defaultType : "textfield",
-						layout : "form",
-						defaults : {
-							anchor : "96%,96%",
-							labelStyle: 'text-align:right;'
-						}, 
-						items : [ 
-						{  
-							id:"QUERY_addr",
-							fieldLabel : "地址" 
-						} ] 
-			} ]
+				  }]
 	    }]
 	}); 
   

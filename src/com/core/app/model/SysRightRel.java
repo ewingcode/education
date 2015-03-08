@@ -11,34 +11,14 @@ public class SysRightRel implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
+	private Integer relRight;
 	private String type;
 	private String relId;
-	private Integer menuId;
+	private Integer targetId;
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
 
 	// Constructors
-
-	/** default constructor */
-	public SysRightRel() {
-	}
-
-	/** minimal constructor */
-	public SysRightRel(String type, Timestamp createTime, Timestamp lastUpdate) {
-		this.type = type;
-		this.createTime = createTime;
-		this.lastUpdate = lastUpdate;
-	}
-
-	/** full constructor */
-	public SysRightRel(String type, String relId, Integer menuId,
-			Timestamp createTime, Timestamp lastUpdate) {
-		this.type = type;
-		this.relId = relId;
-		this.menuId = menuId;
-		this.createTime = createTime;
-		this.lastUpdate = lastUpdate;
-	}
 
 	// Property accessors
 
@@ -66,12 +46,20 @@ public class SysRightRel implements java.io.Serializable {
 		this.relId = relId;
 	}
 
-	public Integer getMenuId() {
-		return this.menuId;
+	public Integer getRelRight() {
+		return relRight;
 	}
 
-	public void setMenuId(Integer menuId) {
-		this.menuId = menuId;
+	public void setRelRight(Integer relRight) {
+		this.relRight = relRight;
+	}
+
+	public Integer getTargetId() {
+		return targetId;
+	}
+
+	public void setTargetId(Integer targetId) {
+		this.targetId = targetId;
 	}
 
 	public Timestamp getCreateTime() {

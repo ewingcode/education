@@ -1,26 +1,38 @@
 package com.core.app.bean;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserInfo {
 	private Integer id;
 	private String userName;
 	private Integer depId;
 	private Integer roleId;
+	private Integer areaId;
+	private Set<Integer> relAreas = new HashSet<Integer>();
 	private String password;
 	private String sex;
 	private String position;
 	private String phone;
 	private String addr;
 	private String zipcode;
-	private List<Integer> relMenus = new ArrayList<Integer>();
+	private Set<Integer> relMenus = new HashSet<Integer>();
 
-	public List<Integer> getRelMenus() {
+	public Set<Integer> getRelAreas() {
+		return relAreas;
+	}
+
+	public void setRelAreas(Set<Integer> relAreas) {
+		this.relAreas = relAreas;
+	}
+
+	public Set<Integer> getRelMenus() {
 		return relMenus;
 	}
 
-	public void setRelMenus(List<Integer> relMenus) {
+	public void setRelMenus(Set<Integer> relMenus) {
 		this.relMenus = relMenus;
 	}
 
@@ -102,5 +114,12 @@ public class UserInfo {
 
 	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
+	}
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
 	}
 }

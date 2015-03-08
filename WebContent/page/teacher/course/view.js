@@ -13,14 +13,11 @@ var cm = new Ext.grid.ColumnModel( {
 				header : "id",
 				dataIndex : "id",
 				hidden : true
-			},
+			}, 
 			{
-				header : "区域",
-				dataIndex : "areaId", 
-				renderer: function(value) { 
-					return  SysArea.translate(value);    
-				}
-			},
+				header : "教师名称",
+				dataIndex : "userName"
+			}, 
 			{
 				header : "周一",
 				dataIndex : "phone",
@@ -35,70 +32,7 @@ var cm = new Ext.grid.ColumnModel( {
 					return  "9:00-10:00"+"<br>"+"10:00-11:00";    
 				}
 			},  
-			{
-				header : "教师名称",
-				dataIndex : "userName"
-			},
-			{
-				header : "科目",
-				dataIndex : "courseType",
-				renderer : function(value) {
-					if (value != null || value != "undefined") {
-						var courses = new Array();
-						courses = value.split(",");
-						var coursetrans = "";
-						for ( var i = 0; i < courses.length; i++) {
-							coursetrans += SysParam.translate(courseStore,
-									courses[i]);
-							if (i < courses.length - 1)
-								coursetrans += ",";
-						}
-						return coursetrans;
-					} else {
-						return "";
-					}
-				}
-			},
-			{
-				header : "教学年级",
-				dataIndex : "gradeType",
-				width : 250,
-				renderer : function(value) {
-					if (value != null || value != "undefined") {
-						var grades = new Array();
-						grades = value.split(",");
-						var gradestrans = "";
-						for ( var i = 0; i < grades.length; i++) {
-							gradestrans += SysParam.translate(gradeStore,
-									grades[i]);
-							if (i < grades.length - 1)
-								gradestrans += ",";
-						}
-						return gradestrans;
-					} else {
-						return "";
-					}
-				}
-			},
-			{
-				header : "性别",
-				dataIndex : "sex",
-				renderer : function(value) {
-					return SysParam.translate(sexTypeStore, value);
-				}
-
-			},
-			{
-				header : "电话",
-				dataIndex : "phone"
-			},  
-			{
-				header : "是否有效",
-				dataIndex : "iseff",
-				renderer : function(value) {
-					return SysParam.translate(iseffStore, value);
-				}
-			},
+			 
 			{
 				header : "操作",
 				xtype : 'actioncolumn',

@@ -141,7 +141,10 @@ public class BaseModelService {
 			if (value == null || (keytype.equals("_n_") && value == "null")) {
 				continue;
 			}
-			if (keytype.equalsIgnoreCase("_s_")
+			if (keytype.equalsIgnoreCase("_m_")) {
+				sb.append(" AND ").append(table)
+						.append("FIND_IN_SET(" + value + "," + key + ")");
+			} else if (keytype.equalsIgnoreCase("_s_")
 					|| keytype.equalsIgnoreCase("_n_")
 					|| keytype.equalsIgnoreCase("_d_")) {
 				if (orflag == null) {
@@ -304,5 +307,4 @@ public class BaseModelService {
 		}
 		return sb.toString();
 	}
-
 }

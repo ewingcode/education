@@ -9,6 +9,7 @@
 		<meta http-equiv="Cache-Control" content="no-cache" />
 		<meta http-equiv=Cache-Control content=no-cache />
 		<meta http-equiv=Expires content=0 />
+		<title>华实教育</title>
 
 		<link rel="stylesheet" type="text/css"
 			href="${_contextPath}/resources/css/ext-all.css"></link>
@@ -55,6 +56,7 @@
 		<script type="text/javascript" src="${_contextPath}/js/SysResource.js"></script>
 		<script type="text/javascript" src="${_contextPath}/js/SysOrg.js"></script>
 		<script type="text/javascript" src="${_contextPath}/js/SysRoleTree.js"></script>
+		<script type="text/javascript" src="${_contextPath}/js/SysArea.js"></script>
 		<script type="text/javascript"
 			src="${_contextPath}/js/ireport/jasperreports.js"></script>
 		<script type="text/javascript"> 

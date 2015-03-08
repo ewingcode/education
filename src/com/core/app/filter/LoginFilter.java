@@ -59,7 +59,7 @@ public class LoginFilter implements Filter {
 								new SysTrace(userInfo.getId(), menuUrl));
 					}
 				} catch (SessionException e) {
-					logger.error("fail to get user session!", e);
+					logger.warn("fail to get user session!", e);
 				}
 				if (userInfo == null) {
 					response.sendRedirect(loginPage + "?outsession=0");

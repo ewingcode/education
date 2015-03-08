@@ -8,7 +8,11 @@ import com.core.app.action.base.ActionException;
 import com.core.app.action.base.BaseAction;
 import com.core.app.action.base.ResponseData;
 import com.core.app.action.base.ResponseUtils;
+import com.core.app.control.SessionException;
 import com.core.app.model.SysUser;
+import com.core.app.service.SysRightRelService;
+import com.util.SqlUtil;
+import com.util.StringUtil;
 import com.web.model.TeacherAbility;
 import com.web.model.TeacherInfo;
 import com.web.service.TeacherService;
@@ -17,9 +21,24 @@ public class TeacherAction extends BaseAction {
 	private static Logger logger = Logger.getLogger(BaseAction.class);
 	@Resource
 	private TeacherService teacherService;
-
+	@Resource
+	private SysRightRelService sysRightRelService;
 	public TeacherAction() {
 		super(TeacherInfo.class);
+	}
+
+	@Override
+	public String getCondition() {
+		if (StringUtil.isEmpty(condition))
+			condition = "";
+		try {
+			String relAreaSql = sysRightRelService.getAreaRightSql(request);
+			if (!StringUtil.isEmpty(relAreaSql))
+				return SqlUtil.combine(condition , relAreaSql);
+		} catch (SessionException e) {
+			e.printStackTrace();
+		}
+		return condition;
 	}
 
 	public void addNewTeacher() throws ActionException {

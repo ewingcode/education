@@ -1,7 +1,7 @@
 Ext.ns("SysRel");
-SysRel.viewWin = function(type,relId){
+SysRel.viewWin = function(type,relId,right){ 
 	var treeLoader = new Ext.tree.TreeLoader( { 
-		dataUrl : 'Public_SysRightRel_querySettingTree.action?type='+type+'&relId='+relId  
+		dataUrl : 'Public_SysRightRel_querySettingTree.action?type='+type+'&relId='+relId+'&right='+right
 		 
 	});
 
@@ -51,6 +51,7 @@ SysRel.viewWin = function(type,relId){
 							params : {
 								relId : relId,
 								type: type ,
+								right:right,
 								menuIds:msg
 							},
 							method : "post",

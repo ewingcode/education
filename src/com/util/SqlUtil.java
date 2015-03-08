@@ -5,6 +5,7 @@ package com.util;
 public class SqlUtil {
 	/**
 	 * 字符数组转成in查询条件
+	 * 
 	 * @param array
 	 * @return
 	 */
@@ -18,6 +19,7 @@ public class SqlUtil {
 	}
 	/**
 	 * 整形数组转成in查询条件
+	 * 
 	 * @param array
 	 * @return
 	 */
@@ -29,5 +31,21 @@ public class SqlUtil {
 		return sb.length() == 0 ? "" : sb.substring(0, sb.length() - 1)
 				.toString();
 	}
-	 
+
+	/**
+	 * 合并sql
+	 * 
+	 * @param sql1
+	 * @param sql2
+	 * @return
+	 */
+	public static String combine(String sql1, String sql2) { 
+		StringBuffer sql  = new StringBuffer();
+		if (!(sql1.trim().endsWith("and") || sql1.trim()
+				.endsWith("AND")) && !(sql2.trim().startsWith("and") || sql2.trim()
+						.startsWith("AND"))) {
+			sql.append(sql1).append(" AND ").append(sql2);
+		}
+		return sql.toString();
+	}
 }

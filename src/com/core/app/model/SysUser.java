@@ -24,8 +24,17 @@ public class SysUser implements java.io.Serializable {
 	private Timestamp lastUpdate;
 	private Integer roleId;
 	private String email;
+	private Integer areaId; 
 
 	// Constructors
+
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
+	}
 
 	/** default constructor */
 	public SysUser() {

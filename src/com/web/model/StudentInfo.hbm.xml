@@ -15,6 +15,9 @@
                 <comment>学生名称</comment>
             </column>
         </property>
+        	<property name="areaId" type="java.lang.Integer">
+			<column name="area_id" />
+		</property>
         <property name="grade" type="java.lang.String">
             <column name="grade" length="10">
                 <comment>年级</comment>

@@ -11,6 +11,7 @@ public class TeacherInfo implements java.io.Serializable {
 	private Integer id;
 	private String userName;
 	private Integer depId;
+	private Integer areaId;
 	private String password;
 	private String sex;
 	private String position;
@@ -24,6 +25,14 @@ public class TeacherInfo implements java.io.Serializable {
 	private String email;
 	private String courseType;
 	private String gradeType;
+
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
+	}
 
 	// Constructors
 
@@ -58,10 +67,10 @@ public class TeacherInfo implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public TeacherInfo(String userName, Integer depId, String password, String sex,
-			String position, String phone, String addr, String zipcode,
-			String iseff, Timestamp createTime, Timestamp lastUpdate,
-			Integer roleId, String email) {
+	public TeacherInfo(String userName, Integer depId, String password,
+			String sex, String position, String phone, String addr,
+			String zipcode, String iseff, Timestamp createTime,
+			Timestamp lastUpdate, Integer roleId, String email) {
 		this.userName = userName;
 		this.depId = depId;
 		this.password = password;

@@ -12,7 +12,7 @@ var EditWindow = function(_primaryId,_courseType,_gradeType) {
 		id : "userEditForm",
 	    title: '用户编辑',
         width: 500,
-        height:400,
+        height:450,
         minWidth: 500,
         minHeight: 300,
         layout: 'fit',
@@ -77,7 +77,7 @@ var EditWindow = function(_primaryId,_courseType,_gradeType) {
 									buttons : Ext.MessageBox.OK,
 									icon : Ext.Msg.INFO
 								}); 
-								 
+								  
 								 loadGirdStore();
 								win.close();
 							},
@@ -136,7 +136,8 @@ EditWindow.prototype.editform = function() {
 				   {name :"iseff",mapping:'iseff'},
 				   {name :"roleId",mapping:'roleId'},
 				   {name :"courseType",mapping:'courseType'},
-				   {name :"gradeType",mapping:'gradeType'} ]),
+				   {name :"gradeType",mapping:'gradeType'} ,
+				   {name :"areaId",mapping:'areaId'} ]),
 		items : [ { 
 			id : "id",
 			xtype : "hidden",
@@ -157,7 +158,7 @@ EditWindow.prototype.editform = function() {
 					  );  	
 					}
 				}
-		},
+		}, new SysArea.ComboBox('areaId',true),
 		new SysParam.ComboBox('性别','sex', 'SEXTYPE',true) ,
 		new SysParam.checkbox('教学年级', 'gradeList', 'GRADE',gradeType!=null?gradeType.split(","):null)
 		,
@@ -201,7 +202,7 @@ EditWindow.prototype.editform = function() {
 			id : "depId",
 			hidden:true,
 			value:"1"
-		} ]
+		}]
 	}); 
 	if (primaryId != null && primaryId != "undefined") {
 		editForm.getForm().load(
