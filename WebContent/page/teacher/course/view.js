@@ -1,11 +1,11 @@
 var isOnlyQuery = false;
-isOnlyQuery = jQuery.url.param("isOnlyQuery") == 'true' ? true : false; 
+isOnlyQuery = jQuery.url.param("isOnlyQuery") == 'true' ? true : false;
 var sexTypeStore = new SysParam.store("SEXTYPE");
 var iseffStore = new SysParam.store("ISEFF");
 var courseStore = new SysParam.store("ORDER_COURSE");
 var gradeStore = new SysParam.store("GRADE");
 var sm = new Ext.grid.CheckboxSelectionModel();
-var cm = new Ext.grid.ColumnModel( {
+var cm = new Ext.grid.ColumnModel({
 	columns : [
 			sm,
 			new Ext.grid.RowNumberer(),
@@ -13,56 +13,10 @@ var cm = new Ext.grid.ColumnModel( {
 				header : "id",
 				dataIndex : "id",
 				hidden : true
-			}, 
+			},
 			{
 				header : "教师名称",
 				dataIndex : "userName"
-			}, 
-			{
-				header : "周一",
-				dataIndex : "phone",
-				renderer: function(value) { 
-					return  "9:00-10:00"+"<br>"+"10:00-11:00";    
-				}
-			},  
-			{
-				header : "周二",
-				dataIndex : "phone",
-				renderer: function(value) { 
-					return  "9:00-10:00"+"<br>"+"10:00-11:00";    
-				}
-			},  
-			 
-			{
-				header : "操作",
-				xtype : 'actioncolumn',
-				hidden : isOnlyQuery,
-				defaults : {
-					width : 230
-				},// 默认每个子item大小
-				width : 50,
-				items : [
-						{
-							getClass : function(v, meta, rec) {
-								return "btn_edit";
-							},
-							tooltip : '编辑',
-							handler : function(grid, rowIndex, colIndex) {
-								var rec = store.getAt(rowIndex);
-								new EditWindow(rec.get('id'), rec
-										.get('courseType'), rec
-										.get('gradeType'));
-							}
-						}, {
-							getClass : function(v, meta, rec) {
-								return "btn_remove";
-							},
-							tooltip : '删除',
-							handler : function(grid, rowIndex, colIndex) {
-								var rec = store.getAt(rowIndex);
-								removeData(rec.get('id'))
-							}
-						} ]
 			} ],
 	defaults : {
 		sortable : true,
@@ -70,17 +24,19 @@ var cm = new Ext.grid.ColumnModel( {
 		width : 100
 	}
 });
+
+ 
 var removeData = function(b) {
 	Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
 		if (c == "yes") {
-			Ext.Ajax.request( {
+			Ext.Ajax.request({
 				url : "Busi_Teacher_delete.action",
 				params : {
 					id : b
 				},
 				method : "post",
 				success : function() {
-					Ext.Msg.show( {
+					Ext.Msg.show({
 						title : '编辑',
 						msg : '成功删除记录',
 						buttons : Ext.MessageBox.OK,
@@ -89,7 +45,7 @@ var removeData = function(b) {
 					loadGirdStore();
 				},
 				failure : function() {
-					Ext.MessageBox.show( {
+					Ext.MessageBox.show({
 						title : "操作信息",
 						msg : "信息保存出错，请联系管理员！",
 						buttons : Ext.MessageBox.OK,
@@ -101,12 +57,12 @@ var removeData = function(b) {
 	});
 };
 
-var store = new Ext.data.Store( {
+var store = new Ext.data.Store({
 	// autoLoad : true,//是否自动加载
-	proxy : new Ext.data.HttpProxy( {
-		url : 'Busi_Teacher_pageQuery.action'
+	proxy : new Ext.data.HttpProxy({
+		url : 'Busi_CourseSchedule_pageQuery.action'
 	}),
-	reader : new Ext.data.JsonReader( {
+	reader : new Ext.data.JsonReader({
 		root : 'result',
 		totalProperty : 'totalProperty',
 		remoteSort : true,
@@ -114,50 +70,92 @@ var store = new Ext.data.Store( {
 			name : "id",
 			mapping : 'id'
 		}, {
-			name : "userName",
-			mapping : 'userName'
+			name : "teacherId",
+			mapping : 'teacherId'
 		}, {
-			name : "addr",
-			mapping : 'addr'
+			name : "teacherName",
+			mapping : 'teacherName'
 		}, {
-			name : "sex",
-			mapping : 'sex'
+			name : "content1",
+			mapping : 'contents[0]'
 		}, {
-			name : "phone",
-			mapping : 'phone'
+			name : "content2",
+			mapping : 'contents[1]'
 		}, {
-			name : "iseff",
-			mapping : 'iseff'
+			name : "content3",
+			mapping : 'contents[2]'
 		}, {
-			name : "zipcode",
-			mapping : 'zipcode'
+			name : "content4",
+			mapping : 'contents[3]'
 		}, {
-			name : "email",
-			mapping : 'email'
+			name : "content5",
+			mapping : 'contents[4]'
 		}, {
-			name : "roleId",
-			mapping : 'roleId'
+			name : "content6",
+			mapping : 'contents[5]'
 		}, {
-			name : "courseType",
-			mapping : 'courseType'
-		}, {
-			name : "gradeType",
-			mapping : 'gradeType'
-		} , {
-			name : "areaId",
-			mapping : 'areaId'
-		}]
+			name : "content7",
+			mapping : 'contents[6]'
+		}  ]
 	})
 });
 
-var toolbar = new Ext.Toolbar( {
+function getDateList() {
+	var startDate = Ext.getCmp('QUERY_schedule_startTime').getValue();
+	var endDate = Ext.getCmp('QUERY_schedule_endTime').getValue();
+	var nextDay = startDate;
+	while (!nextDay.between(nextDay, endDate)) {
+		nextDay = nextDay.add(Date.DAY, 1);
+		nextDay.format('Ymd');
+	}
+}
+
+function getDynamicColumn() {
+	var columString = null;
+	var startDate = Ext.getCmp('QUERY_schedule_startTime').getValue();
+	var endDate = Ext.getCmp('QUERY_schedule_endTime').getValue();
+
+	if (startDate == '' || endDate == '') {
+		Common.ErrMegBox("排课时间不能为空！");
+		return null;
+	}
+	var start = "new Ext.grid.ColumnModel( {" + "columns : [" + "sm,"
+			+ "new Ext.grid.RowNumberer(),"
+			+ "{header : \"id\",dataIndex : \"teacherId\",hidden : true}, "
+			+ "{header : \"教师名称\",dataIndex : \"teacherName\"} ,";
+	var date = "";
+	var maxdayInterval = 7;
+	var dayInterval = 0;
+	while (startDate <= endDate) {
+		dayInterval++;
+		var weekName = DateUtil.getWeekName(startDate);
+		var dateColumn = startDate.format('Ymd')+"<br>"+weekName;
+		 
+		date = date + "{header : '" + dateColumn
+				+ "',dataIndex : 'content"+dayInterval+"'}";
+		if (startDate < endDate)
+			date = date + ",";
+		startDate = startDate.add(Date.DAY, 1);
+		
+	}
+	if (dayInterval > maxdayInterval) {
+		Common.ErrMegBox("排课时间不能超过7日！");
+		return null;
+	}
+
+	var end = "],defaults : {" + "sortable : true," + "menuDisabled : false,"
+			+ "width : 100" + "}" + "})";
+	columString = start + date + end; 
+	return columString;
+}
+var toolbar = new Ext.Toolbar({
 	id : "userTopBar",
 	items : [ {
 		iconCls : "btn_query",
 		text : "查询",
 		xtype : "button",
 		scale : 'medium',
-		handler : function() {
+		handler : function() { 
 			loadGirdStore();
 		}
 	}, {
@@ -179,7 +177,7 @@ var toolbar = new Ext.Toolbar( {
 		}
 	} ]
 });
-var gridPanel = new Ext.grid.GridPanel( {
+var gridPanel = new Ext.grid.GridPanel({
 	id : "userGrid",
 	tbar : toolbar,
 	store : store,
@@ -197,8 +195,8 @@ var gridPanel = new Ext.grid.GridPanel( {
 		showPreview : false
 	},
 	// paging bar on the bottom
-	bbar : new Ext.PagingToolbar( {
-		pageSize : 20,
+	bbar : new Ext.PagingToolbar({
+		pageSize : 5,
 		store : store,
 		displayInfo : true,
 		displayMsg : ' 合共  {2} 条记录，正在显示第 {0} 到 {1} 的记录 ',
@@ -206,16 +204,24 @@ var gridPanel = new Ext.grid.GridPanel( {
 	})
 });
 
-function loadGirdStore() {  
-	store.setBaseParam('start',0); 
-	store.setBaseParam('limit',20); 
-	store.setBaseParam('_QUERY_s_rlike_user_name',Ext.getCmp('QUERY_user_name').getValue());  
-	//store.setBaseParam('_QUERY_m_eq_grade_type',Ext.getCmp('QUERY_grade_type').getValue());  
-	store.setBaseParam('_QUERY_n_eq_area_id',Ext.getCmp('QUERY_areaId').getValue());  
+function loadGirdStore() {
+	var dynamicColumnStr = getDynamicColumn();
+	if (dynamicColumnStr == null)
+		return; 
+	var item = eval(dynamicColumnStr);
+	gridPanel.reconfigure(store, item); 
+	store.setBaseParam('start', 0);
+	store.setBaseParam('limit', 5);
+	store.setBaseParam('_QUERY_s_rlike_user_name', Ext
+			.getCmp('QUERY_user_name').getValue());
+	store.setBaseParam('_QUERY_schedule_startTime',Ext.getCmp('QUERY_schedule_startTime').getValue());
+	store.setBaseParam('_QUERY_schedule_endTime',Ext.getCmp('QUERY_schedule_endTime').getValue());
+	store.setBaseParam('_QUERY_n_eq_area_id', Ext.getCmp('QUERY_areaId')
+			.getValue());
 	store.reload();
 };
 
-var formpanel = new Ext.FormPanel( {
+var formpanel = new Ext.FormPanel({
 	labelAlign : 'left',// 字样显示在顶部
 	bodyStyle : 'padding:5px',
 	plain : true,
@@ -238,8 +244,26 @@ var formpanel = new Ext.FormPanel( {
 			items : [ {
 				id : "QUERY_user_name",
 				fieldLabel : "教师名称"
-			}/*, 
-			new SysParam.ComboBox('教学年级','QUERY_grade_type', 'GRADE')*/]
+			}, {
+				xtype : 'compositefield',
+				fieldLabel : '排课时间',
+				msgTarget : 'side',
+				anchor : '-20',
+				defaults : {
+					flex : 1
+				},
+				items : [ {
+					id : "QUERY_schedule_startTime",
+					xtype : "datefield",
+					vtype : 'daterange',
+					endDateField : 'QUERY_schedule_endTime'
+				}, {
+					id : "QUERY_schedule_endTime",
+					xtype : "datefield",
+					vtype : 'daterange',
+					startDateField : 'QUERY_schedule_startTime'
+				} ]
+			} ]
 		}, {
 			xtype : "container",
 			columnWidth : 0.33,
@@ -249,17 +273,22 @@ var formpanel = new Ext.FormPanel( {
 				anchor : "96%,96%",
 				labelStyle : 'text-align:right;'
 			},
-			items : [  new SysArea.ComboBox('QUERY_areaId',false), ]
+			items : [ new SysArea.ComboBox('QUERY_areaId', false), ]
 		} ]
 	} ]
 });
 
 gridPanel.addListener("rowdblclick", function(g, f, h) {
 	g.getSelectionModel().each(function(e) {
-		new EditWindow(e.data.id,e.data.courseType,e.data.gradeType); 
+		new EditWindow(e.data.id, e.data.courseType, e.data.gradeType);
 	});
 });
+
 Ext.onReady(function() { 
-	
-	Frame.busiPage(formpanel, gridPanel);
+	Frame.busiPage(formpanel, gridPanel); 
+	var today =  new Date();
+	var weekEndDay = today.add(Date.DAY, 6);  
+	$("#QUERY_schedule_startTime").val(today.format("n/j/Y"));
+	$("#QUERY_schedule_endTime").val(weekEndDay.format("n/j/Y"));
+	loadGirdStore();
 });

@@ -10,11 +10,11 @@
             <column name="id" />
             <generator class="identity" />
         </id>
-        <property name="startTime" type="java.lang.String">
-            <column name="start_time" length="50" not-null="true" />
+        <property name="startTime" type="java.lang.Integer">
+            <column name="start_time"   not-null="true" />
         </property>
-        <property name="endTime" type="java.lang.String">
-            <column name="end_time" length="50" not-null="true" />
+        <property name="endTime" type="java.lang.Integer">
+            <column name="end_time" not-null="true" />
         </property>
         <property name="createTime" type="java.sql.Timestamp">
             <column name="create_time" length="19" not-null="true" />

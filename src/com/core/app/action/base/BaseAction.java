@@ -22,7 +22,7 @@ import com.core.app.service.CacheModelService;
 import com.core.jdbc.util.PageBean;
 import com.core.json.JsonUtil;
 import com.opensymphony.xwork2.ActionSupport;
-import com.util.DataFormat;
+import com.util.DateFormat;
 import com.util.StringUtil;
 import com.web.constant.OrderAttachStatus;
 import com.web.model.OrderAttach;
@@ -271,21 +271,21 @@ public class BaseAction extends ActionSupport implements ServletRequestAware,
 					f.set(entityBean, Integer.valueOf(value));
 				} else if (fieldType.equals("java.util.Date")) {
 					if (value.length() == 10) {
-						f.set(entityBean, DataFormat.stringToDate(value,
-								DataFormat.DATE_FORMAT));
+						f.set(entityBean, DateFormat.stringToDate(value,
+								DateFormat.DATE_FORMAT));
 					} else if (value.length() == 19) {
-						f.set(entityBean, DataFormat.stringToDate(value,
-								DataFormat.DATETIME_FORMAT));
+						f.set(entityBean, DateFormat.stringToDate(value,
+								DateFormat.DATETIME_FORMAT));
 					}
 				} else if (fieldType.equals("java.sql.Timestamp")) {
 					if (value.length() == 10) {
-						f.set(entityBean, new java.sql.Timestamp(DataFormat
-								.stringToDate(value, DataFormat.DATE_FORMAT)
+						f.set(entityBean, new java.sql.Timestamp(DateFormat
+								.stringToDate(value, DateFormat.DATE_FORMAT)
 								.getTime()));
 					} else if (value.length() == 19) {
 						f.set(entityBean, new java.sql.Timestamp(
-								DataFormat.stringToDate(value,
-										DataFormat.DATETIME_FORMAT).getTime()));
+								DateFormat.stringToDate(value,
+										DateFormat.DATETIME_FORMAT).getTime()));
 					}
 				}
 

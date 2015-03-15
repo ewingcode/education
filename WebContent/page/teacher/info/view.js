@@ -20,21 +20,7 @@ var cm = new Ext.grid.ColumnModel( {
 				renderer: function(value) { 
 					return  SysArea.translate(value);    
 				}
-			},
-			{
-				header : "周一",
-				dataIndex : "phone",
-				renderer: function(value) { 
-					return  "9:00-10:00"+"<br>"+"10:00-11:00";    
-				}
-			},  
-			{
-				header : "周二",
-				dataIndex : "phone",
-				renderer: function(value) { 
-					return  "9:00-10:00"+"<br>"+"10:00-11:00";    
-				}
-			},  
+			}, 
 			{
 				header : "教师名称",
 				dataIndex : "userName"

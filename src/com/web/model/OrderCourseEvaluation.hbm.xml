@@ -17,7 +17,7 @@
             <column name="student_id" />
         </property>
         <property name="courseType" type="java.lang.String">
-            <column name="course_type" length="1" not-null="true">
+            <column name="course_type" length="2" not-null="true">
                 <comment>课程类型</comment>
             </column>
         </property>

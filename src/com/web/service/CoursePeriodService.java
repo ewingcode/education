@@ -16,6 +16,16 @@ import com.web.util.DateFormat;
 public class CoursePeriodService {
 	@Resource
 	private BaseDao baseDao;
+	
+	/**
+	 * 查找设置课程时间段
+	 * @return
+	 * @throws DaoException
+	 */
+	public List<CoursePeriod> getCoursePeriod() throws DaoException {
+		String sql = " from " + CoursePeriod.class.getName();
+		return baseDao.find(sql, CoursePeriod.class);
+	}
 
 	public boolean existSamePeriod(Date startTime, Date endTime)
 			throws DaoException {
