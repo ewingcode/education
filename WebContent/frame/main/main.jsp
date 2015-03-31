@@ -1,6 +1,5 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/common/include/head.jsp"%>
-<link rel="stylesheet" type="text/css" href="CenterLayout.css" />
+<%@ include file="/common/include/head.jsp"%> 
 <link rel="stylesheet" type="text/css" href="layout-browser.css" />
 <%@ include file="/common/include/html_head.jsp"%>
 <script type="text/javascript"> 

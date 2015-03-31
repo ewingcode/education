@@ -34,7 +34,9 @@
 		<script type="text/javascript"
 			src="${_contextPath}/js/core/ext/ext-all.js"></script>
 		<script type="text/javascript"
-			src="${_contextPath}/js/core/ext/ux/RowExpander.js"></script>
+			src="${_contextPath}/js/core/ext/ux/RowExpander.js"></script> 
+		<script type="text/javascript"  
+			src="${_contextPath}/js/core/ext/ux/RowEditor.js"></script>
 		<script type="text/javascript"
 			src="${_contextPath}/js/core/ext/ux/SearchField.js"></script>
 		<script type="text/javascript"

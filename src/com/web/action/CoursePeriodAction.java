@@ -8,9 +8,9 @@ import com.core.app.action.base.ActionException;
 import com.core.app.action.base.BaseAction;
 import com.core.app.action.base.ResponseData;
 import com.core.app.action.base.ResponseUtils;
+import com.util.DateFormat;
 import com.web.model.CoursePeriod;
 import com.web.service.CoursePeriodService;
-import com.web.util.DateFormat;
 
 public class CoursePeriodAction extends BaseAction {
 	private static Logger logger = Logger.getLogger(OrderAttchAction.class);

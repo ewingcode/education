@@ -1,5 +1,5 @@
 .btn_add {
-	background-image: url(../images/add.gif) !important;
+	background-image: url(../images/add.png) !important;
 }
 
 .btn_search {
@@ -13,7 +13,7 @@
 .btn_save {
 	background-image: url(../images/btn-save.png) !important;
 }
-
+ 
 .btn_cancel {
 	background-image: url(../images/cancel.png) !important;
 }
@@ -29,7 +29,7 @@
 	height: 16px;
 	width: 25px;
 	background-repeat: no-repeat;
-	background-image: url(../images/remove.png) !important;
+	background-image: url(../images/delete.gif) !important;
 }
 
 .btn_detail {

@@ -2,9 +2,11 @@ package com.util;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -12,63 +14,59 @@ public class DateFormat {
 	protected static final String sDefaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	// 日期时间全格式 24小时制
-	public static String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-	public static String DATETIME_FORMAT2 = "yyyyMMddHHmmss";
-	
-	public static String DATETIME_FORMAT3 = "yyyy-MM-ddTHH:mm:ss";
+	public static final String DATETIME_FORMAT2 = "yyyyMMddHHmmss";
 
-	public static String DATE_ZEROTIME_FORMAT = "yyyy-MM-dd 00:00:00";
+	public static final String DATE_ZEROTIME_FORMAT = "yyyy-MM-dd 00:00:00";
 
-	public static String DATE_ZEROTIME_FORMAT2 = "yyyyMMdd000000";
+	public static final String DATE_ZEROTIME_FORMAT2 = "yyyyMMdd000000";
 
-	public static String DATE_FULLTIME_FORMAT = "yyyy-MM-dd 23:59:59";
+	public static final String DATE_FULLTIME_FORMAT = "yyyy-MM-dd 23:59:59";
 
-	public static String DATE_FULLTIME_FORMAT2 = "yyyyMMdd235959";
+	public static final String DATE_FULLTIME_FORMAT2 = "yyyyMMdd235959";
 
 	// 日期时间全格式 12小时制
-	public static String DATETIME12_FORMAT = "yyyy-MM-dd hh:mm:ss";
+	public static final String DATETIME12_FORMAT = "yyyy-MM-dd hh:mm:ss";
 
-	public static String DATETIME12_FORMAT2 = "yyyyMMddhhmmss";
+	public static final String DATETIME12_FORMAT2 = "yyyyMMddhhmmss";
 
 	// 日期全格式
-	public static String DATE_FORMAT = "yyyy-MM-dd";
+	public static final String DATE_FORMAT = "yyyy-MM-dd";
 
-	public static String DATE_FORMAT2 = "yyyyMMdd";
+	public static final String DATE_FORMAT2 = "yyyyMMdd";
 
-	public static String DATE_FORMAT_CN = "yyyy年MM月dd日";
+	public static final String DATE_FORMAT_CN = "yyyy年MM月dd日";
 
 	// 年月
-	public static String YEAR_MONTH_FORMAT = "yyyy-MM";
+	public static final String YEAR_MONTH_FORMAT = "yyyy-MM";
 
-	public static String YEAR_MONTH_FORMAT2 = "yyyyMM";
+	public static final String YEAR_MONTH_FORMAT2 = "yyyyMM";
 
-	public static String YEAR_MONTH_FORMAT_CN = "yyyy年MM月";
+	public static final String YEAR_MONTH_FORMAT_CN = "yyyy年MM月";
 
 	// 某年某月的第一天
-	public static String YEAR_MONTH_FIRSTDAY = "yyyy-MM-01";
+	public static final String YEAR_MONTH_FIRSTDAY = "yyyy-MM-01";
 
 	// 年、月、日
-	public static String YEAR_FORMAT = "yyyy";
+	public static final String YEAR_FORMAT = "yyyy";
 
-	public static String MONTH_FORMAT = "MM";
+	public static final String MONTH_FORMAT = "MM";
 
-	public static String DAY_FORMAT = "dd";
+	public static final String DAY_FORMAT = "dd";
 
 	// 时间全格式 24小时制
-	public static String TIME_FORMAT = "HH:mm:ss";
+	public static final String TIME_FORMAT = "HH:mm:ss";
 
-	public static String TIME_FORMAT2 = "HHmmss";
+	public static final String TIME_FORMAT2 = "HHmmss";
 
 	// 时间全格式 12小时制
-	public static String TIME12_FORMAT = "hh:mm:ss";
+	public static final String TIME12_FORMAT = "hh:mm:ss";
 
-	public static String TIME12_FORMAT2 = "hhmmss";
+	public static final String TIME12_FORMAT2 = "hhmmss";
 
 	// 营业cs版本日期时间格式
-	public static String DATETIME_SLASH_FORMAT = "yyyy/MM/dd HH:mm:ss";
-
-	public static String DATE_SLASH_FORMAT = "yyyy/MM/dd";
+	public static final String DATETIME_SLASH_FORMAT = "yyyy/MM/dd HH:mm:ss"; 
 
 	private static final Logger log = Logger.getLogger(DateFormat.class);
 
@@ -87,20 +85,19 @@ public class DateFormat {
 		}
 
 	}
-	public static Date stringToDate(String inputDate,String pattern) {
+
+	public static Date stringToDate(String inputDate, String pattern) {
 		if (inputDate == null || inputDate.equalsIgnoreCase(""))
 			return null;
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		Date date = null;
 		try {
 			date = sdf.parse(inputDate, new ParsePosition(0));
-		} catch (Exception ex) {
-			SimpleDateFormat sdfs = new SimpleDateFormat(DATE_SLASH_FORMAT);
-			date = sdfs.parse(inputDate, new ParsePosition(0));
-			return date;
+		} catch (Exception ex) { 
 		}
 		return date;
 	}
+
 	public static Date stringToDate(String inputDate) {
 		if (inputDate == null || inputDate.equalsIgnoreCase(""))
 			return null;
@@ -109,15 +106,14 @@ public class DateFormat {
 		try {
 			date = sdf.parse(inputDate, new ParsePosition(0));
 		} catch (Exception ex) {
-			SimpleDateFormat sdfs = new SimpleDateFormat(DATE_SLASH_FORMAT);
-			date = sdfs.parse(inputDate, new ParsePosition(0));
-			return date;
+			 
 		}
 		return date;
 	}
 
 	public static String DateToString(java.util.Date time) {
-		return time.toString();
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+		return sdf.format(time);
 	}
 
 	public static String DateToString(java.util.Date time, String strPattern) {
@@ -132,9 +128,9 @@ public class DateFormat {
 	 *            String
 	 * @return String
 	 */
-	public static String monToStartEndDate(String strMon) {
+	public static String[] monToStartEndDate(String strMon) {
 		if (strMon == null || strMon.length() != 7 || strMon.charAt(4) != '-')
-			return "";
+			return null;
 
 		int iYear = 0;
 		int iMonth = 0;
@@ -143,10 +139,10 @@ public class DateFormat {
 			iYear = Integer.parseInt(strMon.substring(0, 4));
 			iMonth = Integer.parseInt(strMon.substring(5, 7));
 		} catch (Exception exp) {
-			return "";
+			return null;
 		}
 		if (iYear < 1970 || iYear > 2999 || iMonth < 1 || iMonth > 12)
-			return "";
+			return null;
 
 		String strStartDate = strMon + "-01";
 		String strNextMonStartDate = new String();
@@ -165,10 +161,13 @@ public class DateFormat {
 
 		String strEndDate = DateToString(new java.sql.Date(
 				(stringToDate(strNextMonStartDate)).getTime() - 86400000));
-
-		return strStartDate + "|" + strEndDate;
-
+		List<String> list = new ArrayList<String>();
+		list.add(strStartDate);
+		list.add(strEndDate);
+		return list.toArray(new String[list.size()]);
 	}
+
+	 
 
 	/**
 	 * <p>
@@ -190,127 +189,6 @@ public class DateFormat {
 		} catch (Exception ex) {
 			return false;
 		}
-	}
-
-	// 将99.99形式的字符串转换为分值长整
-	public static long StrToDBMoney(String s) throws Exception {
-		int i = s.lastIndexOf(".");
-		if (((i != -1) && ((s.length() - i) > 3)) || (i == s.length() - 1)) {
-			Exception ex = new Exception("字符转换出错.");
-			throw ex;
-		}
-		String sLong = "";
-		if (i == -1) {
-			sLong = s + CommonUtil.repeatChar('0', 2);
-		} else if (i == s.length() - 2) {
-			sLong = s.substring(0, i) + s.substring(i + 1, s.length())
-					+ CommonUtil.repeatChar('0', 1);
-		} else {
-			sLong = s.substring(0, i) + s.substring(i + 1, s.length());
-		}
-		Long cLong = new Long(sLong);
-		return cLong.longValue();
-	}
-
-	// 将99.99形式的字符串转换为分值长整，如遇异常返回0
-	public static long tryStrToDBMoney(String s) {
-		try {
-			return StrToDBMoney(s);
-		} catch (Exception ex) {
-			return 0L;
-		}
-	}
-
-	public static String tryFormatDBMoney(long l) {
-		return "￥" + tryDBMoneyToStr(l);
-	}
-
-	// 将99999字符串转换为999.99的字符串形式，如遇异常返回0
-	public static String tryDBMoneyToStr(long l) {
-		try {
-			String header = "";
-			if (l < 0) {
-				header = "-";
-			}
-			String s = LongToStr(Math.abs(l));
-			if (s.length() > 2) {
-				String sPrefix = s.substring(0, s.length() - 2);
-				String sSubfix = s.substring(s.length() - 2);
-				return header + sPrefix + "." + sSubfix;
-			} else if (s.length() == 2)
-				return header + "0." + s;
-			else if (s.length() == 1)
-				return header + "0.0" + s;
-
-			return "0.00";
-		} catch (Exception ex) {
-			return "0.00";
-		}
-	}
-
-	// 将(-)99999字符串转换为999.99的字符串形式，如遇异常返回0(包括对负数的处理)
-	public static String tryDBMoneyToStrNew(long l) {
-		if (l < 0)
-			return "-" + tryDBMoneyToStr(-l);
-		else
-			return tryDBMoneyToStr(l);
-	}
-
-	/**
-	 * 将字符串转换为长整，如遇异常返回0
-	 * @param s
-	 * @return
-	 * @deprecated by hesw.此类是用于做数据格式化输出的，类型转换请使用VarTypeUtil中对应的方法
-	 */
-	public static long tryStrToLong(String s) {
-		try {
-			Long cLong = new Long(s);
-			return cLong.longValue();
-		} catch (Exception ex) {
-			return 0L;
-		}
-	}
-
-	/**
-	 * 将字符串转换为整型，如遇异常返回0
-	 * @param s
-	 * @return
-	 * @deprecated by hesw.此类是用于做数据格式化输出的，类型转换请使用VarTypeUtil中对应的方法
-	 */
-	public static int tryStrToInt(String s) {
-		try {
-			Integer cLong = new Integer(s);
-			return cLong.intValue();
-		} catch (Exception ex) {
-			return 0;
-		}
-	}
-
-	/**
-	 * 将字符串转换为整型，如遇异常返回0
-	 * @param s
-	 * @return
-	 * @deprecated by hesw.此类是用于做数据格式化输出的，类型转换请使用VarTypeUtil中对应的方法
-	 */
-	public static short tryStrToShort(String s) {
-		try {
-			Short cLong = new Short(s);
-			return cLong.shortValue();
-		} catch (Exception ex) {
-			return 0;
-		}
-	}
-
-	// 将整数转换为字符串
-	public static String IntToStr(int i) {
-		Integer cInt = new Integer(i);
-		return cInt.toString();
-	}
-
-	// 将长整转换为字符串
-	public static String LongToStr(long i) {
-		Long cInt = new Long(i);
-		return cInt.toString();
 	}
 
 	/**
@@ -399,10 +277,10 @@ public class DateFormat {
 		}
 		return false;
 	}
-	
+
 	/**
-	 *  输入秒数,得到时分秒
-	 * 	从3.0网厅中dataformat中迁移到此
+	 * 输入秒数,得到时分秒 从3.0网厅中dataformat中迁移到此
+	 * 
 	 * @param second
 	 * @return
 	 */
@@ -441,4 +319,44 @@ public class DateFormat {
 			return h + "小时" + d + "分" + s + "秒";
 		}
 	}
+
+	/**
+	 * 获取每个月每周的日期列表
+	 * 
+	 * @param month
+	 * @return
+	 */
+	public static List<List<Date>> getCalendarWeekTime(String month) {
+		List<List<Date>> calendarList = new ArrayList<List<Date>>();
+		String[] startAndEndDate = DateFormat.monToStartEndDate(month);
+		String startTime = startAndEndDate[0];
+		String endTime = startAndEndDate[1];
+		Date startDateOfmonth = DateFormat.stringToDate(startTime,
+				DateFormat.DATE_FORMAT);
+		Date endDateOfmonth = DateFormat.stringToDate(endTime,
+				DateFormat.DATE_FORMAT);
+		Calendar startDateCal = Calendar.getInstance();
+		startDateCal.setTime(startDateOfmonth);
+		Calendar endDateCal = Calendar.getInstance();
+		endDateCal.setTime(endDateOfmonth);
+		int endWeekNum = endDateCal.get(Calendar.WEEK_OF_MONTH);
+
+		startDateCal.add(Calendar.DAY_OF_YEAR,
+				-(startDateCal.get(Calendar.DAY_OF_WEEK)));
+
+		for (int i = 0; i < endWeekNum; i++) {
+			int weekDay = 0;
+			List<Date> weekList = new ArrayList<Date>();
+			while (weekDay < 7) {
+				startDateCal.add(Calendar.DAY_OF_YEAR, 1);
+				weekList.add(startDateCal.getTime());
+				weekDay++;
+			}
+			calendarList.add(weekList);
+			weekDay = 0;
+		}
+
+		return calendarList;
+	}
+
 }

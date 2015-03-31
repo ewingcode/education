@@ -7,4 +7,6 @@
 </div>
 <div id="list_div">
 </div> 
+<div id="edit_div" style="display: none;">
+</div>
 <%@ include file="/common/include/html_bottom.jsp"%>
