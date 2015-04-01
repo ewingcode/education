@@ -66,7 +66,7 @@ public class DateFormat {
 	public static final String TIME12_FORMAT2 = "hhmmss";
 
 	// 营业cs版本日期时间格式
-	public static final String DATETIME_SLASH_FORMAT = "yyyy/MM/dd HH:mm:ss"; 
+	public static final String DATETIME_SLASH_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
 	private static final Logger log = Logger.getLogger(DateFormat.class);
 
@@ -93,7 +93,7 @@ public class DateFormat {
 		Date date = null;
 		try {
 			date = sdf.parse(inputDate, new ParsePosition(0));
-		} catch (Exception ex) { 
+		} catch (Exception ex) {
 		}
 		return date;
 	}
@@ -106,7 +106,7 @@ public class DateFormat {
 		try {
 			date = sdf.parse(inputDate, new ParsePosition(0));
 		} catch (Exception ex) {
-			 
+
 		}
 		return date;
 	}
@@ -166,8 +166,6 @@ public class DateFormat {
 		list.add(strEndDate);
 		return list.toArray(new String[list.size()]);
 	}
-
-	 
 
 	/**
 	 * <p>
@@ -357,6 +355,18 @@ public class DateFormat {
 		}
 
 		return calendarList;
+	}
+
+	public static String cutTime(Integer time) {
+		String timeStr = time.toString();
+		if (timeStr.length() == 4)
+			return timeStr.substring(0, 2) + ":" + timeStr.substring(2, 4);
+		if (timeStr.length() == 3)
+			return "0" + timeStr.substring(0, 1) + ":"
+					+ timeStr.substring(1, 3);
+		if (timeStr.length() < 3)
+			return "00:" + timeStr;
+		return "";
 	}
 
 }

@@ -177,8 +177,8 @@ public class CourseScheduleAction extends BaseAction {
 						&& schedule.getDate().compareTo(d) == 0) {
 					String courseName = schedule.getCourseName();
 					String studentName = schedule.getStudentName();
-					periodSb.append(cutTime(schedule.getStartTime()))
-							.append("-").append(cutTime(schedule.getEndTime()));
+					periodSb.append(DateFormat.cutTime(schedule.getStartTime()))
+							.append("-").append(DateFormat.cutTime(schedule.getEndTime()));
 					periodSb.append(" ").append(courseName).append(" ")
 							.append(studentName);
 					periodSb.append("<br>");
@@ -204,18 +204,5 @@ public class CourseScheduleAction extends BaseAction {
 		}
 		return dateList;
 	}
-
-	private String cutTime(Integer time) {
-		String timeStr = time.toString();
-		if (timeStr.length() == 4)
-			return timeStr.substring(0, 2) + ":" + timeStr.substring(2, 4);
-		if (timeStr.length() == 3)
-			return "0" + timeStr.substring(0, 1) + ":"
-					+ timeStr.substring(1, 3);
-		if (timeStr.length() < 3)
-			return "00:" + timeStr;
-		return "";
-	}
-
-	
+ 
 }

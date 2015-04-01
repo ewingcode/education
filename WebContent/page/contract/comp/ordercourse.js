@@ -418,7 +418,7 @@ Order.orderCourse = function() {
 					defaultType : "textfield",
 					layout : "form",
 					defaults : {
-						anchor : "50%",
+						//anchor : "50%",
 						labelStyle : 'text-align:right;'
 					},
 					items : [ new SysParam.checkbox('科目', 'courseList',

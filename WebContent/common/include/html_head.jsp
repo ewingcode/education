@@ -60,6 +60,7 @@
 		<script type="text/javascript" src="${_contextPath}/js/SysRoleTree.js"></script>
 		<script type="text/javascript" src="${_contextPath}/js/SysArea.js"></script>
 		<script type="text/javascript" src="${_contextPath}/js/DateUtil.js"></script>
+		<script type="text/javascript" src="${_contextPath}/js/CoursePeriod.js"></script>   
 		<script type="text/javascript"
 			src="${_contextPath}/js/ireport/jasperreports.js"></script>
 		<script type="text/javascript"> 

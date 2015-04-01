@@ -128,29 +128,19 @@ public class CourseCalenderAction extends BaseAction {
 						+ "无安排<br><br><br><br><br><br><br>");
 			}
 
-			if (cal.get(Calendar.MONTH) != curMonth) {
-
-				backgroudColor = "#BEBEBE";
+			if (cal.get(Calendar.MONTH) == curMonth) {
+				backgroudColor = "#FFFFFF";
+				periodSb.insert(0, "<div style='background-color: "
+						+ backgroudColor + ";'>");
+				periodSb.append("</div>");
+				scheduleContents.add(periodSb.toString());
+			}else{
+				scheduleContents.add("");
 			}
 
-			periodSb.insert(0, "<div style='background-color: "
-					+ backgroudColor + ";'>");
-			periodSb.append("</div>");
-			scheduleContents.add(periodSb.toString());
 		}
 
 		return scheduleContents;
-	}
-	private List<Date> getDateList(Date startDate, Date endDate) {
-		List<Date> dateList = new ArrayList<Date>();
-		Calendar cal = Calendar.getInstance();
-		while (startDate.compareTo(endDate) <= 0) {
-			cal.setTime(startDate);
-			dateList.add(cal.getTime());
-			cal.add(Calendar.DAY_OF_YEAR, 1);
-			startDate = cal.getTime();
-		}
-		return dateList;
 	}
 
 	private String cutTime(Integer time) {
