@@ -50,10 +50,10 @@ public class SysRightRelService {
 	 * 
 	 * @param userInfo
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public Set<Integer> getUserAllRelMenu(UserInfo userInfo)
-			throws DaoException {
+			  {
 		Set<Integer> allRelList = new HashSet<Integer>();
 		Set<Integer> userRelList = getRelTargetList(userInfo.getId(),
 				RelType.User, SysRelRight.MENU);
@@ -73,10 +73,10 @@ public class SysRightRelService {
 	 * 
 	 * @param userInfo
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public Set<Integer> getUserAllRelArea(UserInfo userInfo)
-			throws DaoException {
+			  {
 		Set<Integer> allRelList = new HashSet<Integer>();
 		Set<Integer> userRelList = getRelTargetList(userInfo.getId(),
 				RelType.User, SysRelRight.AREA);
@@ -112,10 +112,10 @@ public class SysRightRelService {
 	 * 
 	 * @param userInfo
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public Set<Integer> getRelTargetList(Integer relId, RelType role,
-			SysRelRight right) throws DaoException {
+			SysRelRight right)   {
 		Set<Integer> targetIds = new HashSet<Integer>();
 		List<SysRightRel> userRelList = baseDao.find(
 				"rel_right=" + right.getValue() + " and type='"
@@ -133,11 +133,11 @@ public class SysRightRelService {
 	 * @param type
 	 * @param relId
 	 * @param menuIds
-	 * @throws DaoException
+	 * @ 
 	 */
 	@Transactional
 	public void rightRelSetting(String type, String relId, Integer right,
-			Integer[] menuIds) throws DaoException {
+			Integer[] menuIds)   {
 		baseDao.executeSql("delete from sys_right_rel where rel_right=" + right
 				+ " and type='" + type + "' and rel_id=" + relId);
 		for (Integer menuId : menuIds) {
@@ -157,11 +157,11 @@ public class SysRightRelService {
 	 * @param type
 	 * @param relId
 	 * @param menuIds
-	 * @throws DaoException
+	 * @ 
 	 */
 	@Transactional
 	public Set<Integer> queryRelMenu(String type, Integer right, Integer relId)
-			throws DaoException {
+			  {
 		Set<Integer> targetList = new HashSet<Integer>();
 		List<SysRightRel> relList = baseDao.find(" rel_right=" + right
 				+ " and type='" + type + "' and rel_id=" + relId,

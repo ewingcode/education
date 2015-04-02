@@ -32,7 +32,7 @@ public class InitServlet extends HttpServlet {
 		try {
 			SysParamFactory.WEB_REAL_PATH = super.getServletContext()
 					.getRealPath("/"); 
-			new FileServer().start(); 
+			//new FileServer().start(); 
 			logger.info("init successfully");
 		} catch (Exception e) {
 			logger.error(e, e);

@@ -27,10 +27,10 @@ public class OrderCourseService {
 	 * 
 	 * @param courseTypes
 	 * @param orderId
-	 * @throws DaoException
+	 * @ 
 	 */
 	public void saveOrderCourse(int orderId, String[] courseTypes)
-			throws DaoException {
+			  {
 		if (courseTypes == null || courseTypes.length == 0)
 			return;
 		baseDao
@@ -50,10 +50,10 @@ public class OrderCourseService {
 	 * 
 	 * @param courseTypes
 	 * @param orderId
-	 * @throws DaoException
+	 * @ 
 	 */
 	public void saveOrderCourse(int orderId, List<OrderCourse> courses)
-			throws DaoException {
+			  {
 		if (courses == null || courses.size() == 0)
 			return;
 		baseDao
@@ -70,10 +70,10 @@ public class OrderCourseService {
 	 * @param orderId
 	 * @param courseType
 	 * @param chargerId
-	 * @throws DaoException
+	 * @ 
 	 */
 	public void chooseCourseCharger(int orderId, String courseType,
-			int chargerId) throws DaoException {
+			int chargerId)   {
 		OrderCourse orderCourse = getOrderCourse(orderId, courseType);
 		orderCourse.setChargerId(chargerId);
 		orderCourse.setStatus(OrderCourseStatus.WAIT);
@@ -87,10 +87,10 @@ public class OrderCourseService {
 	 * @param orderId
 	 * @param courseType
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public OrderCourse getOrderCourse(int orderId, String courseType)
-			throws DaoException {
+			  {
 		List<OrderCourse> courseList = baseDao.find("order_id=" + orderId
 				+ " and course_type='" + courseType + "'", OrderCourse.class);
 		return courseList.isEmpty() ? null : courseList.get(0);
@@ -100,16 +100,16 @@ public class OrderCourseService {
 	 * 批量更新课程
 	 * 
 	 * @param courseList
-	 * @throws DaoException
+	 * @ 
 	 */
-	public void batchUpdate(List<OrderCourse> courseList) throws DaoException {
+	public void batchUpdate(List<OrderCourse> courseList)   {
 		for (OrderCourse orderCourse : courseList) {
 			baseDao.update(orderCourse);
 		}
 	}
 
 	public void processCourse(OrderInfo orderInfo, List<OrderCourse> courseList)
-			throws DaoException {
+			  {
 		for (OrderCourse orderCourse : courseList) {
 			orderCourse.setOrderId(orderInfo.getId());
 			orderCourse.setStatus(OrderAttachStatus.ACCEPT);

@@ -24,7 +24,7 @@ public class NoticeService {
 	private SysUserService sysUserService;
 
 	public void addNotice(int senderId, String receiverType,
-			List<String> receiverIdList, String content) throws DaoException {
+			List<String> receiverIdList, String content)   {
 		if (receiverIdList.isEmpty())
 			return;
 		String receiverIds = "";
@@ -48,7 +48,7 @@ public class NoticeService {
 	}
 
 	public void AddSysNotice(int senderId, String receiverType, int receiverId,
-			String content) throws DaoException {
+			String content)   {
 		List<SysUser> userList = new ArrayList<SysUser>();
 		List<String> receiverIdList = new ArrayList<String>();
 		if (NoticeReceiverType.ROLE.equals(receiverType)) {
@@ -64,30 +64,30 @@ public class NoticeService {
 		addNotice(senderId, receiverType, receiverIdList, content);
 	}
 
-	public List<Notice> getPersonalNotices(int receiverId) throws DaoException {
+	public List<Notice> getPersonalNotices(int receiverId)   {
 		String sql = "receiver_id=" + receiverId;
 		return baseDao.find(sql, Notice.class);
 
 	}
 
-	public List<Notice> getAllNoReadNotices() throws DaoException {
+	public List<Notice> getAllNoReadNotices()   {
 		return baseDao.find("is_read='" + NoticeStatusType.NOTREAD + "'",
 				Notice.class);
 	}
 
-	public List getUserNoReadNoticesTotal() throws DaoException {
+	public List getUserNoReadNoticesTotal()   {
 		return baseDao
 				.noMappedObjectQuery("select receiver_id,count(*) as total from notice where  status='"
 						+ NoticeStatusType.NOTREAD + "' group by receiver_id");
 	}
 
 	public List<Notice> getAllNoReadPersonalNotices(int receiverId)
-			throws DaoException {
+			  {
 		return baseDao.find(" receiver_id=" + receiverId + " and status='"
 				+ NoticeStatusType.NOTREAD + "'", Notice.class);
 	}
 
-	public void updateToReaded(int noticeId) throws DaoException {
+	public void updateToReaded(int noticeId)   {
 		Notice notice = baseDao.findOne(noticeId, Notice.class);
 		if (NoticeStatusType.READED.equals(notice.getStatus()))
 			return;

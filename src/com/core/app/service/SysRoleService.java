@@ -24,10 +24,10 @@ public class SysRoleService {
 	 * 获取组织架构树
 	 * 
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public OrgStructTreeObject queryRoleStructTree(Integer[] roleIds)
-			throws DaoException {
+			  {
 		OrgStructTreeObject treeObject = new OrgStructTreeObject();
 		queryRoleTree(treeObject, roleIds);
 		for (OrgStructTreeObject org : treeObject.getChildren()) {
@@ -48,7 +48,7 @@ public class SysRoleService {
 	}
 
 	private void queryRoleTree(OrgStructTreeObject parentTree, Integer[] roleIds)
-			throws DaoException {
+			  {
 		List<SysRole> roleList = querySysRoleTreeData(roleIds);
 		if (roleList.isEmpty()) {
 			parentTree.setLeaf(true);
@@ -83,14 +83,14 @@ public class SysRoleService {
 	}
 
 	private List<SysRole> querySysRoleTreeData(Integer[] roleIds)
-			throws DaoException {
+			  {
 		if (roleIds == null || roleIds.length == 0)
 			return baseDao.find("", SysRole.class);
 		return baseDao.find("id in (" + SqlUtil.array2InCondition(roleIds)+")",
 				SysRole.class);
 	}
 
-	private List<SysUser> queryRoleUnderUser(int roleId) throws DaoException {
+	private List<SysUser> queryRoleUnderUser(int roleId)   {
 		return baseDao.find("role_id= " + roleId, SysUser.class);
 	}
 }

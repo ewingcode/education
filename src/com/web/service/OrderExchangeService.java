@@ -130,7 +130,7 @@ public class OrderExchangeService {
 	}
 
 	public List<OrderExchange> findPersonalEditHis(int orderId, int userId)
-			throws DaoException {
+			  {
 		String sql = " order_id=" + orderId + " and user_id=" + userId;
 		return baseDao.find(sql, OrderExchange.class);
 	}

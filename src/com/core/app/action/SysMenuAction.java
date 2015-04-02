@@ -105,7 +105,7 @@ public class SysMenuAction extends BaseAction {
 	}
 
 	private void queryChildTree(TreeObject parentTree, int parentId,
-			boolean isShowAll) throws DaoException, SessionException {
+			boolean isShowAll) throws SessionException {
 		UserInfo userInfo = SessionControl.getUserInfo(request);
 		List<SysMenu> menuList = queryTreeData("parentid=" + parentId
 				+ " and iseff='0' order by sort");
@@ -131,10 +131,11 @@ public class SysMenuAction extends BaseAction {
 	/**
 	 * 创建新菜单节点
 	 * 
-	 * @throws DaoException
+	 * @
+	 * 
 	 * @throws ActionException
 	 */
-	public void createNewMenu() throws DaoException, ActionException {
+	public void createNewMenu() throws ActionException {
 		ResponseData responseData = null;
 		try {
 			Integer parentId = Integer
@@ -176,7 +177,7 @@ public class SysMenuAction extends BaseAction {
 		return treeObject;
 	}
 
-	private List<SysMenu> queryTreeData(String sql) throws DaoException {
+	private List<SysMenu> queryTreeData(String sql) {
 		return cacheModelService.find(sql, SysMenu.class);
 	}
 }

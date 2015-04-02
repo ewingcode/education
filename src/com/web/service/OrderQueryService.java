@@ -30,11 +30,11 @@ public class OrderQueryService {
 	 * 
 	 * @param userId
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 * @throws OrderException
 	 */
 	public PageBean findPersonalTasks(int userId, int roleId, int pageSize,
-			int startIndex) throws DaoException, OrderException {
+			int startIndex) throws OrderException {
 		int chargerType = orderRoleService.getChargerType(roleId);
 		String sql = " from " + OrderInfo.class.getName()
 				+ " where id in ( select orderId from "
@@ -48,9 +48,9 @@ public class OrderQueryService {
 	 * 
 	 * @param studentId
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public OrderInfo findLearnOrder(int studentId) throws DaoException {
+	public OrderInfo findLearnOrder(int studentId)   {
 		List<OrderInfo> orderList = baseDao.find("student_id=" + studentId
 				+ " and run_status='" + OrderRunStatus.INLEARN + "'",
 				OrderInfo.class);
@@ -65,10 +65,10 @@ public class OrderQueryService {
 	 * 
 	 * @param userId
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public PageBean findPersonalTaskHis(String conditon, String orderBy,
-			int userId, int pageSize, int startIndex) throws DaoException {
+			int userId, int pageSize, int startIndex)   {
 		String sql = " from " + OrderInfo.class.getName()
 				+ " where id in ( select orderId from "
 				+ OrderTrace.class.getName() + " a2 where a2.operator ="
@@ -83,10 +83,10 @@ public class OrderQueryService {
 	 * @param userId
 	 * @param studentId
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public List<OrderInfo> queryRelOrder(int userId, int studentId)
-			throws DaoException {
+			  {
 		String sql = " from  " + OrderInfo.class.getName()
 				+ " where student_id=" + studentId;
 		if (userId != 0) {
@@ -105,10 +105,10 @@ public class OrderQueryService {
 	 * @param userId
 	 * @param studentId
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public OrderInfo queryLastestOrder(int userId, int studentId)
-			throws DaoException {
+			  {
 		List<OrderInfo> orderlist = queryRelOrder(userId, studentId);
 		OrderInfo lastestOrder = null;
 		for (OrderInfo orderInfo : orderlist) {

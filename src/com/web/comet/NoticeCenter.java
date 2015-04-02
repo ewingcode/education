@@ -39,13 +39,13 @@ public class NoticeCenter {
 					String receiver_id = String.valueOf(map.get("receiver_id"));
 					String total = String.valueOf(map.get("total"));
 					event.setField("notice_" + receiver_id + "_notreadcount",
-							total); 
-					
+							total);
+
 				}
-			} catch (DaoException e) {
+			} catch (Exception e) {
 				logger.error(e, e);
 			}
-		 
+
 			return event;
 		}
 	}

@@ -12,26 +12,26 @@
 			split : true,
 			width : "70%",
 			layout : "form",
+			autoScroll : true,
 			defaultType : "textfield",
 			buttonAlign : 'center',
 			items : [ new Schedule.showCalender(teacherId) ]
 
 		});
-		var configPanel = new Ext.FormPanel({
+	  	var configPanel = new Ext.Panel({
 			title : '排课设置',
 			region : 'west',
-
+			autoScroll : true,
 			split : true,
-			width : "30%",
-			layout : "form",
+			width : "30%", 
 			defaultType : "textfield",
 			buttonAlign : 'center',
-			items : [ new Schedule.settingPanel(teacherId) ]
+			items : [ new Schedule.addSchedulePanel(teacherId) ]
 
-		});
+		});  
 		new Ext.Viewport({
 			layout : 'border',
-			items : [ configPanel, shedulePanel ]
+			items : [ configPanel , shedulePanel ]
 		});
 	});
 </script>

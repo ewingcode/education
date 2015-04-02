@@ -13,8 +13,11 @@
 			<column name="course_name"  not-null="true" />
 		</property>
 		<property name="studentName" type="java.lang.String">
-			<column name="student_name" length="1" not-null="true" />
+			<column name="student_name"  not-null="true" />
 		</property>
+		<property name="teacherName" type="java.lang.String">
+			<column name="teacher_name"  not-null="true" />
+		</property> 
 		<property name="studentId" type="java.lang.Integer">
 			<column name="student_id" not-null="true" />
 		</property>

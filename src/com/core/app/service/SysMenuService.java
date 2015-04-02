@@ -19,7 +19,7 @@ public class SysMenuService {
 	public BaseDao baseDao;
 
 	public void queryMenuChildTree(CheckTreeObject parentTree, int parentId,
-			Set<Integer> menuRelList) throws DaoException {
+			Set<Integer> menuRelList)   {
 		List menuList = baseDao.find("parentid=" + parentId, SysMenu.class);
 		if (menuList.isEmpty()) {
 			parentTree.setLeaf(true);

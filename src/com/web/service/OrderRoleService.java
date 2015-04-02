@@ -21,7 +21,7 @@ public class OrderRoleService {
 	@Resource
 	private BaseDao baseDao;
 
-	public int getChargerType(int roleId) throws DaoException, OrderException {
+	public int getChargerType(int roleId) throws OrderException {
 		List<OrderRole> list = baseDao
 				.find("roleId=" + roleId, OrderRole.class);
 		/*
@@ -33,9 +33,9 @@ public class OrderRoleService {
 		return 0;
 	}
 
-	public int getRoleId(int chargerType) throws DaoException, OrderException {
+	public int getRoleId(int chargerType) throws OrderException {
 		List<OrderRole> list = baseDao.find("charger=" + chargerType,
-				OrderRole.class); 
+				OrderRole.class);
 		/*
 		 * if (list.isEmpty()) { throw new
 		 * OrderException("could not found roleid for chargerType:" +

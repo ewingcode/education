@@ -17,7 +17,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
@@ -30,7 +29,7 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	private static Connection conn = null;
 
 	@Override
-	public void delete(Object entity) throws DaoException {
+	public void delete(Object entity) {
 		try {
 			Method method = entity.getClass().getMethod("getId");
 			Object primaryId = method.invoke(entity);
@@ -39,14 +38,13 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 			Object object = findOne((Integer) primaryId, entity.getClass());
 			getHibernateTemplate().delete(object);
 		} catch (Exception e) {
-			throw new DaoException(e);
+			throw new RuntimeException(e);
 		}
 
 	}
 
 	@Override
-	public <T> List<T> find(String condition, Class<T> entityClass)
-			throws DaoException {
+	public <T> List<T> find(String condition, Class<T> entityClass) {
 		try {
 			getHibernateTemplate().setCacheQueries(true);
 			List list = getHibernateTemplate().find(
@@ -59,7 +57,7 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public <T> T findOne(Integer id, Class<T> entityClass) throws DaoException {
+	public <T> T findOne(Integer id, Class<T> entityClass) {
 		List<T> list = find("id=" + id, entityClass);
 		if (!list.isEmpty())
 			return (T) list.get(0);
@@ -67,8 +65,7 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public <T> T findOne(String condition, Class<T> entityClass)
-			throws DaoException {
+	public <T> T findOne(String condition, Class<T> entityClass) {
 		try {
 			getHibernateTemplate().setCacheQueries(true);
 			List<T> list = getHibernateTemplate().find(
@@ -88,7 +85,7 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	 * @param entityClass
 	 * @return
 	 */
-	private String generateQuerySql(String condition, Class entityClass) {
+	private <T> String generateQuerySql(String condition, Class<T> entityClass) {
 		return generateQuerySql(condition, "", entityClass);
 	}
 
@@ -99,8 +96,8 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	 * @param entityClass
 	 * @return
 	 */
-	private String generateQuerySql(String condition, String orderBy,
-			Class entityClass) {
+	private <T> String generateQuerySql(String condition, String orderBy,
+			Class<T> entityClass) {
 		StringBuffer sql = new StringBuffer();
 		sql.append(" from ").append(entityClass.getName());
 		orderBy = orderBy != null ? " " + orderBy : "";
@@ -128,7 +125,8 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	 * @param entityClass
 	 * @return
 	 */
-	private String generateQueryCountSql(String condition, Class entityClass) {
+	private <T> String generateQueryCountSql(String condition,
+			Class<T> entityClass) {
 		StringBuffer sql = new StringBuffer();
 		sql.append("select * from ").append(entityClass.getName());
 		if (!StringUtils.isEmpty(condition))
@@ -137,30 +135,30 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public void save(Object entity) throws DaoException {
+	public void save(Object entity) {
 		bulidEntityTime(entity, true);
 		getHibernateTemplate().persist(entity);
 	}
 
 	@Override
-	public void update(Object entity) throws DaoException {
+	public void update(Object entity) {
 		bulidEntityTime(entity, false);
 		getHibernateTemplate().update(getHibernateTemplate().merge(entity));
 	}
 
 	@Override
-	public PageBean pageQuery(final String condition, int pageSize,
-			int startIndex, Class entityClass) {
+	public <T> PageBean pageQuery(final String condition, int pageSize,
+			int startIndex, Class<T> entityClass) {
 		return pageQuery(condition, "", pageSize, startIndex, entityClass);
 	}
 
 	@Override
-	public PageBean pageQuery(final String condition, String orderBy,
-			int pageSize, int startIndex, Class entityClass) {
+	public <T> PageBean pageQuery(final String condition, String orderBy,
+			int pageSize, int startIndex, Class<T> entityClass) {
 		final int start = startIndex;
 		final int limit = pageSize;
 		final String _orderBy = orderBy;
-		final Class entity = entityClass;
+		final Class<T> entity = entityClass;
 
 		Object ps = super.getHibernateTemplate().execute(
 				new HibernateCallback() {
@@ -228,19 +226,19 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public <T> T queryObject(String sql, Class<T> queryClass)
-			throws DaoException {
-		List list = getHibernateTemplate().find(sql);
+	public <T> T queryObject(String sql, Class<T> queryClass) {
+		List<T> list = getHibernateTemplate().find(sql);
 		if (!list.isEmpty()) {
 			if (list.size() > 1)
-				throw new DaoException("result more than one , is not legal.");
+				throw new RuntimeException(
+						"result more than one , is not legal.");
 			return (T) list.get(0);
 		}
 		return null;
 	}
 
 	@Override
-	public void executeSql(String sql) throws DaoException {
+	public void executeSql(String sql) {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
@@ -267,10 +265,9 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public List executeQuery(String sql) throws DaoException {
+	public List executeQuery(String sql) {
 		try {
 			return this.getSession().createQuery(sql).setCacheable(true).list();
-			// return this.getSession().createQuery(sql).list();
 		} catch (Exception e) {
 			logger.error("fail to execute sql:" + sql, e);
 		}
@@ -279,7 +276,7 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public List noMappedObjectQuery(String sql) throws DaoException {
+	public List noMappedObjectQuery(String sql) {
 		List list;
 		Connection connection = null;
 		try {
@@ -296,7 +293,7 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 				list.add(rowData);
 			}
 		} catch (SQLException e) {
-			throw new DaoException(e);
+			throw new RuntimeException(e);
 		} finally {
 			try {
 				if (connection != null)
@@ -320,8 +317,8 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public PageBean pageQuery(String sql, String condition, String orderBy,
-			int pageSize, int startIndex, Class entityClass) {
+	public <T> PageBean pageQuery(String sql, String condition, String orderBy,
+			int pageSize, int startIndex, Class<T> entityClass) {
 		if (!StringUtils.isEmpty(condition))
 			sql += condition;
 		if (!StringUtils.isEmpty(orderBy))

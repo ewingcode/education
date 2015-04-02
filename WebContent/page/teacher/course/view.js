@@ -28,41 +28,12 @@ Ext.onReady(function() {
 	});
 
 	 
-	var removeData = function(b) {
-		Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
-			if (c == "yes") {
-				Ext.Ajax.request({
-					url : "Busi_Teacher_delete.action",
-					params : {
-						id : b
-					},
-					method : "post",
-					success : function() {
-						Ext.Msg.show({
-							title : '编辑',
-							msg : '成功删除记录',
-							buttons : Ext.MessageBox.OK,
-							icon : Ext.Msg.INFO
-						});
-						loadGirdStore();
-					},
-					failure : function() {
-						Ext.MessageBox.show({
-							title : "操作信息",
-							msg : "信息保存出错，请联系管理员！",
-							buttons : Ext.MessageBox.OK,
-							icon : "ext-mb-error"
-						});
-					}
-				});
-			}
-		});
-	};
+	 
 
 	var store = new Ext.data.Store({
 		// autoLoad : true,//是否自动加载
 		proxy : new Ext.data.HttpProxy({
-			url : 'Busi_CourseSchedule_pageQuery.action'
+			url : 'Busi_CourseScheduleList_pageQuery.action'
 		}),
 		reader : new Ext.data.JsonReader({
 			root : 'result',

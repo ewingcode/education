@@ -13,30 +13,30 @@ import com.core.app.action.base.ActionException;
 import com.core.app.action.base.BaseAction;
 import com.core.app.action.base.ResponseData;
 import com.core.app.action.base.ResponseUtils;
-import com.core.app.service.SysParamService;
-import com.core.app.service.SysRightRelService;
-import com.core.jdbc.DaoException;
 import com.core.jdbc.util.PageBean;
 import com.util.DateFormat;
-import com.web.bean.CourseScheduleDto;
+import com.web.bean.CourseScheduleListDto;
 import com.web.model.CourseScheduleView;
 import com.web.model.TeacherInfo;
 import com.web.service.CoursePeriodService;
 import com.web.service.CourseScheduleService;
 import com.web.service.TeacherService;
 
+/**
+ * 排课日程列表，以月历的形式展示排课信息
+ * 
+ * @author tanson lam
+ * @creation 2015年4月2日
+ */
 public class CourseCalenderAction extends BaseAction {
 	private static Logger logger = Logger.getLogger(BaseAction.class);
 	@Resource
 	private TeacherService teacherService;
 	@Resource
-	private SysRightRelService sysRightRelService;
-	@Resource
 	private CoursePeriodService coursePeriodService;
 	@Resource
 	private CourseScheduleService courseScheduleService;
-	@Resource
-	private SysParamService sysParamService;
+
 	public CourseCalenderAction() {
 		super(TeacherInfo.class);
 	}
@@ -55,7 +55,7 @@ public class CourseCalenderAction extends BaseAction {
 			Integer teacherId = Integer.valueOf(request
 					.getParameter("teacherId"));
 			String month = request.getParameter("month");
-			List<CourseScheduleDto> scheudleList = getCourseSchduleList(
+			List<CourseScheduleListDto> scheudleList = getCourseSchduleList(
 					teacherId, month);
 			PageBean pageBean = new PageBean();
 			pageBean.setResult(scheudleList);
@@ -69,8 +69,15 @@ public class CourseCalenderAction extends BaseAction {
 		this.outResult(responseData);
 	}
 
-	private List<CourseScheduleDto> getCourseSchduleList(Integer teacherId,
-			String month) throws DaoException {
+	/**
+	 * 按照月份关联获取每天已经排课的信息，如当日没有排课记录的则以“无排课”字符占空。
+	 * 
+	 * @param teacherId
+	 * @param month
+	 * @return
+	 */
+	private List<CourseScheduleListDto> getCourseSchduleList(Integer teacherId,
+			String month) {
 		String[] startAndEndDate = DateFormat.monToStartEndDate(month);
 		String startTime = startAndEndDate[0];
 		String endTime = startAndEndDate[1];
@@ -79,7 +86,7 @@ public class CourseCalenderAction extends BaseAction {
 		Date endDateOfmonth = DateFormat.stringToDate(endTime,
 				DateFormat.DATE_FORMAT);
 		List<Integer> teacherIds = new ArrayList<Integer>();
-		List<CourseScheduleDto> scheudleList = new ArrayList<CourseScheduleDto>();
+		List<CourseScheduleListDto> scheudleList = new ArrayList<CourseScheduleListDto>();
 		teacherIds.add(teacherId);
 		List<List<Date>> calendarList = DateFormat.getCalendarWeekTime(month);
 
@@ -87,15 +94,25 @@ public class CourseCalenderAction extends BaseAction {
 				.getTeacherSchedule(teacherIds, startDateOfmonth,
 						endDateOfmonth);
 		for (List<Date> t : calendarList) {
-			CourseScheduleDto dto = new CourseScheduleDto();
-			dto.setContents(mergeScheduleContent(month, scheduleHis, t));
+			CourseScheduleListDto dto = new CourseScheduleListDto();
+			dto.setContents(mergeScheduleContent(teacherId, month, scheduleHis,
+					t));
 			scheudleList.add(dto);
 		}
 
 		return scheudleList;
 	}
 
-	private List<String> mergeScheduleContent(String month,
+	/**
+	 * 合并排课的内容展示在页面，内容会包含html，js的
+	 * 
+	 * @param teacherId
+	 * @param month
+	 * @param scheduleHis
+	 * @param scheduleDateList
+	 * @return
+	 */
+	private List<String> mergeScheduleContent(Integer teacherId, String month,
 			List<CourseScheduleView> scheduleHis, List<Date> scheduleDateList) {
 		List<String> scheduleContents = new ArrayList<String>();
 		Calendar cal = Calendar.getInstance();
@@ -103,8 +120,16 @@ public class CourseCalenderAction extends BaseAction {
 				.stringToDate(month, DateFormat.YEAR_MONTH_FORMAT));
 		int curMonth = cal.get(Calendar.MONTH);
 		String backgroudColor = null;
+		StringBuffer periodSb = null;
+		StringBuffer jsSb = null;
+		boolean hasRel;
 		for (Date d : scheduleDateList) {
-			StringBuffer periodSb = new StringBuffer();
+			cal.setTime(d);
+			String day = DateFormat.DateToString(cal.getTime(),
+					DateFormat.DAY_FORMAT);
+			hasRel = false;
+			periodSb = new StringBuffer();
+			jsSb = new StringBuffer();
 			for (CourseScheduleView schedule : scheduleHis) {
 				if (schedule.getDate().compareTo(d) == 0) {
 					String courseName = schedule.getCourseName();
@@ -114,15 +139,21 @@ public class CourseCalenderAction extends BaseAction {
 					periodSb.append(" ").append(courseName).append(" ")
 							.append(studentName);
 					periodSb.append("<br>");
+					hasRel = true;
 				}
 			}
-			cal.setTime(d);
 
-			String day = DateFormat.DateToString(cal.getTime(),
-					DateFormat.DAY_FORMAT);
+			if (hasRel)
+				jsSb.append("<a href='#' onclick=\"new Schedule.showDailySchedule('"
+						+ teacherId
+						+ "','"
+						+ DateFormat.DateToString(cal.getTime(),
+								DateFormat.DATE_FORMAT) + "')\" >");
+
 			if (periodSb.length() > 0) {
-				periodSb.insert(0, "<p align='center' >" + day + "</p><br>");
-
+				periodSb.insert(0, jsSb.toString() + "<p align='center' >"
+						+ day + "</p><br>");
+				periodSb.append("</a>");
 			} else {
 				periodSb.append("<p align='center'>" + day + "</p><br>"
 						+ "无安排<br><br><br><br><br><br><br>");
@@ -134,7 +165,7 @@ public class CourseCalenderAction extends BaseAction {
 						+ backgroudColor + ";'>");
 				periodSb.append("</div>");
 				scheduleContents.add(periodSb.toString());
-			}else{
+			} else {
 				scheduleContents.add("");
 			}
 

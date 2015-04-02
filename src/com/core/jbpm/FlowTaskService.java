@@ -25,9 +25,9 @@ public class FlowTaskService {
 	 * 
 	 * @param processName
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public List<FlowTask> queryAllFlow(String processName) throws DaoException {
+	public List<FlowTask> queryAllFlow(String processName)   {
 		return baseDao.find("process_name='" + processName + "'",
 				FlowTask.class);
 	}
@@ -37,9 +37,9 @@ public class FlowTaskService {
 	 * 
 	 * @param processName
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public FlowTask getTask(String processName, int taskId) throws DaoException {
+	public FlowTask getTask(String processName, int taskId)   {
 		List<FlowTask> list = baseDao.find("process_name='" + processName
 				+ "' and id=" + taskId, FlowTask.class);
 		if (list.isEmpty())
@@ -52,10 +52,10 @@ public class FlowTaskService {
 	 * 
 	 * @param processName
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public FlowTask getTask(String processName, String taskName)
-			throws DaoException {
+			  {
 		List<FlowTask> list = baseDao.find("process_name='" + processName
 				+ "' and task_name='" + taskName + "'", FlowTask.class);
 		if (list.isEmpty())
@@ -68,9 +68,9 @@ public class FlowTaskService {
 	 * 
 	 * @param processName
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public FlowTask getStartTask(String processName) throws DaoException {
+	public FlowTask getStartTask(String processName)   {
 		List<FlowTask> list = baseDao.find(" id = (select min(id) from "
 				+ FlowTask.class.getName() + " a where a.processName='"
 				+ processName + "')", FlowTask.class);
@@ -85,10 +85,10 @@ public class FlowTaskService {
 	 * @param processName
 	 * @param taskName
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public List<FlowTaskTransition> getTaskTransition(String processName,
-			int taskId) throws DaoException {
+			int taskId)   {
 		FlowTask flowTask = getTask(processName, taskId);
 		if (flowTask == null)
 			return null;
@@ -103,10 +103,10 @@ public class FlowTaskService {
 	 * @param processName
 	 * @param taskName
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public List<FlowTaskTransition> getTaskTransition(String processName,
-			String taskName) throws DaoException {
+			String taskName)   {
 		FlowTask flowTask = getTask(processName, taskName);
 		if (flowTask == null)
 			return null;
@@ -116,7 +116,7 @@ public class FlowTaskService {
 	}
 
 	public FlowTaskTransition getTaskTransition(String processName, int taskId,
-			String transitionName) throws DaoException {
+			String transitionName)   {
 		FlowTask flowTask = getTask(processName, taskId);
 		if (flowTask == null)
 			return null;
@@ -129,14 +129,14 @@ public class FlowTaskService {
 	}
 
 	public FlowTask getTask(String processName, int taskId,
-			String transitionName) throws DaoException {
+			String transitionName)   {
 		FlowTaskTransition flowTaskTransition = this.getTaskTransition(
 				processName, taskId, transitionName);
 		return getTask(processName, flowTaskTransition.getToId());
 	}
 
 	public FlowTask getTask(String processName, String taskName,
-			String transitionName) throws DaoException {
+			String transitionName)   {
 		FlowTask curTask = this.getTask(processName, taskName);
 		FlowTaskTransition flowTaskTransition = this.getTaskTransition(
 				processName, curTask.getId(), transitionName);

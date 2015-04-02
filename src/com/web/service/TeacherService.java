@@ -19,7 +19,7 @@ public class TeacherService {
 
 	@Transactional
 	public void addNewTeacher(SysUser sysUser, TeacherAbility teacherAbility)
-			throws DaoException {
+			  {
 		baseDao.save(sysUser);
 		int userId = sysUser.getId();
 		teacherAbility.setUserId(userId);
@@ -28,7 +28,7 @@ public class TeacherService {
 
 	@Transactional
 	public void editTeacher(SysUser sysUser, TeacherAbility teacherAbility)
-			throws DaoException {
+			  {
 		baseDao.update(sysUser);
 		int userId = sysUser.getId();
 		List<TeacherAbility> list = baseDao.find("user_id=" + userId,

@@ -7,12 +7,14 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
 
+import com.core.app.constant.IsEff;
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 import com.util.DateFormat;
 import com.util.SqlUtil;
+import com.web.exception.CourseScheduleException;
 import com.web.model.CourseSchedule;
 import com.web.model.CourseScheduleView;
+import com.web.model.TeacherRefStudent;
 
 @Repository("courseScheduleService")
 public class CourseScheduleService {
@@ -29,20 +31,36 @@ public class CourseScheduleService {
 	 * @param startTime
 	 * @param endTime
 	 * @return
-	 * @throws DaoException
+	 * @throws Exception
 	 */
 	public boolean addSchedule(Integer teacherId, Integer studentId, Date date,
 			String courseType, Integer startTime, Integer endTime)
-			throws DaoException {
-		if (this.existSameSchedule(teacherId, date, startTime, endTime))
-			return false;
+			throws Exception {
+		if (existSameSchedule(teacherId, date, startTime, endTime))
+			throw new CourseScheduleException("课程时间安排有相同!");
+		if (isRelStudent(teacherId, studentId, courseType))
+			throw new CourseScheduleException("不是关联的学生!");
 		CourseSchedule scheduleVo = new CourseSchedule();
 		scheduleVo.setCourseType(courseType);
+		scheduleVo.setDate(date);
 		scheduleVo.setEndTime(endTime);
 		scheduleVo.setStartTime(startTime);
 		scheduleVo.setStudentId(studentId);
 		scheduleVo.setTeacherId(teacherId);
+		scheduleVo.setIseff(IsEff.EFFECTIVE);
 		baseDao.save(scheduleVo);
+		return true;
+	}
+
+	public boolean isRelStudent(Integer teacherId, Integer studentId,
+			String courseType) {
+		String sql = "from " + TeacherRefStudent.class.getName()
+				+ " where teacher_id=" + teacherId + " and student_id="
+				+ studentId + " " + "and course_type='" + courseType + "'";
+		List<TeacherRefStudent> relList = baseDao.find(sql,
+				TeacherRefStudent.class);
+		if (relList == null || relList.isEmpty())
+			return false;
 		return true;
 	}
 
@@ -53,43 +71,37 @@ public class CourseScheduleService {
 	 * @param date
 	 * @param startTime
 	 * @param endTime
-	 * @return
-	 * @throws DaoException
+	 * @return @
 	 */
 	public boolean existSameSchedule(Integer teacherId, Date date,
-			Integer startTime, Integer endTime) throws DaoException {
+			Integer startTime, Integer endTime) {
 		String sql = "from " + CourseSchedule.class.getName()
 				+ " where teacher_id=" + teacherId + " and date='"
 				+ DateFormat.DateToString(date, DateFormat.DATE_FORMAT) + "'";
 		List<CourseSchedule> scheduleList = baseDao.find(sql,
 				CourseSchedule.class);
 		for (CourseSchedule scheduleVo : scheduleList) {
-			if (scheduleVo.getStartTime().compareTo(startTime) <= 0
-					&& scheduleVo.getEndTime().compareTo(startTime) >= 0) {
+			boolean isLegalTime = isLegalNewTime(
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
+			if (!isLegalTime)
 				return true;
-			}
-			if (scheduleVo.getStartTime().compareTo(endTime) <= 0
-					&& scheduleVo.getEndTime().compareTo(endTime) >= 0) {
-				return true;
-			}
-			if (scheduleVo.getStartTime().compareTo(startTime) >= 0
-					&& scheduleVo.getEndTime().compareTo(endTime) <= 0) {
-				return true;
-			}
 		}
 		return false;
 	}
+
 	/**
 	 * 获取教师指定时间内的排课信息
 	 * 
 	 * @param teacherId
 	 * @param startScheldueDate
 	 * @param endScheduleDate
-	 * @return
-	 * @throws DaoException
+	 * @return @
 	 */
-	public List<CourseScheduleView> getTeacherSchedule(List<Integer> teacherIds,
-			Date startScheldueDate, Date endScheduleDate) throws DaoException {
+	public List<CourseScheduleView> getTeacherSchedule(
+			List<Integer> teacherIds, Date startScheldueDate,
+			Date endScheduleDate) {
 		String sql = "from "
 				+ CourseScheduleView.class.getName()
 				+ " where teacher_id in ("
@@ -102,5 +114,56 @@ public class CourseScheduleService {
 				+ DateFormat.DateToString(endScheduleDate,
 						DateFormat.DATE_FORMAT) + "'";
 		return baseDao.find(sql, CourseScheduleView.class);
+	}
+
+	public static void main(String[] args) {
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 1000, 1100 }));
+		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 930, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 2200, 2300 }));
+		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 900, 1000 }));
+	}
+
+	/**
+	 * 是否合法没有冲突的新排课时间
+	 * 
+	 * @param oldTime
+	 * @param newTime
+	 * @return
+	 */
+	public static boolean isLegalNewTime(Integer[] oldTime, Integer[] newTime) {
+		if (oldTime == null || newTime == null || oldTime.length != 2
+				|| newTime.length != 2)
+			throw new IllegalArgumentException("wrong parameter!");
+		int start1 = oldTime[0];
+		int end1 = oldTime[1];
+		int start2 = newTime[0];
+		int end2 = newTime[1];
+
+		if (start1 == start2 && end1 == end2)
+			return false;
+
+		if (start1 <= start2 && end1 >= end2)
+			return false;
+
+		if (start1 >= start2 && end1 <= end2)
+			return false;
+
+		if (start1 < start2 && end1 <= start2)
+			return true;
+
+		if (start1 >= end2 && start1 > start1)
+			return true;
+
+		return true;
 	}
 }

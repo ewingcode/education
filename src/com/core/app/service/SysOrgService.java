@@ -22,9 +22,9 @@ public class SysOrgService {
 	/**
 	 * 获取组织架构树
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public OrgStructTreeObject queryOrgStructTree(OrgQueryType type) throws DaoException {
+	public OrgStructTreeObject queryOrgStructTree(OrgQueryType type)   {
 		String parentId = "0";
 		OrgStructTreeObject treeObject = new OrgStructTreeObject();
 		treeObject.setId(Integer.valueOf(parentId));
@@ -49,7 +49,7 @@ public class SysOrgService {
 	}
 
 	private void queryDepartmentTree(OrgStructTreeObject parentTree,
-			int parentId) throws DaoException {
+			int parentId)   {
 		List<SysDepartment> depList = querySysDepartmentTreeData("parentid="
 				+ parentId + " order by id");
 		if (depList.isEmpty()) {
@@ -87,11 +87,11 @@ public class SysOrgService {
 	}
 
 	private List<SysDepartment> querySysDepartmentTreeData(String sql)
-			throws DaoException {
+			  {
 		return baseDao.find(sql, SysDepartment.class);
 	}
 
-	private List<SysUser> queryDepUnderUser(int depId) throws DaoException {
+	private List<SysUser> queryDepUnderUser(int depId)   {
 		return baseDao.find("dep_id=" + depId, SysUser.class);
 	}
 }

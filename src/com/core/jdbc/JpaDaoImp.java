@@ -32,28 +32,28 @@ public class JpaDaoImp extends JpaDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public void delete(Object entity) throws DaoException {
+	public void delete(Object entity)   {
 		getJpaTemplate().remove(getJpaTemplate().merge(entity));
 
 	}
 
 	@Override
-	public List excuteQuery(String sql) throws DaoException {
+	public List excuteQuery(String sql)   {
 		return getJpaTemplate().find(sql.toString());
 	}
 
 	@Override
-	public void executeUpdate(String sql) throws DaoException {
+	public void executeUpdate(String sql)   {
 
 	}
 
 	@Override
-	public List find(String condition, Class entityClass) throws DaoException {
+	public List find(String condition, Class entityClass)   {
 		return getJpaTemplate().find(generateQuerySql(condition, entityClass));
 	}
 
 	@Override
-	public Object findOne(Object id, Class entityClass) throws DaoException {
+	public Object findOne(Object id, Class entityClass)   {
 		return getJpaTemplate().find(entityClass, id);
 	}
 
@@ -94,13 +94,13 @@ public class JpaDaoImp extends JpaDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public void save(Object entity) throws DaoException {
+	public void save(Object entity)   {
 		bulidEntityTime(entity, true);
 		getJpaTemplate().persist(entity);
 	}
 
 	@Override
-	public void update(Object entity) throws DaoException {
+	public void update(Object entity)   {
 		bulidEntityTime(entity, false);
 		getJpaTemplate().merge(entity);
 	}

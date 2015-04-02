@@ -51,7 +51,7 @@ public class OrderService {
 	private NoticeService noticeService;
 	public final static String PROCESS_NAME = OrderProcess.APPLY_PROCESSNAME;
 
-	public OrderInfo findOne(int id) throws DaoException {
+	public OrderInfo findOne(int id)   {
 		Object object = baseDao.findOne(id, OrderInfo.class);
 		if (object == null) {
 			return null;
@@ -59,7 +59,7 @@ public class OrderService {
 		return (OrderInfo) object;
 	}
 
-	public boolean existLearnOrder(int studentId) throws DaoException {
+	public boolean existLearnOrder(int studentId)   {
 		List<OrderInfo> orderList = baseDao.find("student_id=" + studentId
 				+ " and run_status='" + OrderRunStatus.INLEARN + "'",
 				OrderInfo.class);
@@ -79,7 +79,7 @@ public class OrderService {
 	 * 创建新的签单
 	 * 
 	 * @param orderInfo
-	 * @throws DaoException
+	 * @ 
 	 */
 	@Transactional
 	public boolean createNewOrder(OrderInfo orderInfo, int operator,
@@ -270,10 +270,10 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @throws DaoException
+	 * @ 
 	 */
 	private void logOrderRelHis(String procesName, int taskId, int orderId,
-			int operator) throws DaoException {
+			int operator)   {
 		FlowTask task = flowTaskService.getTask(procesName, taskId);
 		OrderRelHis orderRelHis = new OrderRelHis();
 		orderRelHis.setOrderId(orderId);
@@ -291,10 +291,10 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @throws DaoException
+	 * @ 
 	 */
 	private int getOperatorInOrderRelHis(int orderId, String taskName)
-			throws DaoException, OrderException {
+			throws OrderException {
 		List<OrderRelHis> orderRelHisList = baseDao.find(" order_id=" + orderId
 				+ " and task_name='" + taskName + "'", OrderRelHis.class);
 		if (orderRelHisList.isEmpty()) {
@@ -311,10 +311,10 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @throws DaoException
+	 * @ 
 	 */
 	private int getOperatorInRollbackOrderTrace(int orderId, String taskName)
-			throws DaoException, OrderException {
+			throws OrderException {
 		List<OrderTrace> orderTraceList = baseDao.find(" order_id=" + orderId
 				+ " and task_name='" + taskName + "' and oper='1'",
 				OrderTrace.class);
@@ -346,10 +346,10 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @throws DaoException
+	 * @ 
 	 */
 	private void delOrderRelHis(int curTaskId, int orderId, int operator)
-			throws DaoException {
+			  {
 		List<OrderRelHis> relList = baseDao.find("task_id=" + curTaskId
 				+ " and orderId=" + orderId + " and operator=" + operator,
 				OrderRelHis.class);
@@ -364,9 +364,9 @@ public class OrderService {
 	 * 删除相关的签单信息。
 	 * 
 	 * @param orderId
-	 * @throws DaoException
+	 * @ 
 	 */
-	public void cancelOrder(int orderId) throws DaoException {
+	public void cancelOrder(int orderId)   {
 		baseDao.executeSql("delete from order_info where id=" + orderId);
 		baseDao
 				.executeSql("delete from order_course where order_id="

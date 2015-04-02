@@ -21,14 +21,14 @@ public class OrderRelHisService {
 	private BaseDao baseDao;
 
 	public List<OrderRelHis> getOrderRelHis(int orderId, String chargerType)
-			throws DaoException {
+			  {
 		List<OrderRelHis> list = baseDao.find("orderId=" + orderId
 				+ " and chargerType='" + chargerType + "'", OrderRelHis.class);
 		return list;
 	}
 	
 	@Transactional
-	public void batchUpdate(List<OrderRelHis> list) throws DaoException {
+	public void batchUpdate(List<OrderRelHis> list)   {
 		for (OrderRelHis orderRelHis : list) {
 			baseDao.update(orderRelHis);
 		}

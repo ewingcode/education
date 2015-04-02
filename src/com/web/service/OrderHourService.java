@@ -19,26 +19,26 @@ public class OrderHourService {
 	private BaseDao baseDao;
 
 	@Transactional
-	public void save(OrderCourseHour orderCourseHour) throws DaoException {
+	public void save(OrderCourseHour orderCourseHour)   {
 		baseDao.save(orderCourseHour);
 		updateCostHour(orderCourseHour.getStudentId());
 	}
 
 	@Transactional
-	public void update(OrderCourseHour orderCourseHour) throws DaoException {
+	public void update(OrderCourseHour orderCourseHour)   {
 		baseDao.update(orderCourseHour);
 		updateCostHour(orderCourseHour.getStudentId());
 	}
 
 	@Transactional
-	public void delete(OrderCourseHour orderCourseHour) throws DaoException {
+	public void delete(OrderCourseHour orderCourseHour)   {
 		orderCourseHour = baseDao.findOne(orderCourseHour.getId(),
 				OrderCourseHour.class);
 		baseDao.delete(orderCourseHour);
 		updateCostHour(orderCourseHour.getStudentId());
 	}
 
-	public void updateCostHour(int studentId) throws DaoException {
+	public void updateCostHour(int studentId)   {
 		List<OrderInfo> orderInfoList = baseDao.find("student_id=" + studentId
 				+ " order by id ", OrderInfo.class);
 		String sql = "select sum(costHour) from  "

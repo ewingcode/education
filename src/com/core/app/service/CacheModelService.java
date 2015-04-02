@@ -29,18 +29,18 @@ public class CacheModelService {
 	}
 
 	@Cacheable(cacheName = "cacheManager")
-	public  <T> List<T>  find(String queryString, Class<T> entityClass) throws DaoException {
+	public  <T> List<T>  find(String queryString, Class<T> entityClass)   {
 		return baseDao.find(queryString, entityClass);
 	}
 
 	@Cacheable(cacheName = "cacheManager")
-	public <T> T findOne(Integer id, Class<T> entityClass) throws DaoException {
+	public <T> T findOne(Integer id, Class<T> entityClass)   {
 		return baseDao.findOne(id, entityClass);
 	}
 
 	@Cacheable(cacheName = "cacheManager")
 	public <T> T queryObject(String sql, Class<T> queryClass)
-			throws DaoException {
+			  {
 		return (T) baseDao.queryObject(sql, queryClass);
 	}
 

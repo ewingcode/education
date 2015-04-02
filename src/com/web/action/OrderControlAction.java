@@ -160,7 +160,7 @@ public class OrderControlAction extends BaseAction {
 	}
 
 	private List<OrderCourse> processOrderCourse(int orderId,
-			OrderCourseOper oper) throws DaoException {
+			OrderCourseOper oper)   {
 		Map paramMap = request.getParameterMap();
 		Iterator itor = paramMap.keySet().iterator();
 		String statusPrefix = "courseStatus";
@@ -233,7 +233,7 @@ public class OrderControlAction extends BaseAction {
 		outResult(responseData);
 	}
 
-	private List<OrderCourse> processOrderCourse() throws DaoException {
+	private List<OrderCourse> processOrderCourse()   {
 		Map paramMap = request.getParameterMap();
 		Iterator itor = paramMap.keySet().iterator();
 		String statusPrefix = "courseStatus";

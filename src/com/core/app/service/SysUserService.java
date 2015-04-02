@@ -25,27 +25,27 @@ public class SysUserService {
 	 * 
 	 * @param userName
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public List<SysUser> findUser(String userName) throws DaoException {
+	public List<SysUser> findUser(String userName)   {
 		if (StringUtils.isEmpty(userName))
 			throw new IllegalArgumentException("userName should not be null");
 		return baseDao.find(" user_name='" + userName + "'", SysUser.class);
 	}
 	
-	public List<SysUser> findUserByRole(int roleId) throws DaoException { 
+	public List<SysUser> findUserByRole(int roleId)   { 
 		return baseDao.find(" role_id="+roleId, SysUser.class);
 	}
 	
-	public List<SysUser> findUserByDepartment(int depId) throws DaoException { 
+	public List<SysUser> findUserByDepartment(int depId)   { 
 		return baseDao.find(" dep_id="+depId, SysUser.class);
 	}
 
-	public List<SysUser> findAllUser() throws DaoException {
+	public List<SysUser> findAllUser()   {
 		return baseDao.find("", SysUser.class);
 	}
 
-	public SysUser findOne(int userId) throws DaoException {
+	public SysUser findOne(int userId)   {
 		if (userId == 0)
 			throw new IllegalArgumentException("userId should not be null");
 		return baseDao.findOne(userId, SysUser.class);

@@ -25,18 +25,21 @@
 				fieldLabel : "账      号",
 				//	cls : "text-user",
 				allowBlank : false,
-				blankText : "账号不能为空"
+				blankText : "账号不能为空",
+				value:"国产007"
 			}, {
 				name : "password",
 				fieldLabel : "密      码",
 				allowBlank : false,
 				blankText : "密码不能为空",
+				value:"1",
 				cls : "text-lock",
 				inputType : "password"
 			}, {
 				name : "checkCode",
 				id : "checkCode",
 				fieldLabel : "验证码",
+				value:"1",
 				allowBlank : false,
 				hidden : true,
 				cls : "text-code",

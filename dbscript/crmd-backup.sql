@@ -1468,3 +1468,15 @@ DROP TABLE IF EXISTS `teacher_ref_student`;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+
+DROP VIEW course_schedule_view; 
+CREATE   
+ VIEW `course_schedule_view` AS 
+SELECT  `c`.`id` AS `id`,  `c`.`teacher_id` AS `teacher_id`,  `c`.`student_id` AS `student_id`,  `c`.`course_type` AS `course_type`,
+  `c`.`date` AS `date`,  `c`.`start_time` AS `start_time`,  `c`.`end_time` AS `end_time`,  `c`.`iseff` AS `iseff`, 
+   `c`.`create_time` AS `create_time`,  `c`.`last_update` AS `last_update`,  `p`.`param_name` AS `course_name`, 
+    `s`.`name` AS `student_name`, t.user_name AS `teacher_name`
+     FROM   `course_schedule` `c`  JOIN `sys_param` `p`   JOIN `student_info` `s` JOIN teacher_info t
+ WHERE  `p`.`root_code` = 'ORDER_COURSE'   AND  `p`.`param_value` = `c`.`course_type`   AND  `s`.`id` = `c`.`student_id` 
+ AND t.id = c.teacher_id

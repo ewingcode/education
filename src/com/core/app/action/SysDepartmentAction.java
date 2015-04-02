@@ -72,7 +72,7 @@ public class SysDepartmentAction extends BaseAction {
 	}
 
 	private void queryChildTree(TreeObject parentTree, int parentId)
-			throws DaoException {
+			  {
 		List menuList = queryTreeData("parentid=" + parentId);
 		if (menuList.isEmpty()) {
 			parentTree.setLeaf(true);
@@ -98,7 +98,7 @@ public class SysDepartmentAction extends BaseAction {
 		return treeObject;
 	}
 
-	private List queryTreeData(String sql) throws DaoException {
+	private List queryTreeData(String sql)   {
 		return baseModelService.find(sql, SysDepartment.class);
 	}
 }

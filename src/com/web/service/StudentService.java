@@ -15,7 +15,7 @@ public class StudentService {
 	@Resource
 	private BaseDao baseDao;
 
-	public StudentInfo getStudent(int studentId) throws DaoException {
+	public StudentInfo getStudent(int studentId)   {
 		return baseDao.findOne(studentId, StudentInfo.class);
 	}
 
@@ -24,15 +24,15 @@ public class StudentService {
 	 * 
 	 * @param studentId
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public String getStudentName(int studentId) throws DaoException {
+	public String getStudentName(int studentId)   {
 		StudentInfo studentInfo = getStudent(studentId);
 		return studentInfo != null ? studentInfo.getName() : "";
 	}
 
 	@Transactional
-	public void testTx() throws DaoException {
+	public void testTx()   {
 		OrderInfo order = new OrderInfo();
 		order.setFlowInsId("1");
 		order.setStudentId(1);

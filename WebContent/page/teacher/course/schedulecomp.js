@@ -1,66 +1,295 @@
 Ext.ns("Schedule");
 
 /**
- * 签单信息
- * 
- * @param orderId
- * @return
+ * 弹出单日排课列表
  */
-Schedule.settingPanel = function(teacherId) {
+Schedule.showDailySchedule = function(teacherId, date) {
+	var store = new Ext.data.Store({
+		proxy : new Ext.data.HttpProxy({
+			url : 'Busi_CourseScheduleManage_listDailySchedule.action'
 
-	var settingSet;
-
-	settingSet = new Ext.form.FieldSet({
-		xtype : 'fieldset',
-		layout : "column",
-		items : [ {
-			xtype : "container",
-			columnWidth : .5,
-			defaultType : "textfield",
-			layout : "form",
-			defaults : {
-				width : 100,
-				labelStyle : 'text-align:right;'
-			},
-			items : [ {
-				id : "studentId",
-				fieldLabel : "学生"
+		}),
+		reader : new Ext.data.JsonReader({
+			root : 'result',
+			totalProperty : 'totalProperty',
+			remoteSort : true,
+			fields : [ {
+				name : "id",
+				mapping : 'id',
+				hidden : true,
 			}, {
-				id : "courseHour",
-				fieldLabel : "课时",
-				readOnly : true
+				name : "teacherName",
+				mapping : 'teacherName'
 			}, {
-				id : "remainHour",
-				fieldLabel : "剩余课时",
-				readOnly : true
+				name : "studentName",
+				mapping : 'studentName'
+			}, {
+				name : "courseName",
+				mapping : 'courseName'
+			}, {
+				name : "date",
+				mapping : 'date'
+			}, {
+				name : "startTime",
+				mapping : 'startTime'
+			}, {
+				name : "endTime",
+				mapping : 'endTime'
 			} ]
-		}, {
-			xtype : "container",
-			columnWidth : 0.5,
-			defaultType : "textfield",
-			layout : "form",
-			defaults : {
-				width : 100,
-				labelStyle : 'text-align:right;'
-			},
-			items : [ {
-				fieldLabel : "日期",
-				allowBlank : false,
-				id : "sceduleDate",
-				xtype : "datefield",
-				format : "Y-m-d"
-			}, new CoursePeriod.ComboBox("coursePeriod") ]
-		}, {
-			xtype : "container",
-			columnWidth : 1,
-			layout : "form",
-			defaultType : "textfield", 
-			items : [ new Order.orderCourse() ]
+		})
+	});
+
+	function loadStore() {
+		store.reload({
+			params : {
+				_QUERY_s_eq_date : date,
+				_QUERY_n_eq_teacherId : teacherId,
+				_ORDERBY : " order by start_time asc"
+			}
+		});
+	}
+
+	var cm = new Ext.grid.ColumnModel(
+			{
+				columns : [
+						new Ext.grid.RowNumberer(),
+						{
+							header : "id",
+							dataIndex : "id",
+							hidden : true
+						},
+						{
+							header : "教师",
+							dataIndex : "teacherName"
+						},
+						{
+							header : "学生",
+							dataIndex : "studentName"
+						},
+						{
+							header : "科目",
+							dataIndex : "courseName"
+						},
+						{
+							header : "日期",
+							dataIndex : "date",
+							renderer : Ext.util.Format.dateRenderer('Y-m-d')
+						},
+						{
+							header : "开始时间",
+							dataIndex : "startTime"
+						},
+						{
+							header : "结束时间",
+							dataIndex : "endTime"
+						},
+						{
+							header : "操作",
+							xtype : 'actioncolumn',
+							items : [ {
+								getClass : function(v, meta, rec) {
+									return "btn_remove";
+								},
+								tooltip : '删除',
+								handler : function(grid, rowIndex, colIndex) {
+									var rec = store.getAt(rowIndex);
+									Ext.Msg
+											.confirm(
+													"信息确认",
+													"您确认要删除该记录吗？",
+													function(c) {
+														if (c == "yes") {
+															Ext.Ajax
+																	.request({
+																		url : "Busi_CourseScheduleManage_delete.action",
+																		params : {
+																			id : rec
+																					.get('id')
+																		},
+																		method : "post",
+																		success : function() {
+																			Ext.Msg
+																					.show({
+																						title : '编辑',
+																						msg : '成功删除记录',
+																						buttons : Ext.MessageBox.OK,
+																						icon : Ext.Msg.INFO
+																					});
+																			loadStore();
+																		},
+																		failure : function() {
+																			Ext.MessageBox
+																					.show({
+																						title : "操作信息",
+																						msg : "信息保存出错，请联系管理员！",
+																						buttons : Ext.MessageBox.OK,
+																						icon : "ext-mb-error"
+																					});
+																		}
+																	});
+														}
+													});
+								}
+							} ]
+						} ],
+				defaults : {
+					width : 140,
+					align : "center"
+				}
+			});
+	var gridPanel = new Ext.grid.EditorGridPanel({
+		id : "fileGird",
+		store : store,
+		region : "center",
+		autoScroll : true,
+		cm : cm,
+		height : 700,
+		clicksToEdit : 1,
+		viewConfig : {
+			forceFit : true,// 填满width.
+			enableRowBody : true,
+			showPreview : false
+		}
+	});
+
+	loadStore();
+
+	var win = new Ext.Window({
+		id : "editScheduleWin",
+		title : '排课编辑',
+		width : 650,
+		height : 400,
+		minWidth : 500,
+		minHeight : 300,
+		layout : 'fit',
+		plain : true,
+		bodyStyle : 'padding:5px;',
+		buttonAlign : 'center',
+		items : [ gridPanel ],
+		buttons : [ {
+			text : "关闭",
+			iconCls : "btn_cancel",
+			handler : function() {
+				win.close();
+			}
 		} ]
 	});
-	return settingSet;
+	win.show();
+}
+
+/**
+ * 设置排都课的面板
+ * 
+ * @param teacherId
+ * @return
+ */
+Schedule.addSchedulePanel = function(teacherId) {
+
+	var settingForm = new Ext.FormPanel(
+			{
+				layout : "form",
+				autoScroll : true,
+				defaultType : "textfield",
+				buttonAlign : 'center',
+				defaults : {
+					anchor : "80%,98%",
+					labelStyle : 'text-align:right;'
+				},
+				items : [
+						{
+							id : "teacherId",
+							fieldLabel : "教师",
+							value : teacherId,
+							hidden : true
+						},
+						{
+							xtype : 'compositefield',
+							id : "assignerComp",
+							fieldLabel : '学生',
+							width : "200",
+							items : [ {
+								xtype : "textfield",
+								id : 'studentId',
+								hidden : true
+							}, {
+								xtype : "textfield",
+								id : "studentName",
+								width : "70",
+								readOnly : true 
+							}, {
+								xtype : "button",
+								id : "choseAssigerBtn",
+								text : "选择",
+								width : "50",
+								listeners : {
+									"click" : function(d, i, n, e) {
+										new Teacher.selectRefStudent(teacherId,function(studentId){
+											alert('callback'+studentId);
+										});
+									}
+								}
+							} ]
+						},
+						{
+							id : "courseHour",
+							fieldLabel : "课时",
+							readOnly : true
+						},
+						{
+							id : "remainHour",
+							fieldLabel : "剩余课时",
+							readOnly : true
+						},
+						{
+							fieldLabel : "日期",
+							allowBlank : false,
+							id : "date",
+							xtype : "datefield",
+							format : "Y-m-d"
+						},
+						new CoursePeriod.ComboBox("coursePeriod", false),
+						new SysParam.ComboBox('科目', 'courseType',
+								'ORDER_COURSE', false) ],
+				buttons : [ {
+					text : "保存",
+					iconCls : "btn_save",
+					handler : function() {
+
+						if (!settingForm.getForm().isValid())
+							return;
+
+						settingForm.getForm().submit({
+							url : "Busi_CourseScheduleManage_save.action",
+							method : "post",
+							params : {
+							// courseList : checkCourse
+							},
+							waitMsg : "正在提交数据...",
+							success : function(i, j) {
+								Common.SucMegBox('成功新建排课信息');
+								settingForm.form.reset();
+							},
+							failure : function(i, j) {
+								Common.ErrMegBox(j.result.retinfo);
+
+							}
+						});
+					}
+				}, {
+					text : "重置",
+					iconCls : "btn_cancel",
+					handler : function() {
+						settingForm.form.reset();
+					}
+				} ]
+			});
+
+	return settingForm;
 };
 
+/**
+ * 显示月排课信息
+ */
 Schedule.showCalender = function(teacherId, month) {
 	var curDay = new Date();
 	var curMonth = curDay.format("Y-m");
@@ -147,7 +376,7 @@ Schedule.showCalender = function(teacherId, month) {
 			height : 100
 		} ],
 		defaults : {
-			width : 100,
+			width : 200,
 			align : "center"
 		}
 	});

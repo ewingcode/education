@@ -37,7 +37,7 @@ public class CommonAction extends BaseAction {
 	}
 
 	private void queryChildTree(CheckTreeObject parentTree, int parentId)
-			throws DaoException {
+			  {
 		List menuList = queryTreeData("parentid=" + parentId);
 		if (menuList.isEmpty()) {
 			parentTree.setLeaf(true);
@@ -65,7 +65,7 @@ public class CommonAction extends BaseAction {
 		return treeObject;
 	}
 
-	private List queryTreeData(String sql) throws DaoException {
+	private List queryTreeData(String sql)   {
 		SysMenu dao = new SysMenu();
 		// return baseDao.find("from "+SysMenu.class.getName()+" where " + sql);
 		return baseModelService.find(sql, SysMenu.class);

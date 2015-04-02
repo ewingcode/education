@@ -39,7 +39,7 @@ public class SysLogTraceService {
 			vo.setModuleName(menu.getName());
 			vo.setUserId(userId);
 			baseDao.save(vo);
-		} catch (DaoException e) {
+		} catch (Exception e) {
 			logger.error("error in sys log trace", e);
 		}
 	}

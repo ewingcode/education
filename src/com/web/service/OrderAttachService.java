@@ -36,12 +36,12 @@ public class OrderAttachService {
 	@Resource
 	private BaseDao baseDao;
 
-	public List<OrderAttach> queryOrderAttach(int orderId) throws DaoException {
+	public List<OrderAttach> queryOrderAttach(int orderId)   {
 		return baseDao.find("order_id=" + orderId, OrderAttach.class);
 	}
 
 	public OrderAttach getOrderAttach(int orderId, String type)
-			throws DaoException {
+			  {
 		List<OrderAttach> list = baseDao.find("order_id=" + orderId
 				+ " and type='" + type + "'", OrderAttach.class);
 		if (list.isEmpty())
@@ -50,7 +50,7 @@ public class OrderAttachService {
 	}
 
 	public List<OrderAttach> queryOrderAttach(int orderId, String... type)
-			throws DaoException {
+			  {
 		List<OrderAttach> list = baseDao.find("order_id=" + orderId
 				+ " and type in (" + SqlUtil.array2InCondition(type) + ")",
 				OrderAttach.class);
@@ -192,7 +192,7 @@ public class OrderAttachService {
 	}
 
 	public void updateStatus(int attachId, String status, String commet)
-			throws DaoException {
+			  {
 		OrderAttach orderAttach = baseDao.findOne(attachId, OrderAttach.class);
 		orderAttach.setStatus(status);
 		orderAttach.setCommet(commet);

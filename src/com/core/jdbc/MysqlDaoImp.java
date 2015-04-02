@@ -29,7 +29,7 @@ public class MysqlDaoImp implements BaseDao {
 	}
 
 	@Override
-	public void delete(Object entity) throws DaoException {
+	public void delete(Object entity)   {
 		String sql = null;
 		try {
 			this.table = GenericsUtil.getTable(entity.getClass());
@@ -49,7 +49,7 @@ public class MysqlDaoImp implements BaseDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List find(String condiction, String orderBy, boolean isAsc,
-			Class entityClass) throws DaoException {
+			Class entityClass)   {
 		try {
 			this.table = GenericsUtil.getTable(entityClass);
 			String order = " desc ";
@@ -92,7 +92,7 @@ public class MysqlDaoImp implements BaseDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page paginationQuery(String condition, int pageNo, int pageSize,
-			Class entityClass) throws DaoException {
+			Class entityClass)   {
 		return paginationQuery(condition, pageNo, pageSize, null, true,
 				entityClass);
 	}
@@ -101,7 +101,7 @@ public class MysqlDaoImp implements BaseDao {
 	@Override
 	public Page paginationQuery(String condition, int pageNo, int pageSize,
 			String orderBy, boolean isAsc, Class entityClass)
-			throws DaoException {
+			  {
 		try {
 			this.table = GenericsUtil.getTable(entityClass);
 			String order = " desc ";
@@ -144,7 +144,7 @@ public class MysqlDaoImp implements BaseDao {
 	}
 
 	@Override
-	public void save(Object entity) throws DaoException {
+	public void save(Object entity)   {
 		try {
 			String sql = GenericsUtil.getSaveSql(entity);
 			log.info(sql);
@@ -163,7 +163,7 @@ public class MysqlDaoImp implements BaseDao {
 	}
 
 	@Override
-	public void update(Object entity) throws DaoException {
+	public void update(Object entity)   {
 		String sql = "";
 		try {
 			hasPrimaryKey(entity);

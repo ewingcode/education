@@ -28,7 +28,7 @@ public class SysAreaService {
 	public BaseDao baseDao;
 
 	public void queryAreaChildTree(CheckTreeObject parentTree, int parentId,
-			Set<Integer> menuRelList) throws DaoException {
+			Set<Integer> menuRelList)   {
 		List menuList = baseDao.find("parentid=" + parentId, SysArea.class);
 		if (menuList.isEmpty()) {
 			parentTree.setLeaf(true);

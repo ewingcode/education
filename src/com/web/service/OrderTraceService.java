@@ -15,13 +15,13 @@ public class OrderTraceService {
 	@Resource
 	private BaseDao baseDao;
 
-	public List<OrderTrace> queryTraceList(int orderId) throws DaoException {
+	public List<OrderTrace> queryTraceList(int orderId)   {
 		List<OrderTrace> list = baseDao.find("order_id=" + orderId
 				+ " order by id desc", OrderTrace.class);
 		return list;
 	}
 
-	public OrderTrace queryLatestTrace(int orderId) throws DaoException {
+	public OrderTrace queryLatestTrace(int orderId)   {
 		List<OrderTrace> list = baseDao.find("order_id=" + orderId
 				+ " order by id desc", OrderTrace.class);
 		if (list.isEmpty())
@@ -30,7 +30,7 @@ public class OrderTraceService {
 	}
 
 	public OrderTrace getUnCompleteTrace(int orderId, int taskId)
-			throws DaoException {
+			  {
 		List<OrderTrace> list = baseDao.find("order_id=" + orderId
 				+ " and task_id=" + taskId + " and (operator =0 or operator is null)",
 				OrderTrace.class);

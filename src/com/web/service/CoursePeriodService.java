@@ -20,15 +20,15 @@ public class CoursePeriodService {
 	/**
 	 * 查找设置课程时间段
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
-	public List<CoursePeriod> getCoursePeriod() throws DaoException {
+	public List<CoursePeriod> getCoursePeriod()   {
 		String sql = " from " + CoursePeriod.class.getName();
 		return baseDao.find(sql, CoursePeriod.class);
 	}
 
 	public boolean existSamePeriod(Date startTime, Date endTime)
-			throws DaoException {
+			  {
 		String sql = " from " + CoursePeriod.class.getName();
 		String startTimeStr = DateFormat.DateToString(startTime);
 		String endTimeStr = DateFormat.DateToString(endTime);

@@ -17,12 +17,12 @@ public class SysParamService {
 	public BaseDao baseDao;
 
 	@Cacheable(cacheName = "cacheManager")
-	public List<SysParam> getSysParam(String rootCode) throws DaoException {
+	public List<SysParam> getSysParam(String rootCode)   {
 		return baseDao.find("root_code='" + rootCode + "'", SysParam.class);
 	}
 	
 	@Cacheable(cacheName = "cacheManager")
-	public List<SysParam> getAllSysParam() throws DaoException {
+	public List<SysParam> getAllSysParam()   {
 		return baseDao.find("", SysParam.class);
 	}
 }

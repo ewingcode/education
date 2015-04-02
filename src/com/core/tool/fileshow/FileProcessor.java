@@ -48,7 +48,7 @@ public class FileProcessor extends Thread {
 	}
 
 	private void updateOrderAttach(File swfFile, OrderAttach orderAttach)
-			throws DaoException {
+			  {
 
 		if (orderAttach.getPath() != null) {
 			String[] str = orderAttach.getPath().split("/");

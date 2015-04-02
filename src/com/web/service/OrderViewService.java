@@ -50,12 +50,12 @@ public class OrderViewService {
 	 * @param startIndex
 	 * 
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 * @throws OrderException
 	 * @throws NumberFormatException
 	 */
 	public PageBean getTaskAssignerList(int orderId, int pageSize,
-			int startIndex, String transitionName) throws DaoException,
+			int startIndex, String transitionName) throws
 			NumberFormatException, OrderException {
 		List<OrderInfo> orderList = baseDao.find("id=" + orderId,
 				OrderInfo.class);
@@ -85,12 +85,12 @@ public class OrderViewService {
 	 * @param startIndex
 	 * 
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 * @throws OrderException
 	 * @throws NumberFormatException
 	 */
 	public String getTaskAssigner(int orderId, String transitionName)
-			throws DaoException, NumberFormatException, OrderException {
+			throws NumberFormatException, OrderException {
 		List<OrderInfo> orderList = baseDao.find("id=" + orderId,
 				OrderInfo.class);
 		OrderInfo order = orderList.get(0);
@@ -104,7 +104,7 @@ public class OrderViewService {
 	 * 
 	 * @param order
 	 * @return
-	 * @throws DaoException
+	 * @ 
 	 */
 	public List<FlowTaskTransition> getPageActions(OrderInfo order)
 			throws Exception {
@@ -118,7 +118,7 @@ public class OrderViewService {
 	 * @param order
 	 * @return
 	 * @throws OrderException
-	 * @throws DaoException
+	 * @ 
 	 */
 	public String getTaskPage(OrderInfo order) throws Exception {
 		String taskName = order.getStatus();
@@ -131,7 +131,7 @@ public class OrderViewService {
 	 * @param order
 	 * @return
 	 * @throws OrderException
-	 * @throws DaoException
+	 * @ 
 	 */
 	public String showUserEditedTaskPage(int userId, int orderId)
 			throws Exception {
@@ -181,7 +181,7 @@ public class OrderViewService {
 		return flowTaskService.getTaskTransition(PROCESSNAME, taskName);
 	}
 
-	public String getProceeName(int orderId) throws DaoException {
+	public String getProceeName(int orderId)   {
 		OrderInfo orderInfo = baseDao.findOne(orderId, OrderInfo.class);
 		if (orderInfo.getOrderType().equals(OrderType.APPLY))
 			return OrderProcess.APPLY_PROCESSNAME;
