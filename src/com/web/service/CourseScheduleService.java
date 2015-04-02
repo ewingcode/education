@@ -11,6 +11,7 @@ import com.core.app.constant.IsEff;
 import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
 import com.util.SqlUtil;
+import com.web.constant.CourseScheduleIsFinish;
 import com.web.exception.CourseScheduleException;
 import com.web.model.CourseSchedule;
 import com.web.model.CourseScheduleView;
@@ -20,7 +21,18 @@ import com.web.model.TeacherRefStudent;
 public class CourseScheduleService {
 	@Resource
 	private BaseDao baseDao;
-
+	/**
+	 * 是否结束的排课计划
+	 * 
+	 * @param scheduleId
+	 * @return
+	 */
+	public boolean isFinishSchedule(Integer scheduleId) {
+		CourseSchedule courseSchedule = baseDao.findOne(scheduleId,
+				CourseSchedule.class);
+		return courseSchedule.getIsFinish().equals(
+				CourseScheduleIsFinish.FINISHED.getValue());
+	}
 	/**
 	 * 为老师增加排课
 	 * 
@@ -36,10 +48,14 @@ public class CourseScheduleService {
 	public boolean addSchedule(Integer teacherId, Integer studentId, Date date,
 			String courseType, Integer startTime, Integer endTime)
 			throws Exception {
-		if (existSameSchedule(teacherId, date, startTime, endTime))
-			throw new CourseScheduleException("课程时间安排有相同!");
-		if (isRelStudent(teacherId, studentId, courseType))
-			throw new CourseScheduleException("不是关联的学生!");
+		if (existSameScheduleForTeacher(teacherId, date, startTime, endTime))
+			throw new CourseScheduleException("教学老师的课程时间安排有相同!");
+		if (existSameScheduleForStudent(studentId, date, startTime, endTime))
+			throw new CourseScheduleException("学生的课程时间安排有相同!");
+		if (!isRelStudent(teacherId, studentId))
+			throw new CourseScheduleException("不能关联该学生!");
+		if (!hasPremitToTeach(teacherId, studentId, courseType))
+			throw new CourseScheduleException("不能关联该科目!");
 		CourseSchedule scheduleVo = new CourseSchedule();
 		scheduleVo.setCourseType(courseType);
 		scheduleVo.setDate(date);
@@ -48,11 +64,37 @@ public class CourseScheduleService {
 		scheduleVo.setStudentId(studentId);
 		scheduleVo.setTeacherId(teacherId);
 		scheduleVo.setIseff(IsEff.EFFECTIVE);
+		scheduleVo.setIsFinish(CourseScheduleIsFinish.NOTFINISH.getValue());
 		baseDao.save(scheduleVo);
 		return true;
 	}
 
-	public boolean isRelStudent(Integer teacherId, Integer studentId,
+	/**
+	 * 是否对应的课程教师
+	 * 
+	 * @param teacherId
+	 * @param studentId
+	 * @return
+	 */
+	public boolean isRelStudent(Integer teacherId, Integer studentId) {
+		String sql = "from " + TeacherRefStudent.class.getName()
+				+ " where teacher_id=" + teacherId + " and student_id="
+				+ studentId;
+		List<TeacherRefStudent> relList = baseDao.find(sql,
+				TeacherRefStudent.class);
+		if (relList == null || relList.isEmpty())
+			return false;
+		return true;
+	}
+	/**
+	 * 是否对应的课程教师
+	 * 
+	 * @param teacherId
+	 * @param studentId
+	 * @param courseType
+	 * @return
+	 */
+	public boolean hasPremitToTeach(Integer teacherId, Integer studentId,
 			String courseType) {
 		String sql = "from " + TeacherRefStudent.class.getName()
 				+ " where teacher_id=" + teacherId + " and student_id="
@@ -73,7 +115,7 @@ public class CourseScheduleService {
 	 * @param endTime
 	 * @return @
 	 */
-	public boolean existSameSchedule(Integer teacherId, Date date,
+	public boolean existSameScheduleForTeacher(Integer teacherId, Date date,
 			Integer startTime, Integer endTime) {
 		String sql = "from " + CourseSchedule.class.getName()
 				+ " where teacher_id=" + teacherId + " and date='"
@@ -82,9 +124,27 @@ public class CourseScheduleService {
 				CourseSchedule.class);
 		for (CourseSchedule scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[] { scheduleVo.getStartTime(),
-							scheduleVo.getEndTime() }, new Integer[] {
-							startTime, endTime });
+					new Integer[]{scheduleVo.getStartTime(),
+							scheduleVo.getEndTime()}, new Integer[]{startTime,
+							endTime});
+			if (!isLegalTime)
+				return true;
+		}
+		return false;
+	}
+
+	public boolean existSameScheduleForStudent(Integer studentId, Date date,
+			Integer startTime, Integer endTime) {
+		String sql = "from " + CourseSchedule.class.getName()
+				+ " where student_id=" + studentId + " and date='"
+				+ DateFormat.DateToString(date, DateFormat.DATE_FORMAT) + "'";
+		List<CourseSchedule> scheduleList = baseDao.find(sql,
+				CourseSchedule.class);
+		for (CourseSchedule scheduleVo : scheduleList) {
+			boolean isLegalTime = isLegalNewTime(
+					new Integer[]{scheduleVo.getStartTime(),
+							scheduleVo.getEndTime()}, new Integer[]{startTime,
+							endTime});
 			if (!isLegalTime)
 				return true;
 		}
@@ -112,25 +172,25 @@ public class CourseScheduleService {
 						DateFormat.DATE_FORMAT)
 				+ "' and '"
 				+ DateFormat.DateToString(endScheduleDate,
-						DateFormat.DATE_FORMAT) + "'";
+						DateFormat.DATE_FORMAT) + "' order by date,start_time";
 		return baseDao.find(sql, CourseScheduleView.class);
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 1000, 1100 }));
-		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 930, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 2200, 2300 }));
-		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{1000, 1100}));
+		System.out.println(isLegalNewTime(new Integer[]{1000, 1100},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{930, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{2200, 2300}));
+		System.out.println(isLegalNewTime(new Integer[]{2200, 2300},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{800, 2300},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{900, 1000}));
 	}
 
 	/**

@@ -26,6 +26,9 @@
 		<property name="startTime" type="java.lang.Integer">
 			<column name="start_time" length="4" not-null="true" />
 		</property>
+		<property name="isFinish" type="java.lang.Integer">
+			<column name="is_finish" length="1" not-null="true" />
+		</property>
 		<property name="endTime" type="java.lang.Integer">
 			<column name="end_time" length="4" not-null="true" />
 		</property>

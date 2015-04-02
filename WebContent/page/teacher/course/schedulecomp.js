@@ -35,6 +35,9 @@ Schedule.showDailySchedule = function(teacherId, date) {
 			}, {
 				name : "endTime",
 				mapping : 'endTime'
+			}, {
+				name : "isFinish",
+				mapping : 'isFinish'
 			} ]
 		})
 	});
@@ -60,10 +63,12 @@ Schedule.showDailySchedule = function(teacherId, date) {
 						},
 						{
 							header : "教师",
+							width : 260,
 							dataIndex : "teacherName"
 						},
 						{
 							header : "学生",
+							width : 260,
 							dataIndex : "studentName"
 						},
 						{
@@ -82,13 +87,22 @@ Schedule.showDailySchedule = function(teacherId, date) {
 						{
 							header : "结束时间",
 							dataIndex : "endTime"
+						}, 
+						{
+							header : "状态",
+							dataIndex : "isFinsh",
+							 renderer: function(value) {  
+									return  value == 0 ?"未执行":"结束";    
+								}
 						},
 						{
 							header : "操作",
 							xtype : 'actioncolumn',
 							items : [ {
-								getClass : function(v, meta, rec) {
-									return "btn_remove";
+								getClass : function(v, meta, rec) { 
+									//只对没有结束的计划提供删除的按钮
+									if(rec.get("isFinish") ==0)
+									  return "btn_remove";
 								},
 								tooltip : '删除',
 								handler : function(grid, rowIndex, colIndex) {
@@ -133,7 +147,7 @@ Schedule.showDailySchedule = function(teacherId, date) {
 							} ]
 						} ],
 				defaults : {
-					width : 140,
+					width : 160,
 					align : "center"
 				}
 			});
@@ -143,7 +157,7 @@ Schedule.showDailySchedule = function(teacherId, date) {
 		region : "center",
 		autoScroll : true,
 		cm : cm,
-		height : 700,
+		height : 600,
 		clicksToEdit : 1,
 		viewConfig : {
 			forceFit : true,// 填满width.
@@ -157,8 +171,8 @@ Schedule.showDailySchedule = function(teacherId, date) {
 	var win = new Ext.Window({
 		id : "editScheduleWin",
 		title : '排课编辑',
-		width : 650,
-		height : 400,
+		width : 750,
+		height : 350,
 		minWidth : 500,
 		minHeight : 300,
 		layout : 'fit',
@@ -207,28 +221,43 @@ Schedule.addSchedulePanel = function(teacherId) {
 							id : "assignerComp",
 							fieldLabel : '学生',
 							width : "200",
-							items : [ {
-								xtype : "textfield",
-								id : 'studentId',
-								hidden : true
-							}, {
-								xtype : "textfield",
-								id : "studentName",
-								width : "70",
-								readOnly : true 
-							}, {
-								xtype : "button",
-								id : "choseAssigerBtn",
-								text : "选择",
-								width : "50",
-								listeners : {
-									"click" : function(d, i, n, e) {
-										new Teacher.selectRefStudent(teacherId,function(studentId){
-											alert('callback'+studentId);
-										});
-									}
-								}
-							} ]
+							items : [
+									{
+										xtype : "textfield",
+										id : 'studentId',
+										hidden : true
+									},
+									{
+										xtype : "textfield",
+										id : "studentName",
+										width : "70",
+										readOnly : true
+									},
+									{
+										xtype : "button",
+										id : "choseAssigerBtn",
+										text : "选择",
+										width : "50",
+										listeners : {
+											"click" : function(d, i, n, e) {
+												new Teacher.selectRefStudent(
+														teacherId,
+														function(studentId,
+																studentName) {
+															Ext
+																	.getCmp(
+																			'studentId')
+																	.setValue(
+																			studentId);
+															Ext
+																	.getCmp(
+																			'studentName')
+																	.setValue(
+																			studentName);
+														});
+											}
+										}
+									} ]
 						},
 						{
 							id : "courseHour",

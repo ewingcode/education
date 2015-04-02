@@ -387,9 +387,9 @@ Teacher.selectRefStudent = function(teacherId,callbackFn) {
 	
 	var win = new Ext.Window({
 		id : "editScheduleWin",
-		title : '排课编辑',
+		title : '学生信息',
 		width : 650,
-		height : 400,
+		height : 500,
 		minWidth : 500,
 		minHeight : 300,
 		plain : true,
@@ -407,9 +407,9 @@ Teacher.selectRefStudent = function(teacherId,callbackFn) {
 				gridPanel.getSelectionModel().each(
 						function(e) {
 							var studentId = e.data.studentId;
-							var name = e.data.name;
-							alert(studentId+","+name);
-							callbackFn(studentId);
+							var studentName = e.data.name; 
+							callbackFn(studentId,studentName);
+							win.close();
 						});
 			}
 		}, {
@@ -420,5 +420,6 @@ Teacher.selectRefStudent = function(teacherId,callbackFn) {
 			}
 		} ]
 	});
+	loadGirdStore();
 	win.show();
 }

@@ -17,6 +17,14 @@ public class CourseScheduleDto {
 	private String courseName;
 	private String studentName;
 	private String teacherName;
+	private Integer isFinish;
+	public Integer getIsFinish() {
+		return isFinish;
+	}
+
+	public void setIsFinish(Integer isFinish) {
+		this.isFinish = isFinish;
+	}
 
 	public void setStudentName(String studentName) {
 		this.studentName = studentName;

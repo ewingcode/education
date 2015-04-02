@@ -21,8 +21,14 @@ public class CourseScheduleView implements java.io.Serializable {
 	private Integer endTime;
 	private String iseff;
 	private Timestamp createTime;
-	private Timestamp lastUpdate;
-
+	private Timestamp lastUpdate; 
+	private Integer isFinish;
+	public Integer getIsFinish() {
+		return isFinish;
+	}
+	public void setIsFinish(Integer isFinish) {
+		this.isFinish = isFinish;
+	}
 	public String getTeacherName() {
 		return teacherName;
 	}

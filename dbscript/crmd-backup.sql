@@ -1479,4 +1479,4 @@ SELECT  `c`.`id` AS `id`,  `c`.`teacher_id` AS `teacher_id`,  `c`.`student_id` A
     `s`.`name` AS `student_name`, t.user_name AS `teacher_name`
      FROM   `course_schedule` `c`  JOIN `sys_param` `p`   JOIN `student_info` `s` JOIN teacher_info t
  WHERE  `p`.`root_code` = 'ORDER_COURSE'   AND  `p`.`param_value` = `c`.`course_type`   AND  `s`.`id` = `c`.`student_id` 
- AND t.id = c.teacher_id
+ AND t.id = c.teacher_id;

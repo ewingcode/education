@@ -11,11 +11,11 @@ import com.core.app.action.base.ActionException;
 import com.core.app.action.base.BaseAction;
 import com.core.app.action.base.ResponseData;
 import com.core.app.action.base.ResponseUtils;
-import com.core.app.constant.IsEff;
 import com.core.app.service.SysParamService;
 import com.core.app.service.SysRightRelService;
 import com.util.DateFormat;
 import com.web.bean.CourseScheduleDto;
+import com.web.exception.CourseScheduleException;
 import com.web.model.CoursePeriod;
 import com.web.model.CourseSchedule;
 import com.web.model.CourseScheduleView;
@@ -108,6 +108,7 @@ public class CourseScheduleManageAction extends BaseAction {
 				dto.setStudentName(scheduleEntity.getStudentName());
 				dto.setTeacherName(scheduleEntity.getTeacherName());
 				dto.setCourseName(scheduleEntity.getCourseName());
+				dto.setIsFinish(scheduleEntity.getIsFinish());
 			}
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setTotalProperty(dtoList.size());
@@ -119,4 +120,29 @@ public class CourseScheduleManageAction extends BaseAction {
 		this.outResult(responseData);
 	}
 
+	/**
+	 * dao删除
+	 * 
+	 * @throws ActionException
+	 */
+	public void delete() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			if (entityBean == null)
+				throw new ActionException(
+						"entityClass must be defined in Action");
+			CourseSchedule courseSchedule = (CourseSchedule) this
+					.buildPageData(entityBean);
+			boolean isFinished = courseScheduleService
+					.isFinishSchedule(courseSchedule.getId());
+			if (isFinished)
+				throw new CourseScheduleException("排课计划已经结束");
+			baseModelService.delete(entityBean);
+			responseData = ResponseUtils.success("删除成功！");
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("删除失败！" + e.getMessage());
+		}
+		this.outResult(responseData);
+	}
 }

@@ -25,6 +25,7 @@ import com.util.DateFormat;
 import com.util.SqlUtil;
 import com.util.StringUtil;
 import com.web.bean.CourseScheduleDto;
+import com.web.bean.CourseScheduleListDto;
 import com.web.model.CourseScheduleView;
 import com.web.model.TeacherInfo;
 import com.web.service.CoursePeriodService;
@@ -91,7 +92,7 @@ public class CourseScheduleAction extends BaseAction {
 			PageBean pageBean = baseModelService.pageQuery(bulidConditionSql(),
 					bulidOrderBySql(), Integer.valueOf(limit),
 					Integer.valueOf(start), entityClass);
-			List<CourseScheduleDto> scheudleList = getCourseSchduleList(
+			List<CourseScheduleListDto> scheudleList = getCourseSchduleList(
 					(List<TeacherInfo>) pageBean.getResult(), startDate,
 					endDate);
 			pageBean.setResult(scheudleList);
@@ -128,7 +129,7 @@ public class CourseScheduleAction extends BaseAction {
 			PageBean pageBean = baseModelService.pageQuery(bulidConditionSql(),
 					bulidOrderBySql(), Integer.valueOf(limit),
 					Integer.valueOf(start), entityClass);
-			List<CourseScheduleDto> scheudleList = getCourseSchduleList(
+			List<CourseScheduleListDto> scheudleList = getCourseSchduleList(
 					(List<TeacherInfo>) pageBean.getResult(), startDate,
 					endDate);
 			pageBean.setResult(scheudleList);
@@ -142,11 +143,11 @@ public class CourseScheduleAction extends BaseAction {
 		this.outResult(responseData);
 	}
 
-	private List<CourseScheduleDto> getCourseSchduleList(
+	private List<CourseScheduleListDto> getCourseSchduleList(
 			List<TeacherInfo> teacherInfoList, Date startDate, Date endDate)
 			throws DaoException {
 		List<Integer> teacherIds = new ArrayList<Integer>();
-		List<CourseScheduleDto> scheudleList = new ArrayList<CourseScheduleDto>();
+		List<CourseScheduleListDto> scheudleList = new ArrayList<CourseScheduleListDto>();
 
 		for (TeacherInfo t : teacherInfoList) {
 			teacherIds.add(t.getId());
@@ -156,7 +157,7 @@ public class CourseScheduleAction extends BaseAction {
 		List<CourseScheduleView> scheduleHis = courseScheduleService
 				.getTeacherSchedule(teacherIds, startDate, endDate);
 		for (TeacherInfo t : teacherInfoList) {
-			CourseScheduleDto dto = new CourseScheduleDto();
+			CourseScheduleListDto dto = new CourseScheduleListDto();
 			dto.setTeacherId(t.getId());
 			dto.setTeacherName(t.getUserName());
 			dto.setContents(mergeScheduleContent(t.getId(), scheduleHis,

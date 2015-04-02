@@ -16,10 +16,17 @@ public class CourseSchedule implements java.io.Serializable {
 	private Date date;
 	private Integer startTime;
 	private Integer endTime;
+	private Integer isFinish;
 	private String iseff;
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
-
+	
+	public Integer getIsFinish() {
+		return isFinish;
+	}
+	public void setIsFinish(Integer isFinish) {
+		this.isFinish = isFinish;
+	}
 	public Integer getId() {
 		return id;
 	}
