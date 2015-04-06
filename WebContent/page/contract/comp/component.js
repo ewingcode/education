@@ -142,6 +142,8 @@ Order.contractStatus = function(orderId) {
 		var grade = data.result.grade; 
 		var runStatus=data.result.runStatus;
 		var status=data.result.status;
+		var fee= parseFloat(data.result.fee)/100;
+		 
 		var startTime =  new Date(data.result.startTime.time).format('Y-m-d H:i:s') ; 
 		var endTime =  new Date(data.result.endTime.time).format('Y-m-d H:i:s') ; 
 		contractSet = new Ext.form.FieldSet( {
@@ -168,10 +170,10 @@ Order.contractStatus = function(orderId) {
 					readOnly : true,
 					value : courseHour
 				} ,{
-					id : "remainHour",
-					fieldLabel : "剩余课时",
+					id : "orderStatus",
+					fieldLabel : "审批状态",
 					readOnly : true,
-					value : remainHour
+					value : status
 				}
 				]
 			},{
@@ -184,16 +186,17 @@ Order.contractStatus = function(orderId) {
 					labelStyle : 'text-align:right;'
 				},
 				items : [
-		          {
-					id : "startTime",
-					fieldLabel : "开始时间",
+					{
+					id : "gradeName",
+					fieldLabel : "报读年级",
 					readOnly : true,
-					value:startTime
-					} ,{
-					id : "orderStatus",
-					fieldLabel : "审批状态",
+					value : SysParam.translate(gradeStore,grade)
+				},
+				{
+					id : "remainHour",
+					fieldLabel : "剩余课时",
 					readOnly : true,
-					value : status
+					value : remainHour
 				},
 				{
 					id : "runStatus",
@@ -217,19 +220,41 @@ Order.contractStatus = function(orderId) {
 					width:150,
 					labelStyle : 'text-align:right;'
 				},
-				items : [{
+				items : [
+				  {
+					id : "fee",
+					fieldLabel : "签单费用",
+					readOnly : true,
+					value : fee
+				  }
+				]
+			},
+			{
+				xtype : "container",
+				columnWidth : 0.3,
+				defaultType : "textfield",
+				layout : "form",
+				defaults : {  
+					width:150,
+					labelStyle : 'text-align:right;'
+				},
+				items : [
+				   {
+					id : "startTime",
+					fieldLabel : "开始时间",
+					readOnly : true,
+					value:startTime
+					} ,
+				   {
 					id : "endTime",
 					fieldLabel : "结束时间",
 					readOnly : true,
 					value:endTime
-					} ,{
-					id : "gradeName",
-					fieldLabel : "报读年级",
-					readOnly : true,
-					value : SysParam.translate(gradeStore,grade)
-				}
+					}  
 				]
-			} ]
+			}
+	          
+			]
 		});
 		
 	});

@@ -1,5 +1,6 @@
 package com.web.action;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -63,8 +64,8 @@ public class OrderViewAction extends BaseAction {
 		try {
 			String orderId = request.getParameter("orderId");
 			String userId = request.getParameter("userId");
-			String taskPage = orderViewService.showUserEditedTaskPage(Integer
-					.valueOf(userId), Integer.valueOf(orderId));
+			String taskPage = orderViewService.showUserEditedTaskPage(
+					Integer.valueOf(userId), Integer.valueOf(orderId));
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setPage(taskPage);
 		} catch (Exception e) {
@@ -95,7 +96,8 @@ public class OrderViewAction extends BaseAction {
 		}
 		outResult(responseData);
 	}
-
+	
+	 
 	/**
 	 * 显示签单信息
 	 * 
@@ -106,7 +108,7 @@ public class OrderViewAction extends BaseAction {
 		try {
 			String orderId_str = request.getParameter("orderId");
 			OrderInfo orderInfo = orderService.findOne(Integer
-					.valueOf(orderId_str));
+					.valueOf(orderId_str)); 
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(orderInfo);
 		} catch (Exception e) {
@@ -160,6 +162,7 @@ public class OrderViewAction extends BaseAction {
 
 	/**
 	 * 获取签单步骤的人，分页查询
+	 * 
 	 * @throws ActionException
 	 */
 	@Deprecated
@@ -168,11 +171,13 @@ public class OrderViewAction extends BaseAction {
 		try {
 			String orderId = request.getParameter("orderId");
 			String transitionName = request.getParameter("transitionName");
+			transitionName = new String(transitionName.getBytes("ISO8859-1"),
+					"UTF-8");
 			String start = request.getParameter("start");
 			String limit = request.getParameter("limit");
-			PageBean pageBean = orderViewService.getTaskAssignerList(Integer
-					.valueOf(orderId), Integer.valueOf(limit), Integer
-					.valueOf(start), transitionName);
+			PageBean pageBean = orderViewService.getTaskAssignerList(
+					Integer.valueOf(orderId), Integer.valueOf(limit),
+					Integer.valueOf(start), transitionName);
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setTotalProperty(pageBean.getTotalCount());
 			responseData.setResult(pageBean.getResult());
@@ -192,9 +197,11 @@ public class OrderViewAction extends BaseAction {
 		ResponseData responseData = null;
 		try {
 			String orderId = request.getParameter("orderId");
-			String transitionName = request.getParameter("transitionName"); 
-			String assigner = orderViewService.getTaskAssigner(Integer
-					.valueOf(orderId), transitionName);
+			String transitionName = request.getParameter("transitionName");
+			transitionName = new String(transitionName.getBytes("ISO8859-1"),
+					"UTF-8");
+			String assigner = orderViewService.getTaskAssigner(
+					Integer.valueOf(orderId), transitionName);
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(assigner);
 		} catch (Exception e) {

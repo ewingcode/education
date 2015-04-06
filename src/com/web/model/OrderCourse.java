@@ -17,8 +17,17 @@ public class OrderCourse implements java.io.Serializable {
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
 	private String status;
+	private Integer hour;
 
 	// Constructors
+
+	public Integer getHour() {
+		return hour;
+	}
+
+	public void setHour(Integer hour) {
+		this.hour = hour;
+	}
 
 	/** default constructor */
 	public OrderCourse() {

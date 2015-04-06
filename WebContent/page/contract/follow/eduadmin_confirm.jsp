@@ -20,9 +20,10 @@ var  editform = new Ext.FormPanel( {
 		buttonAlign:'center',  
 		items:[   
 			new Order.contractStatus(orderId),
-			new Order.fileListComp(orderId,'1,2,3,4'),
-			new Order.courseManage(orderId, false, true),
-			new Order.fileUploadComp('教学方案',"5",orderId,false,true) 
+			//new Order.fileListComp(orderId,'1,2,3,4'),
+			new Order.courseManage(orderId, false, true)/* ,
+			new Order.fileUploadComp('教学方案',"5",orderId,false,true)  */
+			,new Order.showTrace(orderId)
 				],
 		 buttons : [ {
 					text : "保存",
@@ -35,8 +36,9 @@ var  editform = new Ext.FormPanel( {
 								 if(!Order.validateAttach(SUBMITTYPE_APPLY_FILE))
 									 return;
 									 var transitionName = $("#transitionName").val(); 
-								 var isExistNotPassAttach = Order.existNotPassAttach();
-								 var isExistNotPassCourse = Order.existNotPassCourse();
+
+									 var isExistNotPassCourse = Order.existNotPassCourse();
+							/* 	 var isExistNotPassAttach = Order.existNotPassAttach();
 							     if(isExistNotPassAttach ) { 
 									if('不通过'!=transitionName){
 										 Common.ErrMegBox('存在不通过的文档审批记录，签单处理应为不通过'); 
@@ -49,10 +51,10 @@ var  editform = new Ext.FormPanel( {
 									 Common.ErrMegBox('存在不通过的课程审批记录，签单处理应为不通过'); 
 									 return;
 								 }
-							  }
-							  if(!isExistNotPassCourse && !isExistNotPassAttach){
-							  	if('通过'!=transitionName){
-									 Common.ErrMegBox('签单处理应为通过'); 
+							  } */
+							if('通过'==transitionName){
+							     if(isExistNotPassCourse ){ 
+									 Common.ErrMegBox('有不通过的课程信息'); 
 									 return;
 								 }
 							  }

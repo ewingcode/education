@@ -24,7 +24,7 @@ Order.showTrace = function(orderId) {
 				type : "date",
 				mapping : 'createTime.time',
 				dateFormat : 'time'
-			} ]
+			},"transition" ]
 		})
 	});
 	store.reload( {
@@ -75,7 +75,10 @@ Order.showTrace = function(orderId) {
 					renderer : function(value) {
 						return SysUser.translate(value);
 					}
-				}  
+				} ,{
+					header : "操作",
+					dataIndex : "transition"  
+				} 
 					  ],
 		defaults : {
 			sortable : true,

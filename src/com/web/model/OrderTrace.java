@@ -21,8 +21,16 @@ public class OrderTrace implements java.io.Serializable {
 	private Timestamp lastUpdate;
 	private Integer operSort;
 	private Integer taskId;
-
+	private String transition;
 	// Constructors
+
+	public String getTransition() {
+		return transition;
+	}
+
+	public void setTransition(String transition) {
+		this.transition = transition;
+	}
 
 	/** default constructor */
 	public OrderTrace() {

@@ -2,6 +2,7 @@ package com.web.action;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -160,7 +161,7 @@ public class OrderControlAction extends BaseAction {
 	}
 
 	private List<OrderCourse> processOrderCourse(int orderId,
-			OrderCourseOper oper)   {
+			OrderCourseOper oper) {
 		Map paramMap = request.getParameterMap();
 		Iterator itor = paramMap.keySet().iterator();
 		String statusPrefix = "courseStatus";
@@ -200,10 +201,10 @@ public class OrderControlAction extends BaseAction {
 		return courseList;
 	}
 
-	public void modifyOrderCharger() throws ActionException { 
+	public void modifyOrderCharger() throws ActionException {
 		ResponseData responseData = null;
 		try {
-			String orderId = request.getParameter("orderId"); 
+			String orderId = request.getParameter("orderId");
 			Map paramMap = request.getParameterMap();
 			Iterator itor = paramMap.keySet().iterator();
 			String chargerPrefix = "operator";
@@ -233,7 +234,7 @@ public class OrderControlAction extends BaseAction {
 		outResult(responseData);
 	}
 
-	private List<OrderCourse> processOrderCourse()   {
+	private List<OrderCourse> processOrderCourse() {
 		Map paramMap = request.getParameterMap();
 		Iterator itor = paramMap.keySet().iterator();
 		String statusPrefix = "courseStatus";
@@ -256,12 +257,21 @@ public class OrderControlAction extends BaseAction {
 		}
 		return courseList;
 	}
+	public static void main(String[] args) {
+		String fee = "5634";
 
+		BigDecimal feeBD = new BigDecimal(fee);
+		System.out.println(feeBD.multiply(new BigDecimal(100)).longValue());
+		System.out.println(feeBD.divide(new BigDecimal(100)).doubleValue());
+
+	}
 	public void createNewOrder() throws ActionException {
 		ResponseData responseData = null;
 		try {
 			String studentId = request.getParameter("studentId");
 			String courseList = request.getParameter("courseList");
+			String fee = request.getParameter("fee");
+
 			String[] courseArray = StringUtils.split(courseList, ",");
 			String courseHour = request.getParameter("courseHour");
 			String grade = request.getParameter("grade");
@@ -272,13 +282,22 @@ public class OrderControlAction extends BaseAction {
 			orderInfo = (OrderInfo) this.buildPageData(super.entityBean);
 			UserInfo userInfo = SessionControl.getUserInfo(request);
 			Map<OrderAttach, File> attachMap = uploadAttachFile(this);
+			List<OrderInfo> orderList = orderService.findByOrderNo(orderInfo
+					.getOrderNo());
+			if (orderList != null && !orderList.isEmpty()) {
+				responseData = ResponseUtils.fail("有重复的合同编号！");
+				outResult(responseData);
+				return;
+			}
+			BigDecimal feeBD = new BigDecimal(fee); 
+			orderInfo.setFee(feeBD.multiply(new BigDecimal(100)).longValue()); 
 			orderService.createNewOrder(orderInfo, userInfo.getId(), attachMap,
 					courseArray);
 
-			responseData = ResponseUtils.success("处理成功！");
+			responseData = ResponseUtils.success("创建签单成功！");
 		} catch (Exception e) {
 			logger.error(e, e);
-			responseData = ResponseUtils.fail("处理失败！");
+			responseData = ResponseUtils.fail("创建签单失败！");
 		}
 		outResult(responseData);
 

@@ -39,11 +39,12 @@ Ext.onReady(function() {
 			}   
 				]
 		},    
-		  new Order.courseList(orderId,false),
+		  new Order.courseList(orderId,false)
+		,new Order.showTrace(orderId)/* ,
 			new Order.fileUploadComp('初期辅导方案',"1",orderId,false,true),
 			new Order.fileUploadComp('华实模拟协议',"2",orderId,false,true),
 			new Order.fileUploadComp('华实全方位测评报告',"3",orderId,false,true),
-			new Order.fileUploadComp('教学安排表',"4",orderId,false,true)
+			new Order.fileUploadComp('教学安排表',"4",orderId,false,true) */
 				],
 		 buttons : [ {
 					text : "保存",

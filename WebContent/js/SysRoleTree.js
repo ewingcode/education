@@ -1,12 +1,14 @@
 Ext.ns("SysRoleTree");
 
-SysRoleTree.viewWin = function(singleCheck,parentSelectId,parentSelectUserName,roleIds,frameId) {
-    var _frameId=frameId!=null?frameId:'frameId1';
-	var url = _contextPath + '/page/system/role/roletree.jsp?singleCheck='+singleCheck;
-	url += '&roleIds='+roleIds;
+SysRoleTree.viewWin = function(singleCheck, parentSelectId,
+		parentSelectUserName, roleIds, frameId) {
+	var _frameId = frameId != null ? frameId : 'frameId1';
+	var url = _contextPath + '/page/system/role/roletree.jsp?singleCheck='
+			+ singleCheck;
+	url += '&roleIds=' + roleIds;
 	url += '&parentSelectUserName=' + parentSelectUserName;
 	url += '&parentSelectId=' + parentSelectId;
-	var win = new Ext.Window( {
+	var win = new Ext.Window({
 		id : "orgStructForm",
 		title : '负责人',
 		width : 580,

@@ -22,16 +22,19 @@
 					buttonAlign : 'center',
 					items : [
 							new Order.contractStatus(orderId),
-							new Order.fileListComp(orderId, '1,2,3,4'),
-							new Order.fileUploadComp('教学方案', "5", orderId,
-									true, false),
+							/*	new Order.fileListComp(orderId, '1,2,3,4'),
+						 	new Order.fileUploadComp('教学方案', "5", orderId,
+									true, false), */
 							new Order.courseManage(orderId, true, false)
+							,new Order.showTrace(orderId)
 									 ],
 					buttons : [ {
 						text : "保存",
 						iconCls : "btn_save",
 						handler : function() { 
-						    if(isOnlyEdit!='true'){   
+							 var transitionName = $("#transitionName").val();
+						    if(isOnlyEdit!='true' && '通过'==transitionName){  
+						   
 								if (!Order.validateCourse(COURSEOPER_CHARGER))
 									return;
 								if (!Order.validateAttach(SUBMITTYPE_UPLOAD_FILE))

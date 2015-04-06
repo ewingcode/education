@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.core.app.model.SysParam;
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 import com.googlecode.ehcache.annotations.Cacheable;
 
 @Repository("sysParamService")
@@ -17,12 +16,18 @@ public class SysParamService {
 	public BaseDao baseDao;
 
 	@Cacheable(cacheName = "cacheManager")
-	public List<SysParam> getSysParam(String rootCode)   {
+	public List<SysParam> getSysParam(String rootCode) {
 		return baseDao.find("root_code='" + rootCode + "'", SysParam.class);
 	}
-	
+
 	@Cacheable(cacheName = "cacheManager")
-	public List<SysParam> getAllSysParam()   {
+	public List<SysParam> getAllSysParam() {
 		return baseDao.find("", SysParam.class);
+	}
+
+	@Cacheable(cacheName = "cacheManager")
+	public SysParam getParamByName(String rootCode, String paramName) {
+		return baseDao.findOne("root_code='" + rootCode + "' and param_name='"
+				+ paramName + "'", SysParam.class);
 	}
 }

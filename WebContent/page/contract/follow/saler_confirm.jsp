@@ -20,11 +20,12 @@
 			height : 600,
 			buttonAlign : 'center',
 			items : [ Order.courseTimeEdit(orderId),
-					Order.courseTypeEdit(orderId),
+					Order.courseTypeEdit(orderId)
+					,new Order.showTrace(orderId)/* ,
 					new Order.fileUploadComp('初期辅导方案', "1", orderId, true),
 					new Order.fileUploadComp('华实模拟协议', "2", orderId, true),
 					new Order.fileUploadComp('华实全方位测评报告', "3", orderId, true),
-					new Order.fileUploadComp('教学安排表', "4", orderId, true) ],
+					new Order.fileUploadComp('教学安排表', "4", orderId, true) */ ],
 			buttons : [ {
 				text : "保存",
 				iconCls : "btn_save",

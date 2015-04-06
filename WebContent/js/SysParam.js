@@ -46,7 +46,7 @@ SysParam.store=function(rootCode){
 	 arrayStore.loadData(arrayObj);
 	return arrayStore; 
 };
-SysParam.ComboBox = function(fieldName, filedId, rootCode, allowBlank,isReadOnly,selectFn) {
+SysParam.ComboBox = function(fieldName, filedId, rootCode, allowBlank,isReadOnly,selectFn,sameNameAndValue,isHidden) {
 	var _allowBlank = true;
 	var _isReadOnly=false;
 	if (allowBlank != null)
@@ -67,7 +67,11 @@ SysParam.ComboBox = function(fieldName, filedId, rootCode, allowBlank,isReadOnly
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].paramValue;
 		 			var paramName =data.result[i].paramName;
-		 			arrayObj[i] = [paramName,paramValue]; 
+		 			if(sameNameAndValue){
+		 				arrayObj[i] = [paramName,paramName]; 
+		 			}else{
+		 				arrayObj[i] = [paramName,paramValue]; 
+		 			}
 		 		 }
 	 	}
 	  );  
@@ -82,6 +86,7 @@ SysParam.ComboBox = function(fieldName, filedId, rootCode, allowBlank,isReadOnly
 				editable : false,
 				emptyText : '请选择',   
 				lazyRender:true,
+				hidden:isHidden,
 				mode: 'local',  
 				region : "center",
 				valueField : "paramValue",

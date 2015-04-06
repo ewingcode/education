@@ -17,7 +17,7 @@ public class EncodingFilter implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain chain) throws IOException, ServletException {
-		req.setCharacterEncoding("utf-8");// 所有post请求使用utf-8编码
+		req.setCharacterEncoding("utf-8");// 所有post请求使用utf-8编码 
 		chain.doFilter(req, res);
 
 	}

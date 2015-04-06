@@ -13,6 +13,9 @@
         <property name="orderId" type="java.lang.Integer">
             <column name="order_id" not-null="true" />
         </property>
+        <property name="hour" type="java.lang.Integer">
+            <column name="hour" not-null="true" />
+        </property>
         <property name="courseType" type="java.lang.String">
             <column name="course_type" length="2" not-null="true">
                 <comment>课程类型</comment>

@@ -51,7 +51,7 @@ public class OrderService {
 	private NoticeService noticeService;
 	public final static String PROCESS_NAME = OrderProcess.APPLY_PROCESSNAME;
 
-	public OrderInfo findOne(int id)   {
+	public OrderInfo findOne(int id) {
 		Object object = baseDao.findOne(id, OrderInfo.class);
 		if (object == null) {
 			return null;
@@ -59,7 +59,7 @@ public class OrderService {
 		return (OrderInfo) object;
 	}
 
-	public boolean existLearnOrder(int studentId)   {
+	public boolean existLearnOrder(int studentId) {
 		List<OrderInfo> orderList = baseDao.find("student_id=" + studentId
 				+ " and run_status='" + OrderRunStatus.INLEARN + "'",
 				OrderInfo.class);
@@ -79,7 +79,7 @@ public class OrderService {
 	 * 创建新的签单
 	 * 
 	 * @param orderInfo
-	 * @ 
+	 *            @
 	 */
 	@Transactional
 	public boolean createNewOrder(OrderInfo orderInfo, int operator,
@@ -96,7 +96,7 @@ public class OrderService {
 		orderCourseService.saveOrderCourse(orderInfo.getId(), courses);
 		logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
 				TransitionArrangeType.UNARRANGE, null, startFlowTask,
-				orderInfo, operator, operator);
+				orderInfo, operator, operator, null);
 		// 直接提交到销售部主管
 		List<FlowTaskTransition> actionList = orderViewService
 				.getPageActions(orderInfo);
@@ -104,8 +104,8 @@ public class OrderService {
 			FlowTaskTransition transition = actionList.get(0);
 			if (TransitionArrangeType.UNARRANGE.getType().equals(
 					transition.getNeedArrange())) {
-				orderTransfer(operator, 0, orderInfo.getId(), transition
-						.getName());
+				orderTransfer(operator, 0, orderInfo.getId(),
+						transition.getName());
 			}
 		}
 		return true;
@@ -127,7 +127,7 @@ public class OrderService {
 						transitionName);
 		this.logOrderTrace(PROCESS_NAME, NoticeWay.SEND, TransitionArrangeType
 				.getArrangeType(flowTaskTransition.getNeedArrange()), preTask,
-				curTask, order, operator, assignerId);
+				curTask, order, operator, assignerId, transitionName);
 
 		return true;
 	}
@@ -162,7 +162,7 @@ public class OrderService {
 		FlowTask curTask = flowTaskService.getTask(PROCESS_NAME, curTaskName);
 		String nextTaskName = flowTaskService.getTaskTransition(PROCESS_NAME,
 				curTask.getId(), transitionName).getTo();
-		order.setStatus(nextTaskName); 
+		order.setStatus(nextTaskName);
 		baseDao.update(order);
 
 		return true;
@@ -179,11 +179,11 @@ public class OrderService {
 	 */
 	public void logOrderTrace(String procssName, NoticeWay noticeWay,
 			TransitionArrangeType arrangeType, FlowTask preTask,
-			FlowTask curTask, OrderInfo order, int operator, int assignerId)
-			throws Exception {
+			FlowTask curTask, OrderInfo order, int operator, int assignerId,
+			String transitionName) throws Exception {
 		int orderId = order.getId();
-		int preTaskId = preTask != null ? preTask.getId() : 0; 
-		OrderTrace preOrderTrace = new OrderTrace(); 
+		int preTaskId = preTask != null ? preTask.getId() : 0;
+		OrderTrace preOrderTrace = new OrderTrace();
 		if (preTask != null) {
 			preOrderTrace = orderTraceService.getUnCompleteTrace(orderId,
 					preTaskId);
@@ -196,6 +196,7 @@ public class OrderService {
 					delOrderRelHis(preTaskId, orderId, operator);
 				}
 				preOrderTrace.setOperator(operator);
+				preOrderTrace.setTransition(transitionName);
 				baseDao.update(preOrderTrace);
 			}
 		}
@@ -270,10 +271,10 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @ 
+	 *            @
 	 */
 	private void logOrderRelHis(String procesName, int taskId, int orderId,
-			int operator)   {
+			int operator) {
 		FlowTask task = flowTaskService.getTask(procesName, taskId);
 		OrderRelHis orderRelHis = new OrderRelHis();
 		orderRelHis.setOrderId(orderId);
@@ -291,7 +292,7 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @ 
+	 *            @
 	 */
 	private int getOperatorInOrderRelHis(int orderId, String taskName)
 			throws OrderException {
@@ -311,7 +312,7 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @ 
+	 *            @
 	 */
 	private int getOperatorInRollbackOrderTrace(int orderId, String taskName)
 			throws OrderException {
@@ -346,10 +347,9 @@ public class OrderService {
 	 * @param orderId
 	 * @param roleId
 	 * @param userId
-	 * @ 
+	 *            @
 	 */
-	private void delOrderRelHis(int curTaskId, int orderId, int operator)
-			  {
+	private void delOrderRelHis(int curTaskId, int orderId, int operator) {
 		List<OrderRelHis> relList = baseDao.find("task_id=" + curTaskId
 				+ " and orderId=" + orderId + " and operator=" + operator,
 				OrderRelHis.class);
@@ -361,22 +361,26 @@ public class OrderService {
 	}
 
 	/**
+	 * 根据合同编号查询签单信息
+	 * 
+	 * @param orderNo
+	 * @return
+	 */
+	public List<OrderInfo> findByOrderNo(String orderNo) {
+		return baseDao.find("order_no='" + orderNo + "'", OrderInfo.class);
+
+	}
+	/**
 	 * 删除相关的签单信息。
 	 * 
 	 * @param orderId
-	 * @ 
+	 *            @
 	 */
-	public void cancelOrder(int orderId)   {
+	public void cancelOrder(int orderId) {
 		baseDao.executeSql("delete from order_info where id=" + orderId);
-		baseDao
-				.executeSql("delete from order_course where order_id="
-						+ orderId);
-		baseDao
-				.executeSql("delete from order_course where order_id="
-						+ orderId);
-		baseDao
-				.executeSql("delete from order_attach where order_id="
-						+ orderId);
+		baseDao.executeSql("delete from order_course where order_id=" + orderId);
+		baseDao.executeSql("delete from order_course where order_id=" + orderId);
+		baseDao.executeSql("delete from order_attach where order_id=" + orderId);
 		baseDao.executeSql("delete from order_rel_his where order_id="
 				+ orderId);
 		baseDao.executeSql("delete from order_trace where order_id=" + orderId);

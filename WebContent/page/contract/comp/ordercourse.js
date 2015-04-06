@@ -22,7 +22,7 @@ Order.courseList = function(orderId,showCharger) {
 			fields : [ {
 				name : "id",
 				type : "int"
-			}, "orderId", "courseType", "chargerId", {
+			}, "hour","orderId", "courseType", "chargerId", {
 				name : "createTime",
 				type : "date",
 				mapping : 'createTime.time',
@@ -49,12 +49,17 @@ Order.courseList = function(orderId,showCharger) {
 					hidden : true
 				},
 				{
-					header : "名称",
+					header : "科目",
 					width:25,
 					dataIndex : "courseType",
 					renderer : function(value) { 
 						return SysParam.translate(orderCourseStore, value);
 					}
+				},
+				{
+					header : "课时",
+					width:25,
+					dataIndex : "hour" 
 				},
 				{
 					header : "负责人", 
@@ -124,13 +129,15 @@ Order.courseManage = function(orderId, needChoose,needApproval,isLastOrder) {
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var type =data.result[i].courseType;
 		 			var status =data.result[i].status;
+		 			var hour =data.result[i].hour;
 		 			var statusStr = SysParam.translate(applyStatusStore, status);
 		 			var courseName = SysParam.translate(orderCourseStore,type);
 		 			var chargerId =data.result[i].chargerId;  
 		 			var chargerStr=Teacher.translate(chargerId); 
-		 			var _needChoose = (needChoose!=null&&needChoose)?true:false;
+		 			var _needChoose = (needChoose!=null&&needChoose)?true:false; 
 		 			var _needApproval=(needApproval!=null&&needApproval)?true:false;  
 		 			var _courseName = 'courseName'+type;
+		 			var _hour = 'hour'+type;
 		 			var _courseAcceptBtn = "courseAcceptBtn" + type;
 		 			var _courseRejectBtn = "courseRejectBtn" + type;
 		 			var _courseStatus="courseStatus"+type;
@@ -141,6 +148,7 @@ Order.courseManage = function(orderId, needChoose,needApproval,isLastOrder) {
 		 			var _lastCourseCharger="lastCourseChargerId"+type;  
 		 			var _lastCourseChargerName="lastCourseChargerName"+type;
 		 			var _courseFiled="courseFiled"+type;
+		 			var _hourFiled="hourFiled"+type;
 		 			var _chargerFiled="chargerFiled"+type;
 		 			var _isShowStatus=true;
 		 			//状态是不通过的和通过的才显示审批状态
@@ -152,9 +160,9 @@ Order.courseManage = function(orderId, needChoose,needApproval,isLastOrder) {
 						_needModify=true; 
 					}
 					if(status==STATUS_ACCEPT){ 
-						needChoose=false;
+						_needChoose=false;
 						_needModify=false;
-						_needApproval=false; 
+						//_needApproval=false; 
 					}
 					//续单的时候，需要选择老师
 					if(isLastOrder==true){
@@ -164,7 +172,7 @@ Order.courseManage = function(orderId, needChoose,needApproval,isLastOrder) {
 						
 		 			var courseField = {
 		 					xtype : 'compositefield',
-		 					fieldLabel : '课程', 
+		 					fieldLabel : '科目', 
 		 					items : [ {
 		 						xtype : 'textfield',
 		 						id : _courseName,
@@ -178,6 +186,17 @@ Order.courseManage = function(orderId, needChoose,needApproval,isLastOrder) {
 		 						hidden: true,
 		 						value:status
 		 					}]
+		 			};
+		 			var hourField = {
+		 					xtype : 'compositefield',
+		 					fieldLabel : '课时', 
+		 					items : [ {
+		 						xtype : 'textfield',
+		 						id : _hour,
+		 						width : 50,
+		 						value : hour,
+		 						readOnly : true
+		 					} ]
 		 			};
 		 			var chargerField = {
 		 					xtype : 'compositefield',
@@ -208,35 +227,15 @@ Order.courseManage = function(orderId, needChoose,needApproval,isLastOrder) {
 		 						readOnly : true, 
 		 						value:chargerStr,
 		 						width:"100"
-		 					}, {
-		 						id : _courseAcceptBtn,
-		 						hidden:!_needApproval,
-		 						xtype : "button",
-		 						text : "通过",
-		 						width : 50,
-		 						handler : function(button,event) {  
-		 						    var _i_type = button.getId().replace("courseAcceptBtn","");
-		 						   	var _i_courseStatusStr="ccStatusStr"+_i_type;
-		 				 			var _i_courseStatus="courseStatus"+_i_type;
-		 				 			$("#"+_i_courseStatusStr).val('通过');
-		 				 			$("#"+_i_courseStatus).val(STATUS_ACCEPT); 
-		 							Public.toggleClick($("#courseAcceptBtn"+_i_type) ,$("#courseRejectBtn"+_i_type));
-		 						}
-		 					}, {
-		 						id : _courseRejectBtn,
-		 						hidden:!_needApproval,
-		 						xtype : "button",
-		 						text : "不通过",
-		 						width : 50,
-		 						handler : function(button,event) { 
-		 						    var _i_type = button.getId().replace("courseRejectBtn","");
-		 						   	var _i_courseStatusStr="ccStatusStr"+_i_type;
-		 				 			var _i_courseStatus="courseStatus"+_i_type;
-		 				 			$("#"+_i_courseStatusStr).val('不通过');
-		 				 			$("#"+_i_courseStatus).val(STATUS_REJECT);
-		 							Public.toggleClick($("#courseRejectBtn"+_i_type) ,$("#courseAcceptBtn"+_i_type));
-		 						}
-		 					},
+		 					}, 
+		 					new SysParam.ComboBox('审批',"courseAcceptBtn"+type, 'APPLY_STATUS' ,true,false,function(combo,  record, index){
+		 						var _i_type = combo.getId().replace("courseAcceptBtn","");
+	 				 		   	var _i_courseStatusStr="ccStatusStr"+_i_type;
+	 				 			var _i_courseStatus="courseStatus"+_i_type; 
+	 				 			$("#"+_i_courseStatusStr).val(record.get('paramName'));
+	 				 			$("#"+_i_courseStatus).val(record.get('paramValue'));  
+		 					},null,!_needApproval),
+		 				 
 		 					{
 		 						id : _chooseCourseCharger,
 		 						hidden: !_needChoose,
@@ -280,9 +279,21 @@ Order.courseManage = function(orderId, needChoose,needApproval,isLastOrder) {
 		 						} ); 
 		 			field.add(
 		 					{
+		 						xtype : "container", 
+			 					id:_hourFiled,
+		 						columnWidth : 0.3,
+		 						defaultType : "textfield",
+		 						layout : "form",
+		 						defaults : { 
+		 							labelStyle : 'text-align:right;'
+		 						},
+		 						items : [hourField  ]
+		 						} ); 
+		 			field.add(
+		 					{
 		 						xtype : "container",
 		 						id:_chargerFiled,
-		 						columnWidth : 0.7,
+		 						columnWidth : 0.4,
 		 						defaultType : "textfield",
 		 						layout : "form",
 		 						defaults : { 
@@ -452,7 +463,7 @@ Order.validateCourse=function(oper){
 		 $("input[name^='courseStatus']").each(function(){
 			    var input = $(this);
 				var val = jQuery.trim(input.val());
-				var inputName = input.attr('id');
+				var inputName = input.attr('id'); 
 				var courseType = inputName.replace('courseStatus','');
 				var courseName = $("#courseName"+courseType).val(); 
 				if(val=='' || !(STATUS_REJECT ==val || STATUS_ACCEPT ==val)){
@@ -475,7 +486,7 @@ Order.existNotPassCourse=function(){
 			function() {
 				var input = $(this);
 				var val = jQuery.trim(input.val()); 
-				if(val==STATUS_REJECT){
+				if(val == STATUS_REJECT){
 					ret=true;
 					return true;
 				} 

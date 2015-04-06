@@ -11,45 +11,57 @@ Assigner.showAssinerField = function(isShow) {
 }
 
 Assigner.assingerFiled = function(orderId) {
+	var orderRoleStore = Order.loadOrderRoleStore();
 	var field = {
 		xtype : 'compositefield',
 		id : "assignerComp",
 		fieldLabel : '下一个执行者',
 		width : "300",
-		items : [ {
-			xtype : "textfield",
-			id : "assignerId",
-			hidden : true
-		}, {
-			xtype : "textfield",
-			id : "assignerName",
-			readOnly : true,
-			disabled : true,
-			width : "150"
-		}, {
-			xtype : "button",
-			id : "choseAssigerBtn",
-			text : "选择指派人",
-			width : "150",
-			readOnly : true,
-			disabled : true,
-			listeners : {
-				"click" : function(d, i, n, e) {
-					//new Assigner.assingerWindow(orderId);
-				var assigner='';
-				var url ="Busi_OrderView_getAssigner.action?orderId="+orderId+"&transitionName="+$("#transitionName").val();
-			 
-				Ajax.syncRequest(url,  
-					 function(data) {   
-				 		 
-				 		assigner = data.result;
-					});
-					if(assigner!=null && assigner!='')
-					new SysRoleTree.viewWin('true','assignerId','assignerName',assigner);
-		       
-				}
-			}
-		} ]
+		items : [
+				{
+					xtype : "textfield",
+					id : "assignerId",
+					hidden : true
+				},
+				{
+					xtype : "textfield",
+					id : "assignerName",
+					readOnly : true,
+					disabled : true,
+					width : "150"
+				},
+				{
+					xtype : "button",
+					id : "choseAssigerBtn",
+					text : "选择指派人",
+					width : "150",
+					listeners : {
+						"click" : function(d, i, n, e) {
+							var assigner = '';
+							var roleId =''; 
+							var url = "Busi_OrderView_getAssigner.action?orderId="
+									+ orderId
+									+ "&transitionName="
+									+ $("#transitionName").val();
+
+							Ajax.syncRequest(url, function(data) {
+								assigner = data.result;
+								
+							    for(var i=0;i<orderRoleStore.getTotalCount();i++){
+							    	var rec = orderRoleStore.getAt(i);
+							    	if(rec.get("charger")==assigner){
+							    		roleId = rec.get("roleId");
+							    	} 
+							    } 
+							});
+						 
+							if (roleId != null && roleId != '')
+								new SysRole.selectWin('assignerId',
+										'assignerName', roleId);
+
+						}
+					}
+				} ]
 	};
 	return field;
 };
@@ -59,11 +71,11 @@ Assigner.assingerWindow = function(orderId) {
 	var resultTpl = new Ext.XTemplate('<tpl for=".">',
 			'<div class="search-item">',
 			'<p style="CURSOR: pointer">{userName}</p>', '</div></tpl>');
-	var ds = new Ext.data.Store( {
-		proxy : new Ext.data.HttpProxy( {
+	var ds = new Ext.data.Store({
+		proxy : new Ext.data.HttpProxy({
 			url : 'Busi_OrderView_showAssigerList.action'
 		}),
-		reader : new Ext.data.JsonReader( {
+		reader : new Ext.data.JsonReader({
 			root : 'result',
 			totalProperty : 'totalProperty',
 			remoteSort : true,
@@ -74,25 +86,25 @@ Assigner.assingerWindow = function(orderId) {
 					"zipcode", "iseff" ]
 		})
 	});
-	var assignRecord = Ext.data.Record.create( [ // creates a subclass of
-													// Ext.data.Record
-			{
-				name : 'assignerId'
-			}, {
-				name : 'assignerName'
-			} ]);
+	var assignRecord = Ext.data.Record.create([ // creates a subclass of
+	// Ext.data.Record
+	{
+		name : 'assignerId'
+	}, {
+		name : 'assignerName'
+	} ]);
 	var recIns;
-	var panel = new Ext.Panel( {
+	var panel = new Ext.Panel({
 		id : 'searchPanel',
 		height : 300,
 		autoScroll : true,
-		items : new Ext.DataView( {
+		items : new Ext.DataView({
 			tpl : resultTpl,
 			store : ds,
 			itemSelector : 'div.search-item',
 			listeners : {
 				"dblclick" : function(d, i, n, e) {
-					recIns = new assignRecord( {
+					recIns = new assignRecord({
 						assignerId : ds.getAt(i).get("id"),
 						assignerName : ds.getAt(i).get("userName")
 					});
@@ -101,18 +113,18 @@ Assigner.assingerWindow = function(orderId) {
 			}
 		}),
 
-		tbar : [ '搜索: ', ' ', new Ext.ux.form.SearchField( {
+		tbar : [ '搜索: ', ' ', new Ext.ux.form.SearchField({
 			id : 'search',
 			store : ds,
 			width : 320,
 			onTrigger2Click : function() {
-				loadds(ds,orderId);
+				loadds(ds, orderId);
 				this.hasSearch = true;
 				this.triggers[0].show();
 			}
 		}) ],
 
-		bbar : new Ext.PagingToolbar( {
+		bbar : new Ext.PagingToolbar({
 			store : ds,
 			pageSize : 10,
 			displayInfo : true,
@@ -121,8 +133,8 @@ Assigner.assingerWindow = function(orderId) {
 		})
 	});
 
-	loadds(ds,orderId);
-	var win = new Ext.Window( {
+	loadds(ds, orderId);
+	var win = new Ext.Window({
 		id : "userEditForm",
 		title : '任务执行者',
 		width : 500,
@@ -156,8 +168,8 @@ Assigner.assingerWindow = function(orderId) {
 	win.show();
 };
 
-function loadds(ds,_orderId) {
-	ds.load( {
+function loadds(ds, _orderId) {
+	ds.load({
 		params : {
 			start : 0,
 			limit : 10,

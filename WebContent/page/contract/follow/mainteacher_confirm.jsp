@@ -36,8 +36,9 @@ var  editform = new Ext.FormPanel( {
 					items : [new Order.contractStatus(orderId)  ]
 			} 
 		 ]
-		}, new Order.courseList(orderId,false),
-			new Order.fileListComp(orderId,'1,2,3,4') 
+		}, new Order.courseList(orderId,false)/* ,
+			new Order.fileListComp(orderId,'1,2,3,4') */ 
+			,new Order.showTrace(orderId)
 				],
 		 buttons : [ {
 					text : "保存",

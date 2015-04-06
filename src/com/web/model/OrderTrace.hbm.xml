@@ -38,6 +38,12 @@
                 <comment>操作类型 0:前进，1:回退</comment>
             </column>
         </property>
+         <property name="transition" type="java.lang.String">
+            <column name="transition">
+                <comment>操作动作</comment>
+            </column>
+        </property>
+        
         <property name="createTime" type="java.sql.Timestamp">
             <column name="create_time" length="19" not-null="true" />
         </property>

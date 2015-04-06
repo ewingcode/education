@@ -14,6 +14,7 @@ public class OrderInfo implements java.io.Serializable {
 	private Integer studentId;
 	private String orderType;
 	private String status;
+	private Long fee;
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
 	private String des;
@@ -218,6 +219,14 @@ public class OrderInfo implements java.io.Serializable {
 
 	public void setCostCourseHour(Integer costCourseHour) {
 		this.costCourseHour = costCourseHour;
+	}
+
+	public Long getFee() {
+		return fee;
+	}
+
+	public void setFee(Long fee) {
+		this.fee = fee;
 	}
 
 }

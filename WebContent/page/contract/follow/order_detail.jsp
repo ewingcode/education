@@ -18,8 +18,8 @@ var  editform = new Ext.FormPanel( {
 		height:600,
 		buttonAlign:'center',  
 		items:[   
-			new Order.contractStatus(orderId),
-			new Order.fileListComp(orderId,'1,2,3,4,5'),
+			new Order.contractStatus(orderId),/* 
+			new Order.fileListComp(orderId,'1,2,3,4,5'), */
 			new Order.courseList(orderId,true),
 			new Order.showTrace(orderId),
 			   new OrderCharger.roleManage(orderId)
