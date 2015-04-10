@@ -60,6 +60,17 @@ public class OrderService {
 		return (OrderInfo) object;
 	}
 
+	public void updateOrderCostHour(int orderId, int incHour) {
+		OrderInfo orderInfo = findOne(orderId);
+		Integer costHour = orderInfo.getCostCourseHour() == null ? 0
+				: orderInfo.getCostCourseHour();
+		orderInfo.setCostCourseHour(costHour + incHour);
+		if (orderInfo.getCostCourseHour() >= orderInfo.getCourseHour()) {
+			orderInfo.setRunStatus(OrderRunStatus.OVER);
+		}
+		baseDao.update(orderInfo);
+	}
+
 	public boolean existLearnOrder(int studentId) {
 		List<OrderInfo> orderList = baseDao.find("student_id=" + studentId
 				+ " and run_status='" + OrderRunStatus.INLEARN + "'",
@@ -85,6 +96,7 @@ public class OrderService {
 		}
 		return false;
 	}
+
 	/**
 	 * 创建新的签单
 	 * 
@@ -380,6 +392,7 @@ public class OrderService {
 		return baseDao.find("order_no='" + orderNo + "'", OrderInfo.class);
 
 	}
+
 	/**
 	 * 删除相关的签单信息。
 	 * 

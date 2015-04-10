@@ -6,21 +6,31 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.core.app.constant.IsEff;
 import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
 import com.util.SqlUtil;
+import com.web.constant.CourseHourStatus;
+import com.web.constant.CourseScheduleFinish;
 import com.web.constant.CourseScheduleIsFinish;
+import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
 import com.web.model.CourseSchedule;
 import com.web.model.CourseScheduleView;
+import com.web.model.OrderCourse;
+import com.web.model.OrderCourseHour;
+import com.web.model.OrderInfo;
 import com.web.model.TeacherRefStudent;
 
 @Repository("courseScheduleService")
 public class CourseScheduleService {
 	@Resource
 	private BaseDao baseDao;
+	@Resource
+	private OrderService orderService;
+
 	/**
 	 * 是否结束的排课计划
 	 * 
@@ -33,6 +43,7 @@ public class CourseScheduleService {
 		return courseSchedule.getIsFinish().equals(
 				CourseScheduleIsFinish.FINISHED.getValue());
 	}
+
 	/**
 	 * 为老师增加排课
 	 * 
@@ -86,6 +97,7 @@ public class CourseScheduleService {
 			return false;
 		return true;
 	}
+
 	/**
 	 * 是否对应的课程教师
 	 * 
@@ -124,9 +136,9 @@ public class CourseScheduleService {
 				CourseSchedule.class);
 		for (CourseSchedule scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -142,9 +154,9 @@ public class CourseScheduleService {
 				CourseSchedule.class);
 		for (CourseSchedule scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -177,20 +189,20 @@ public class CourseScheduleService {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{1000, 1100}));
-		System.out.println(isLegalNewTime(new Integer[]{1000, 1100},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{930, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{2200, 2300}));
-		System.out.println(isLegalNewTime(new Integer[]{2200, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{800, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 1000, 1100 }));
+		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 930, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 2200, 2300 }));
+		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 900, 1000 }));
 	}
 
 	/**
@@ -225,5 +237,65 @@ public class CourseScheduleService {
 			return true;
 
 		return true;
+	}
+
+	@Transactional
+	public void confirmCourseHour(CourseSchedule courseSchedule) {
+		courseSchedule.setIsFinish(CourseScheduleFinish.FINISHED.getValue());
+		baseDao.update(courseSchedule);
+		int costHour = (courseSchedule.getEndTime() - courseSchedule
+				.getStartTime()) / 100;
+		int payHour = 0;
+		OrderCourseHour orderCourseHour = new OrderCourseHour();
+		orderCourseHour.setCostHour(costHour);
+		orderCourseHour.setCourseType(courseSchedule.getCourseType());
+		orderCourseHour.setStudentId(courseSchedule.getStudentId());
+		orderCourseHour.setTeacherId(courseSchedule.getTeacherId());
+		orderCourseHour.setTeachTime(courseSchedule.getDate());
+		orderCourseHour.setScheduleId(courseSchedule.getId());
+		Integer studentId = orderCourseHour.getStudentId();
+
+		String sql = "  order_id in  (select id from  "
+				+ OrderInfo.class.getName() + " a where a.studentId="
+				+ studentId + " ) order by id asc";
+		List<OrderCourse> orderCourseList = baseDao
+				.find(sql, OrderCourse.class);
+
+		for (OrderCourse orderCourse : orderCourseList) {
+			Integer coursehour = orderCourse.getHour();
+			Integer costcourseHour = orderCourse.getCostHour();
+			Integer leaveHour = coursehour - costcourseHour;
+			Integer incHour = 0;
+
+			if (leaveHour >= costHour) {
+				incHour = costHour;
+				costHour = 0;
+			} else {
+				incHour = costHour - leaveHour;
+				costHour = costHour - incHour;
+			}
+			payHour += incHour;
+			if (incHour > 0) {
+				orderCourse.setCostHour(costcourseHour + incHour);
+				baseDao.update(orderCourse);
+				orderService.updateOrderCostHour(orderCourse.getOrderId(),
+						incHour);
+
+			} 
+		}
+
+		if (payHour > 0) {
+			orderCourseHour.setPayHour(payHour);
+			if (costHour > 0) {
+				orderCourseHour.setStatus(CourseHourStatus.ALL_SETTLE
+						.getValue());
+				orderCourseHour.setMsg("全部课时已经结算");
+			} else {
+				orderCourseHour.setStatus(CourseHourStatus.PART_SETTLE
+						.getValue());
+				orderCourseHour.setMsg("部分课时");
+			}
+			baseDao.save(orderCourseHour);
+		}
 	}
 }

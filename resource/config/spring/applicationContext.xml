@@ -120,17 +120,18 @@
 	
 	
 	
-	<!-- 计划任务
-	<bean id="orderJob" class="com.web.schedule.OrderJob" />
+	
+	<bean id="courseScheduleJob" class="com.web.schedule.CourseScheduleJob" />
 	  
-	<bean id="orderJobDetail"
+	<bean id="courseScheduleJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="orderJob" />
-		<property name="targetMethod" value="checkOutTimeOrder" />
+		<property name="targetObject" ref="courseScheduleJob" />
+		<property name="targetMethod" value="execute" />
 	</bean>
-	<bean id="orderJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	<!-- 计划任务
+	<bean id="courseHourJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail">
-			<ref bean="orderJobDetail" />
+			<ref bean="courseHourJobDetail" />
 		</property>
 		<property name="startDelay">
 			<value>0</value>
@@ -140,16 +141,17 @@
 			<value>1000</value>
 		 
 		</property>
-	</bean>
+	</bean> -->
 
 	<bean id="cronTrigger_2" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
-			<ref bean="orderJobDetail" />
+			<ref bean="courseScheduleJobDetail" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0/5 * * * ?</value>
+			<value>0/5 * * * * ?</value>
 		</property>
 	</bean>
+	  
 	<bean lazy-init="false" autowire="no"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
@@ -158,6 +160,6 @@
 			</list>
 		</property>
 	</bean>
- -->
+ 
 </beans>
 

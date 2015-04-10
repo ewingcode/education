@@ -15,6 +15,7 @@ import com.core.jdbc.BaseDao;
 import com.core.jdbc.DaoException;
 import com.core.jdbc.util.PageBean;
 import com.web.constant.OrderRunStatus;
+import com.web.model.OrderCourse;
 import com.web.model.OrderCourseHour;
 import com.web.model.OrderInfo;
 import com.web.model.OrderRelHis;
@@ -52,20 +53,19 @@ public class BasDaoTest {
 
 	}
 
-	// @Test
+	  @Test
 	public void testQuery2() throws DaoException {
-		try {
-			String sql = "from "
-					+ OrderInfo.class.getName()
-					+ " a2, "
-					+ OrderRelHis.class.getName()
-					+ " a3 where a2.id=a3.orderId  and a3.operator=14 and a3.chargerType=4 group by a2.id";
-			PageBean list = baseDao.pageQuery(sql, 10, 1, StudentInfo.class);
-			System.out.print(list.getTotalCount());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		/*String sql = "select * from  " + OrderCourse.class.getName()
+				+ " where order_id in  (select id from  " + OrderInfo.class.getName()
+				+ " a where a.studentId="
+				+ 1 + " ) order by id asc";*/
+		String sql = "  order_id in  (select id from  " + OrderInfo.class.getName()
+				+ " a where a.studentId="
+				+ 1 + " ) order by id asc";
+		List<OrderCourse> orderCourseList = baseDao.find(sql,
+				OrderCourse.class);
+		System.out.println(orderCourseList);
 	}
 
 	// @Test
@@ -122,7 +122,7 @@ public class BasDaoTest {
 			e.printStackTrace();
 		}
 	}
-	@Test
+	//@Test
 	public void noObjectSql() throws SQLException, DaoException {
 		BaseDao baseDao = (BaseDao) SpringCtx.getByBeanName("baseDao");
 		Connection connection = baseDao.getConnection();

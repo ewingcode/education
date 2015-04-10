@@ -1,6 +1,7 @@
 package com.web.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * OrderCourseHour entity. @author MyEclipse Persistence Tools
@@ -11,15 +12,59 @@ public class OrderCourseHour implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private Integer orderId;
+	private String courseType;
 	private Integer studentId;
 	private Integer costHour;
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
 	private Integer operator;
-	private Timestamp teachTime;
-
+	private Date teachTime;
+	private Integer teacherId;
+	private String status;
+	private Integer scheduleId;
+	private String msg;
+	private Integer payHour;
 	// Constructors
+
+	public Integer getPayHour() {
+		return payHour;
+	}
+
+	public void setPayHour(Integer payHour) {
+		this.payHour = payHour;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
+	public Integer getScheduleId() {
+		return scheduleId;
+	}
+
+	public void setScheduleId(Integer scheduleId) {
+		this.scheduleId = scheduleId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Integer getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(Integer teacherId) {
+		this.teacherId = teacherId;
+	}
 
 	/** default constructor */
 	public OrderCourseHour() {
@@ -33,19 +78,6 @@ public class OrderCourseHour implements java.io.Serializable {
 		this.teachTime = teachTime;
 	}
 
-	/** full constructor */
-	public OrderCourseHour(Integer orderId, Integer studentId,
-			Integer costHour, Timestamp createTime, Timestamp lastUpdate,
-			Integer operator, Timestamp teachTime) {
-		this.orderId = orderId;
-		this.studentId = studentId;
-		this.costHour = costHour;
-		this.createTime = createTime;
-		this.lastUpdate = lastUpdate;
-		this.operator = operator;
-		this.teachTime = teachTime;
-	}
-
 	// Property accessors
 
 	public Integer getId() {
@@ -56,12 +88,12 @@ public class OrderCourseHour implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public Integer getOrderId() {
-		return this.orderId;
+	public String getCourseType() {
+		return courseType;
 	}
 
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
+	public void setCourseType(String courseType) {
+		this.courseType = courseType;
 	}
 
 	public Integer getStudentId() {
@@ -104,11 +136,11 @@ public class OrderCourseHour implements java.io.Serializable {
 		this.operator = operator;
 	}
 
-	public Timestamp getTeachTime() {
+	public Date getTeachTime() {
 		return this.teachTime;
 	}
 
-	public void setTeachTime(Timestamp teachTime) {
+	public void setTeachTime(Date teachTime) {
 		this.teachTime = teachTime;
 	}
 

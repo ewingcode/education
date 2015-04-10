@@ -5,10 +5,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 import com.web.constant.OrderRunStatus;
 import com.web.model.OrderCourseHour;
 import com.web.model.OrderInfo;
@@ -17,20 +15,17 @@ import com.web.model.OrderInfo;
 public class OrderHourService {
 	@Resource
 	private BaseDao baseDao;
-
-	@Transactional
+ 
 	public void save(OrderCourseHour orderCourseHour)   {
 		baseDao.save(orderCourseHour);
 		updateCostHour(orderCourseHour.getStudentId());
 	}
-
-	@Transactional
+ 
 	public void update(OrderCourseHour orderCourseHour)   {
 		baseDao.update(orderCourseHour);
 		updateCostHour(orderCourseHour.getStudentId());
 	}
-
-	@Transactional
+ 
 	public void delete(OrderCourseHour orderCourseHour)   {
 		orderCourseHour = baseDao.findOne(orderCourseHour.getId(),
 				OrderCourseHour.class);
