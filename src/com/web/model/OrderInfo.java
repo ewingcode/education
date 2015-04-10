@@ -29,11 +29,20 @@ public class OrderInfo implements java.io.Serializable {
 	private Integer curOperator;
 	private String isLast;
 	private Integer costCourseHour;
+	private String iseff;
 
 	// Constructors
 
 	/** default constructor */
 	public OrderInfo() {
+	}
+
+	public String getIseff() {
+		return iseff;
+	}
+
+	public void setIseff(String iseff) {
+		this.iseff = iseff;
 	}
 
 	/** minimal constructor */

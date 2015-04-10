@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.core.app.constant.IsEff;
 import com.core.jbpm.FlowTaskService;
 import com.core.jbpm.constant.FlowTaskType;
 import com.core.jbpm.constant.TransitionArrangeType;
@@ -69,17 +70,24 @@ public class OrderService {
 		return true;
 	}
 
-	private Map<String, Object> creatVariables(int userId) {
-		Map<String, Object> variable = new HashMap<String, Object>();
-		variable.put("userid", String.valueOf(userId));
-		return variable;
+	/**
+	 * 删除签单
+	 * 
+	 * @param orderId
+	 * @return
+	 */
+	public boolean deleteOrderInfo(Integer orderId) {
+		OrderInfo orderInfo = findOne(orderId);
+		if (orderInfo != null) {
+			orderInfo.setIseff(IsEff.INEFFECTIVE);
+			baseDao.update(orderInfo);
+			return true;
+		}
+		return false;
 	}
-
 	/**
 	 * 创建新的签单
 	 * 
-	 * @param orderInfo
-	 *            @
 	 */
 	@Transactional
 	public boolean createNewOrder(OrderInfo orderInfo, int operator,
@@ -88,6 +96,7 @@ public class OrderService {
 		orderInfo.setRunStatus(OrderRunStatus.INAPPLY);
 		orderInfo.setOrderType(OrderType.APPLY);
 		orderInfo.setIsLast(OrderIsLast.NOTLAST);
+		orderInfo.setIseff(IsEff.EFFECTIVE);
 		baseDao.save(orderInfo);
 		FlowTask startFlowTask = flowTaskService.getStartTask(PROCESS_NAME);
 		orderInfo.setStatus(startFlowTask.getTaskName());
@@ -203,12 +212,13 @@ public class OrderService {
 		order.setCurOperator(operator);
 		if (curTask.getType() != null
 				&& curTask.getType().equals(FlowTaskType.END)) {
-			boolean existOrder = existLearnOrder(order.getStudentId());
-			if (existOrder) {
-				order.setRunStatus(OrderRunStatus.INWAITING);
-			} else {
-				order.setRunStatus(OrderRunStatus.INLEARN);
-			}
+			/*
+			 * boolean existOrder = existLearnOrder(order.getStudentId()); if
+			 * (existOrder) { order.setRunStatus(OrderRunStatus.INWAITING); }
+			 * else {
+			 */
+			order.setRunStatus(OrderRunStatus.INLEARN);
+			// }
 		}
 		baseDao.update(order);
 		OrderTrace curOrderTrace = new OrderTrace();
@@ -374,7 +384,6 @@ public class OrderService {
 	 * 删除相关的签单信息。
 	 * 
 	 * @param orderId
-	 *            @
 	 */
 	public void cancelOrder(int orderId) {
 		baseDao.executeSql("delete from order_info where id=" + orderId);

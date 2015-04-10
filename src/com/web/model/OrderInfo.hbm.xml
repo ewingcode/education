@@ -38,6 +38,9 @@
 				<comment>签单编号</comment>
 			</column>
 		</property>
+		<property name="iseff" type="java.lang.String">
+			<column name="iseff" length="1" not-null="true" />
+		</property>
 		<property name="flowInsId" type="java.lang.String">
 			<column name="flow_ins_id" length="20" />
 		</property>

@@ -289,8 +289,8 @@ public class OrderControlAction extends BaseAction {
 				outResult(responseData);
 				return;
 			}
-			BigDecimal feeBD = new BigDecimal(fee); 
-			orderInfo.setFee(feeBD.multiply(new BigDecimal(100)).longValue()); 
+			BigDecimal feeBD = new BigDecimal(fee);
+			orderInfo.setFee(feeBD.multiply(new BigDecimal(100)).longValue());
 			orderService.createNewOrder(orderInfo, userInfo.getId(), attachMap,
 					courseArray);
 
@@ -364,9 +364,8 @@ public class OrderControlAction extends BaseAction {
 	public void cancelOrder() throws ActionException {
 		ResponseData responseData = null;
 		try {
-
 			String req_orderId = request.getParameter("orderId");
-			orderService.cancelOrder(Integer.valueOf(req_orderId));
+			orderService.deleteOrderInfo(Integer.valueOf(req_orderId));
 			responseData = ResponseUtils.success("撤单成功！");
 		} catch (Exception e) {
 			logger.error(e, e);

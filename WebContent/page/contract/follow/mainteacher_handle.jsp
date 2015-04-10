@@ -32,15 +32,14 @@
 						text : "保存",
 						iconCls : "btn_save",
 						handler : function() { 
-							 var transitionName = $("#transitionName").val();
-						    if(isOnlyEdit!='true' && '通过'==transitionName){  
-						   
+							 var transitionName = $("#transitionName").val(); 
+						     if(isOnlyEdit!='true' && '确认'==transitionName){   
 								if (!Order.validateCourse(COURSEOPER_CHARGER))
 									return;
 								if (!Order.validateAttach(SUBMITTYPE_UPLOAD_FILE))
 									return;
 								if(!Order.validateReplyNotPassCharger())
-								    return;
+								    return; 
 							  }  
 							Order.submitForm(jQuery.url.param("isOnlyEdit"),editform, orderId,
 									SUBMITTYPE_UPLOAD_FILE, $("#assignerId")

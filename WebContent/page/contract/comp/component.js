@@ -9,6 +9,7 @@ var attachTypeStore;
 var statusStore;
 var yesOrNoStore;
 var runStatusStore;
+var iseffStore;
 /**
  * 初始化数据
  * 
@@ -26,6 +27,7 @@ Order.initData = function() {
 		gradeStore = new SysParam.store("GRADE");
 		yesOrNoStore = new SysParam.store("YESORNO");
 		runStatusStore = new SysParam.store("ORDER_RUN_STATUS");
+		iseffStore = new SysParam.store("ISEFF"); 
 		isLoad=true;
 	}
 }

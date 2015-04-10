@@ -72,7 +72,7 @@ public class OrderLastService {
 				.getTaskTransition(PROCESS_NAME, startFlowTask.getTaskName());
 		orderService.logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
 				TransitionArrangeType.UNARRANGE, null, startFlowTask,
-				orderInfo, operator, operator);
+				orderInfo, operator, operator,null);
 		String preTaskName = orderInfo.getStatus();
 		if (transition != null && transition.size() == 1) {
 			curTaskName = transition.get(0).getTo();
@@ -82,6 +82,6 @@ public class OrderLastService {
 		baseDao.update(orderInfo);
 		orderService.logOrderTrace(PROCESS_NAME, NoticeWay.SEND,
 				TransitionArrangeType.UNARRANGE, startFlowTask, curTask,
-				orderInfo, operator, 0);
+				orderInfo, operator, 0,null);
 	}
 }

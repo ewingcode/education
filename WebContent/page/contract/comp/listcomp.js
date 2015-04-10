@@ -1,22 +1,25 @@
 Ext.ns("OrderList");
-OrderList.loadGirdStore = function(dataStore) {
-var studentIds = Student.mutipleId($("#QUERY_name").val());  
-	dataStore.setBaseParam('start',0); 
-	dataStore.setBaseParam('limit',20); 
-	dataStore.setBaseParam('_QUERY_s_rlike_id',Ext.getCmp('QUERY_orderId').getValue()); 
-	dataStore.setBaseParam('_QUERY_n_in_student_id',Student.mutipleId($("#QUERY_name").val())); 
-	dataStore.setBaseParam('_QUERY_d_ge_create_time',Ext.getCmp('QUERY_create_startTime')
+OrderList.loadGirdStore = function(dataStore) { 
+	dataStore.setBaseParam('start', 0);
+	dataStore.setBaseParam('limit', 20);
+	dataStore.setBaseParam('_QUERY_s_rlike_id', Ext.getCmp('QUERY_orderId')
 			.getValue()); 
-	dataStore.setBaseParam('_QUERY_d_le_create_time',Ext.getCmp('QUERY_create_endTime')
-			.getValue());  
-	dataStore.setBaseParam('_QUERY_s_eq_run_status',Ext.getCmp('QUERY_runStatus')
-			.getValue());  
-	dataStore.setBaseParam('_ORDERBY',"order by id desc"); 
-	dataStore.reload();  
-}
+	dataStore.setBaseParam('_QUERY_s_eq_iseff', new Constant.IsEff().EFFECTIVE);
+	dataStore.setBaseParam('_QUERY_n_in_student_id', Student.mutipleId($(
+			"#QUERY_name").val()));
+	dataStore.setBaseParam('_QUERY_d_ge_create_time', Ext.getCmp(
+			'QUERY_create_startTime').getValue());
+	dataStore.setBaseParam('_QUERY_d_le_create_time', Ext.getCmp(
+			'QUERY_create_endTime').getValue());
+	dataStore.setBaseParam('_QUERY_s_eq_run_status', Ext.getCmp(
+			'QUERY_runStatus').getValue());
+	dataStore.setBaseParam('_ORDERBY', "order by id desc");
+	dataStore.reload();
+};
 
-OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc,isModify,isModifyCharger) {
- 
+OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
+		isPersonalProc, isModify, isModifyCharger, isDeleteOrder) {
+
 	return new Ext.Toolbar(
 			{
 				id : "userTopBar",
@@ -30,13 +33,14 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 								OrderList.loadGirdStore(store);
 
 							}
-						}, {
+						},
+						{
 							iconCls : "btn_reset",
 							text : "重置",
 							xtype : "button",
-							 scale: 'medium',
+							scale : 'medium',
 							handler : function() {
-							formpanel.form.reset();
+								formpanel.form.reset();
 							}
 						},
 						{
@@ -57,8 +61,9 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 													var student = Student
 															.translate(e.data.studentId);
 													Ext.Ajax
-															.request( {
-																url : 'Busi_OrderView_showTaskPage.action?orderId=' + orderId,
+															.request({
+																url : 'Busi_OrderView_showTaskPage.action?orderId='
+																		+ orderId,
 																method : "post",
 																success : function(
 																		response) {
@@ -74,7 +79,9 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 																	Frame
 																			.addTab(
 																					mainFrame,
-																					'签单[' + student + ']',
+																					'签单['
+																							+ student
+																							+ ']',
 																					tab_id,
 																					showPage);
 																}
@@ -117,12 +124,16 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 													mainFrame
 															.add(
 																	{
-																		title : '签单[' + student + ']',
+																		title : '签单['
+																				+ student
+																				+ ']',
 																		id : tab_id,
 																		autoWidth : true,
 																		iconCls : 'tabs',
 																		closable : true,
-																		html : '<iframe  src="' + showPage + '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
+																		html : '<iframe  src="'
+																				+ showPage
+																				+ '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
 																	}).show();
 												});
 							}
@@ -143,19 +154,17 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 												function(e) {
 													var orderId = e.data.id;
 													var student = Student
-															.translate(e.data.studentId); 
+															.translate(e.data.studentId);
 													var showPage = _contextPath
 															+ "/page/contract/follow/order_detail.jsp?orderId="
 															+ orderId
 															+ "&isOnlyEdit=true";
 													var tab_id = "busi_tab_order_"
 															+ orderId;
-													Frame
-															.addTab(
-																	mainFrame,
-																	'签单[' + student + ']',
-																	tab_id,
-																	showPage);
+													Frame.addTab(mainFrame,
+															'签单[' + student
+																	+ ']',
+															tab_id, showPage);
 												});
 							}
 						},
@@ -183,7 +192,7 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 														return;
 													}
 													Ext.Ajax
-															.request( {
+															.request({
 																url : 'Busi_OrderView_showUserEditedTaskPage.action?orderId='
 																		+ orderId
 																		+ '&userId='
@@ -203,14 +212,17 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 																	Frame
 																			.addTab(
 																					mainFrame,
-																					'签单[' + student + ']',
+																					'签单['
+																							+ student
+																							+ ']',
 																					tab_id,
 																					showPage);
 																}
 															});
 												});
 							}
-						} ,{
+						},
+						{
 							iconCls : "btn_edit",
 							text : "修改签单",
 							hidden : isModify ? false : true,
@@ -225,12 +237,12 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 										.getSelectionModel()
 										.each(
 												function(e) {
-													var orderId = e.data.id; 
+													var orderId = e.data.id;
 													var student = Student
 															.translate(e.data.studentId);
 													var showPage = "/page/contract/follow/editorder.jsp?orderId="
-														+ orderId
-														+ "&isOnlyEdit=true";
+															+ orderId
+															+ "&isOnlyEdit=true";
 													showPage = _contextPath
 															+ showPage
 															+ "?orderId="
@@ -241,16 +253,21 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 													mainFrame
 															.add(
 																	{
-																		title : '签单[' + student + ']',
+																		title : '签单['
+																				+ student
+																				+ ']',
 																		id : tab_id,
 																		autoWidth : true,
 																		iconCls : 'tabs',
 																		closable : true,
-																		html : '<iframe  src="' + showPage + '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
+																		html : '<iframe  src="'
+																				+ showPage
+																				+ '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
 																	}).show();
 												});
 							}
-						},{
+						},
+						{
 							iconCls : "btn_edit",
 							text : "修改负责人",
 							hidden : isModifyCharger ? false : true,
@@ -261,96 +278,145 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail, isPersonalProc
 									Common.ErrMegBox('请选择一项进行操作');
 									return;
 								}
-								gridPanel
-								.getSelectionModel()
-								.each(
-										function(e) {
-											var orderId = e.data.id; 
-											OrderCharger.EditWindow(orderId); 
-										});
-								
+								gridPanel.getSelectionModel().each(function(e) {
+									var orderId = e.data.id;
+									OrderCharger.EditWindow(orderId);
+								});
+
 							}
-						}]
+						},
+						{
+							iconCls : "btn_remove",
+							text : "撤单",
+							hidden : isDeleteOrder ? false : true,
+							xtype : "button",
+							scale : 'medium',
+							handler : function() {
+								if (gridPanel.getSelectionModel().getCount() != 1) {
+									Common.ErrMegBox('请选择一项进行操作');
+									return;
+								}
+								gridPanel
+										.getSelectionModel()
+										.each(
+												function(e) {
+													var orderId = e.data.id; 
+													Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
+														if (c == "yes") {
+															Ext.Ajax
+															.request({
+																url : 'Busi_OrderControl_cancelOrder.action?orderId='
+																		+ orderId
+																		+ '&userId='
+																		+ session_userId,
+																method : "post",
+																success : function(
+																		response) {
+																	var rec = Ext.util.JSON
+																			.decode(response.responseText);
+																	Common
+																			.SucMegBox(rec.retinfo);
+																}
+															});
+														}
+													});
+												
+												});
+							}
+						} ]
 			});
 }
 OrderList.ColumnModel = function(selectModel) {
-	return new Ext.grid.ColumnModel( {
-		columns : [ selectModel, new Ext.grid.RowNumberer(), {
-			header : "编号",
-			width:60,
-			dataIndex : "id"
-		}, {
-			header : "学生名称",
-			dataIndex : "studentId",
-			renderer : function(value) {
-				return Student.translate(value);
-			}
-		}, {
-			header : "年级",
-			dataIndex : "grade",
-			width:100,
-			renderer : function(value) {
-				return SysParam.translate(gradeStore, value);
-			}
-		}, {
-			header : "课时",
-			width:50,
-			dataIndex : "courseHour" 
-		 
-		}, {
-			header : "剩余课时",
-			width:80,
-			dataIndex : "costCourseHour",
-			renderer :  function(value, metaData, record, rowIndex, colIndex, store) {
-			     var remainHour = record.get("courseHour")- record.get("costCourseHour"); 
-			     if (remainHour < 30) {
-						return "<span style='color:red'>" + remainHour + "</span>";
+	return new Ext.grid.ColumnModel({
+		columns : [
+				selectModel,
+				new Ext.grid.RowNumberer(),
+				{
+					header : "编号",
+					width : 60,
+					dataIndex : "id"
+				},
+				{
+					header : "学生名称",
+					dataIndex : "studentId",
+					renderer : function(value) {
+						return Student.translate(value);
 					}
-					return remainHour;
-			}
-		} ,{
-			header : "审批",
-			dataIndex : "status"
-		},  {
-			header : "状态",
-			dataIndex : "runStatus",
-			renderer : function(value) {
-				return SysParam.translate(runStatusStore, value);
-			}
-		}, {
-			header : "当前负责人",
-			dataIndex : "curOperator",
-			renderer : function(value) {
-				return SysUser.translate(value);
-			}
-		},{
-			header : "是否被续单",
-			width:80,
-			dataIndex : "isLast",
-			renderer : function(value) {
-				return SysParam.translate(yesOrNoStore, value);
-			}
-		} /*, {
-			header : "生效时间",
-			dataIndex : "startTime",
-			renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-		}, {
-			header : "结束时间",
-			dataIndex : "endTime",
-			renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+				},
+				{
+					header : "年级",
+					dataIndex : "grade",
+					width : 100,
+					renderer : function(value) {
+						return SysParam.translate(gradeStore, value);
+					}
+				},
+				{
+					header : "课时",
+					width : 50,
+					dataIndex : "courseHour"
 
-		}*/, {
-			header : "创建时间",
-			dataIndex : "createTime",
-			width:120,
-			renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-		}, {
-			header : "更新时间",
-			width:120,
-			dataIndex : "lastUpdate",
-			renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+				},
+				{
+					header : "剩余课时",
+					width : 80,
+					dataIndex : "costCourseHour",
+					renderer : function(value, metaData, record, rowIndex,
+							colIndex, store) {
+						var remainHour = record.get("courseHour")
+								- record.get("costCourseHour");
+						if (remainHour < 30) {
+							return "<span style='color:red'>" + remainHour
+									+ "</span>";
+						}
+						return remainHour;
+					}
+				}, {
+					header : "审批",
+					dataIndex : "status"
+				}, {
+					header : "状态",
+					dataIndex : "runStatus",
+					renderer : function(value) {
+						return SysParam.translate(runStatusStore, value);
+					}
+				}, {
+					header : "当前负责人",
+					dataIndex : "curOperator",
+					renderer : function(value) {
+						return SysUser.translate(value);
+					}
+				}, {
+					header : "是否被续单",
+					width : 80,
+					dataIndex : "isLast",
+					renderer : function(value) {
+						return SysParam.translate(yesOrNoStore, value);
+					}
+				}, {
+					header : "是否有效",
+					dataIndex : "iseff",
+					renderer : function(value) {
+						return SysParam.translate(iseffStore, value);
+					}
+				} /*
+					 * , { header : "生效时间", dataIndex : "startTime", renderer :
+					 * Ext.util.Format.dateRenderer('Y-m-d H:i:s') }, { header :
+					 * "结束时间", dataIndex : "endTime", renderer :
+					 * Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+					 *  }
+					 */, {
+					header : "创建时间",
+					dataIndex : "createTime",
+					width : 120,
+					renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+				}, {
+					header : "更新时间",
+					width : 120,
+					dataIndex : "lastUpdate",
+					renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
 
-		}],
+				} ],
 		defaults : {
 			sortable : true,
 			menuDisabled : false,
@@ -359,7 +425,7 @@ OrderList.ColumnModel = function(selectModel) {
 	});
 }
 OrderList.gridPanel = function(toolbar, columnModel, selectModel, dataStore) {
-	return new Ext.grid.GridPanel( {
+	return new Ext.grid.GridPanel({
 		id : "contractListGird",
 		tbar : toolbar,
 		store : dataStore,
@@ -377,7 +443,7 @@ OrderList.gridPanel = function(toolbar, columnModel, selectModel, dataStore) {
 			showPreview : false
 		},
 		// paging bar on the bottom
-		bbar : new Ext.PagingToolbar( {
+		bbar : new Ext.PagingToolbar({
 			pageSize : 10,
 			store : dataStore,
 			displayInfo : true,
@@ -389,12 +455,12 @@ OrderList.gridPanel = function(toolbar, columnModel, selectModel, dataStore) {
 }
 
 OrderList.store = function(queryUrl) {
-	return new Ext.data.Store( {
+	return new Ext.data.Store({
 		// autoLoad : true,//是否自动加载
-		proxy : new Ext.data.HttpProxy( {
+		proxy : new Ext.data.HttpProxy({
 			url : queryUrl
 		}),
-		reader : new Ext.data.JsonReader( {
+		reader : new Ext.data.JsonReader({
 			root : 'result',
 			totalProperty : 'totalProperty',
 			remoteSort : true,
@@ -421,75 +487,81 @@ OrderList.store = function(queryUrl) {
 				type : "date",
 				mapping : 'lastUpdate.time',
 				dateFormat : 'time'
-			}, "des", "isLast", "curOperator","costCourseHour","runStatus" ]
+			}, "iseff", "des", "isLast", "curOperator", "costCourseHour",
+					"runStatus" ]
 		})
 	});
 }
 
 OrderList.formpanel = function() {
-	return new Ext.FormPanel( {
-		labelAlign : 'left',// 字样显示在顶部
-		bodyStyle : 'padding:5px',
-		id : "contractSearchForm",
-		name : "contractSearchForm",
-		plain : true,
-		items : [ {
-			xtype : 'fieldset',
-			layout : "column",
-			title : '查询条件',
-			// collapsible: true,
-			autoHeight : true,
-			items : [
-					{
-						xtype : "container",
-						columnWidth : 0.5,
-						defaultType : "textfield",
-						layout : "form",
-						defaults : {
-							anchor : "96%,96%",
-							labelStyle : 'text-align:right;'
-						},
-						items : [
-								{
+	return new Ext.FormPanel(
+			{
+				labelAlign : 'left',// 字样显示在顶部
+				bodyStyle : 'padding:5px',
+				id : "contractSearchForm",
+				name : "contractSearchForm",
+				plain : true,
+				items : [ {
+					xtype : 'fieldset',
+					layout : "column",
+					title : '查询条件',
+					// collapsible: true,
+					autoHeight : true,
+					items : [
+							{
+								xtype : "container",
+								columnWidth : 0.5,
+								defaultType : "textfield",
+								layout : "form",
+								defaults : {
+									anchor : "50%,50%",
+									labelStyle : 'text-align:right;'
+								},
+								items : [ {
 									id : "QUERY_orderId",
 									fieldLabel : "签单编号"
-								},{  
-									id:"QUERY_name", 
-									fieldLabel : "学生名称" 
-								}  ]
-					}, {
-						xtype : "container",
-						columnWidth : 0.5,
-						defaultType : "textfield",
-						layout : "form",
-						defaults : {
-							anchor : "96%,96%",
-							labelStyle : 'text-align:right;'
-						},
-						items : [
-
-						{
-							xtype : 'compositefield',
-							fieldLabel : '签单开始时间',
-							msgTarget : 'side',
-							anchor : '-20',
-							defaults : {
-								flex : 1
+								}, {
+									id : "QUERY_name",
+									fieldLabel : "学生名称"
+								} ]
 							},
-							items : [ {
-								id : "QUERY_create_startTime",
-								xtype : "datefield",
-								vtype : 'daterange',
-								endDateField : 'QUERY_create_endTime'
-							}, {
-								id : "QUERY_create_endTime",
-								xtype : "datefield",
-								vtype : 'daterange',
-								startDateField : 'QUERY_create_startTime'
+							{
+								xtype : "container",
+								columnWidth : 0.5,
+								defaultType : "textfield",
+								layout : "form",
+								defaults : {
+									anchor : "50%,50%",
+									labelStyle : 'text-align:right;'
+								},
+								items : [
+
+										{
+											xtype : 'compositefield',
+											fieldLabel : '签单开始时间',
+											msgTarget : 'side',
+											anchor : '-20',
+											defaults : {
+												flex : 1
+											},
+											items : [
+													{
+														id : "QUERY_create_startTime",
+														xtype : "datefield",
+														vtype : 'daterange',
+														endDateField : 'QUERY_create_endTime'
+													},
+													{
+														id : "QUERY_create_endTime",
+														xtype : "datefield",
+														vtype : 'daterange',
+														startDateField : 'QUERY_create_startTime'
+													} ]
+										},
+										new SysParam.ComboBox('状态',
+												'QUERY_runStatus',
+												'ORDER_RUN_STATUS') ]
 							} ]
-						},
-						new SysParam.ComboBox('状态','QUERY_runStatus', 'ORDER_RUN_STATUS')]
-					} ]
-		} ]
-	});
+				} ]
+			});
 }
