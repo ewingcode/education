@@ -7,7 +7,7 @@ import java.util.Date;
  * OrderCourseHour entity. @author MyEclipse Persistence Tools
  */
 
-public class OrderCourseHour implements java.io.Serializable {
+public class OrderCourseHourLog implements java.io.Serializable {
 
 	// Fields
 
@@ -22,24 +22,23 @@ public class OrderCourseHour implements java.io.Serializable {
 	private Integer teacherId;
 	private String status;
 	private Integer scheduleId;
-	private String msg;
-	private Integer payHour;
-	// Constructors
+	private Integer orderId;
+	private Integer orderCourseId;
 
-	public Integer getPayHour() {
-		return payHour;
+	public Integer getOrderId() {
+		return orderId;
 	}
 
-	public void setPayHour(Integer payHour) {
-		this.payHour = payHour;
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
 	}
 
-	public String getMsg() {
-		return msg;
+	public Integer getOrderCourseId() {
+		return orderCourseId;
 	}
 
-	public void setMsg(String msg) {
-		this.msg = msg;
+	public void setOrderCourseId(Integer orderCourseId) {
+		this.orderCourseId = orderCourseId;
 	}
 
 	public Integer getScheduleId() {
@@ -67,11 +66,11 @@ public class OrderCourseHour implements java.io.Serializable {
 	}
 
 	/** default constructor */
-	public OrderCourseHour() {
+	public OrderCourseHourLog() {
 	}
 
 	/** minimal constructor */
-	public OrderCourseHour(Timestamp createTime, Timestamp lastUpdate,
+	public OrderCourseHourLog(Timestamp createTime, Timestamp lastUpdate,
 			Timestamp teachTime) {
 		this.createTime = createTime;
 		this.lastUpdate = lastUpdate;

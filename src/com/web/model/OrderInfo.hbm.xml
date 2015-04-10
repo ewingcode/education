@@ -60,6 +60,9 @@
 				<comment>课时总数</comment>
 			</column>
 		</property>
+		<property name="scheduleHour" type="java.lang.Integer">
+			<column name="schedule_hour" />
+		</property>
 		<property name="runStatus" type="java.lang.String">
 			<column name="run_status" length="1" not-null="true">
 				<comment>签单执行状态 0:审批 1:教学中 2:结束</comment>

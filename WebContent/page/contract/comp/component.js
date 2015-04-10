@@ -139,7 +139,8 @@ Order.contractStatus = function(orderId) {
 	Ajax.syncRequest(url, function(data) {
 		var status = data.result.status;
 		var courseHour = data.result.courseHour;
-		var remainHour = data.result.courseHour- data.result.costCourseHour; 
+		var costCourseHour = data.result.costCourseHour; 
+		var scheduleHour = data.result.scheduleHour; 
 		var studentId = data.result.studentId; 
 		var grade = data.result.grade; 
 		var runStatus=data.result.runStatus;
@@ -176,7 +177,7 @@ Order.contractStatus = function(orderId) {
 					fieldLabel : "审批状态",
 					readOnly : true,
 					value : status
-				}
+				} 
 				]
 			},{
 				xtype : "container",
@@ -195,10 +196,10 @@ Order.contractStatus = function(orderId) {
 					value : SysParam.translate(gradeStore,grade)
 				},
 				{
-					id : "remainHour",
-					fieldLabel : "剩余课时",
+					id : "costCourseHour",
+					fieldLabel : "消耗课时",
 					readOnly : true,
-					value : remainHour
+					value : costCourseHour
 				},
 				{
 					id : "runStatus",
@@ -228,33 +229,27 @@ Order.contractStatus = function(orderId) {
 					fieldLabel : "签单费用",
 					readOnly : true,
 					value : fee
-				  }
+				  },
+				  {
+						id : "scheduleHour",
+						fieldLabel : "排课课时",
+						readOnly : true,
+						value : scheduleHour
+					},
+				  {
+						id : "startTime",
+						fieldLabel : "开始时间",
+						readOnly : true,
+						value:startTime
+				  } ,
+				  {
+						id : "endTime",
+						fieldLabel : "结束时间",
+						readOnly : true,
+						value:endTime
+				 } 
 				]
-			},
-			{
-				xtype : "container",
-				columnWidth : 0.3,
-				defaultType : "textfield",
-				layout : "form",
-				defaults : {  
-					width:150,
-					labelStyle : 'text-align:right;'
-				},
-				items : [
-				   {
-					id : "startTime",
-					fieldLabel : "开始时间",
-					readOnly : true,
-					value:startTime
-					} ,
-				   {
-					id : "endTime",
-					fieldLabel : "结束时间",
-					readOnly : true,
-					value:endTime
-					}  
-				]
-			}
+			} 
 	          
 			]
 		});

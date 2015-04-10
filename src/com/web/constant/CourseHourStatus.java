@@ -12,13 +12,9 @@ public enum CourseHourStatus {
 	 */
 	ALL_SETTLE("0"),
 	/**
-	 * 部分清算
-	 */
-	PART_SETTLE("1"),
-	/**
 	 * 取消
 	 */
-	CANCEL("2");
+	CANCEL("1");
 
 	private String value;
 
@@ -29,6 +25,5 @@ public enum CourseHourStatus {
 	public String getValue() {
 		return this.value;
 	}
-	
-	
+
 }

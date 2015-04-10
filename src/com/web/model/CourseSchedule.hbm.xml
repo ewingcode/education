@@ -15,6 +15,13 @@
 		<property name="teacherId" type="java.lang.Integer">
 			<column name="teacher_id" not-null="true" />
 		</property>
+		<property name="orderId" type="java.lang.Integer">
+			<column name="order_id" />
+		</property>
+		<property name="orderCourseId" type="java.lang.Integer">
+			<column name="order_course_id" />
+		</property>
+
 		<property name="courseType" type="java.lang.String">
 			<column name="course_type" length="2" not-null="true">
 				<comment>课程类型</comment>

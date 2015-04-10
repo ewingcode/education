@@ -30,8 +30,16 @@ public class OrderInfo implements java.io.Serializable {
 	private String isLast;
 	private Integer costCourseHour;
 	private String iseff;
-
+	private Integer scheduleHour;
 	// Constructors
+
+	public Integer getScheduleHour() {
+		return scheduleHour;
+	}
+
+	public void setScheduleHour(Integer scheduleHour) {
+		this.scheduleHour = scheduleHour;
+	}
 
 	/** default constructor */
 	public OrderInfo() {

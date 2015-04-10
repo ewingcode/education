@@ -10,6 +10,8 @@ import java.util.Date;
 public class CourseSchedule implements java.io.Serializable {
 
 	private Integer id;
+	private Integer orderCourseId;
+	private Integer orderId; 
 	private Integer teacherId;
 	private Integer studentId;
 	private String courseType;
@@ -20,7 +22,18 @@ public class CourseSchedule implements java.io.Serializable {
 	private String iseff;
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
-	
+	public Integer getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
+	}
+	public Integer getOrderCourseId() {
+		return orderCourseId;
+	}
+	public void setOrderCourseId(Integer orderCourseId) {
+		this.orderCourseId = orderCourseId;
+	}
 	public Integer getIsFinish() {
 		return isFinish;
 	}

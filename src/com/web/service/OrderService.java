@@ -1,7 +1,6 @@
 package com.web.service;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import com.core.jbpm.constant.TransitionArrangeType;
 import com.core.jbpm.model.FlowTask;
 import com.core.jbpm.model.FlowTaskTransition;
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 import com.web.constant.NoticeReceiverType;
 import com.web.constant.NoticeWay;
 import com.web.constant.OrderIsLast;
@@ -59,21 +57,40 @@ public class OrderService {
 		}
 		return (OrderInfo) object;
 	}
-
-	public void updateOrderCostHour(int orderId, int incHour) {
+	/**
+	 * 更新签单消耗的课时
+	 * 
+	 * @param orderId
+	 */
+	public void updateOrderCostHour(int orderId) {
 		OrderInfo orderInfo = findOne(orderId);
-		Integer costHour = orderInfo.getCostCourseHour() == null ? 0
-				: orderInfo.getCostCourseHour();
-		orderInfo.setCostCourseHour(costHour + incHour);
+		String sql = "select sum(costHour) from  "
+				+ OrderCourse.class.getName() + " where order_id=" + orderId;
+		Long totalCosthour = baseDao.queryObject(sql, Long.class);
+		orderInfo.setCostCourseHour(totalCosthour.intValue());
 		if (orderInfo.getCostCourseHour() >= orderInfo.getCourseHour()) {
 			orderInfo.setRunStatus(OrderRunStatus.OVER);
 		}
 		baseDao.update(orderInfo);
 	}
 
+	/**
+	 * 更新签单的已经排课的课时
+	 * 
+	 * @param orderCourseId
+	 */
+	public void updateOrderScheduleHour(Integer orderId) {
+		OrderInfo orderInfo = findOne(orderId);
+		String sql = "select sum(scheduleHour) from  "
+				+ OrderCourse.class.getName() + " where order_id=" + orderId;
+		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
+		orderInfo.setScheduleHour(totalSchedulehour.intValue());
+		baseDao.update(orderInfo);
+	}
+
 	public boolean existLearnOrder(int studentId) {
 		List<OrderInfo> orderList = baseDao.find("student_id=" + studentId
-				+ " and run_status='" + OrderRunStatus.INLEARN + "'",
+				+ " and run_status='" + OrderRunStatus.RUNNING + "'",
 				OrderInfo.class);
 		if (orderList == null || orderList.isEmpty()) {
 			return false;
@@ -229,7 +246,7 @@ public class OrderService {
 			 * (existOrder) { order.setRunStatus(OrderRunStatus.INWAITING); }
 			 * else {
 			 */
-			order.setRunStatus(OrderRunStatus.INLEARN);
+			order.setRunStatus(OrderRunStatus.RUNNING);
 			// }
 		}
 		baseDao.update(order);

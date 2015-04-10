@@ -19,6 +19,9 @@
         <property name="costHour" type="java.lang.Integer">
             <column name="cost_hour"   />
         </property>
+        <property name="scheduleHour" type="java.lang.Integer">
+            <column name="schedule_hour"   />
+        </property> 
         <property name="courseType" type="java.lang.String">
             <column name="course_type" length="2" not-null="true">
                 <comment>课程类型</comment>

@@ -12,11 +12,13 @@ import com.core.jdbc.BaseDao;
 import com.web.constant.OrderAttachStatus;
 import com.web.constant.OrderCourseStatus;
 import com.web.constant.SysParamConstant;
+import com.web.model.CourseSchedule;
 import com.web.model.OrderCourse;
+import com.web.model.OrderCourseHourLog;
 import com.web.model.OrderInfo;
 
 /**
- * 签单课程业务类
+ * 签单课程
  * 
  */
 @Repository("orderCourseService")
@@ -26,6 +28,40 @@ public class OrderCourseService {
 
 	@Resource
 	private SysParamService sysParamService;
+
+	public OrderCourse findOrderCourse(Integer orderCourseId) {
+		return baseDao.findOne(orderCourseId, OrderCourse.class);
+	}
+
+	/**
+	 * 更新签单课程的消耗课时
+	 * 
+	 * @param orderCourseId
+	 */
+	public void updateCourseCostHour(Integer orderCourseId) {
+		OrderCourse orderCourse = findOrderCourse(orderCourseId);
+		String sql = "select sum(costHour) from  "
+				+ OrderCourseHourLog.class.getName()
+				+ " where order_course_id=" + orderCourseId;
+		Long totalCosthour = baseDao.queryObject(sql, Long.class);
+		orderCourse.setCostHour(totalCosthour.intValue());
+		baseDao.update(orderCourse);
+	}
+
+	/**
+	 * 更新签单课程的已经排课的课时
+	 * 
+	 * @param orderCourseId
+	 */
+	public void updateCourseScheduleHour(Integer orderCourseId) {
+		OrderCourse orderCourse = findOrderCourse(orderCourseId);
+		String sql = "select sum((endTime - startTime)/100)  from  "
+				+ CourseSchedule.class.getName() + " where order_course_id="
+				+ orderCourseId;
+		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
+		orderCourse.setScheduleHour(totalSchedulehour.intValue());
+		baseDao.update(orderCourse);
+	}
 	/**
 	 * 创建签单的课程信息
 	 * 
@@ -35,7 +71,7 @@ public class OrderCourseService {
 	 */
 	public void saveOrderCourse(int orderId, String[] courseTypes) {
 		if (courseTypes == null || courseTypes.length == 0)
-			return; 
+			return;
 		baseDao.executeSql("delete from order_course where order_id=" + orderId);
 		for (String coursestr : courseTypes) {
 			String[] courseArr = coursestr.split("_");

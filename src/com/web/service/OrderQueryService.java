@@ -52,7 +52,7 @@ public class OrderQueryService {
 	 */
 	public OrderInfo findLearnOrder(int studentId)   {
 		List<OrderInfo> orderList = baseDao.find("student_id=" + studentId
-				+ " and run_status='" + OrderRunStatus.INLEARN + "'",
+				+ " and run_status='" + OrderRunStatus.RUNNING + "'",
 				OrderInfo.class);
 		if (orderList == null || orderList.isEmpty()) {
 			return null;
@@ -112,7 +112,7 @@ public class OrderQueryService {
 		List<OrderInfo> orderlist = queryRelOrder(userId, studentId);
 		OrderInfo lastestOrder = null;
 		for (OrderInfo orderInfo : orderlist) {
-			if (orderInfo.getRunStatus().equals(OrderRunStatus.INLEARN))
+			if (orderInfo.getRunStatus().equals(OrderRunStatus.RUNNING))
 				lastestOrder = orderInfo;
 		}
 		if (lastestOrder == null)

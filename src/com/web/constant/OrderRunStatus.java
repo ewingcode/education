@@ -9,7 +9,6 @@ package com.web.constant;
  */
 public class OrderRunStatus {
 	public final static String INAPPLY="0";//审批中
-	public final static String INWAITING="1";//未开始
-	public final static String INLEARN="2";//教学中
+	public final static String RUNNING="1";//进行中 
 	public final static String OVER="3";//结束
 }

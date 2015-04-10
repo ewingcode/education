@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 import com.util.DateFormat;
 import com.web.model.CoursePeriod;
 
@@ -16,19 +15,16 @@ import com.web.model.CoursePeriod;
 public class CoursePeriodService {
 	@Resource
 	private BaseDao baseDao;
-	
+
 	/**
 	 * 查找设置课程时间段
-	 * @return
-	 * @ 
 	 */
-	public List<CoursePeriod> getCoursePeriod()   {
+	public List<CoursePeriod> getCoursePeriod() {
 		String sql = " from " + CoursePeriod.class.getName();
 		return baseDao.find(sql, CoursePeriod.class);
 	}
 
-	public boolean existSamePeriod(Date startTime, Date endTime)
-			  {
+	public boolean existSamePeriod(Date startTime, Date endTime) {
 		String sql = " from " + CoursePeriod.class.getName();
 		String startTimeStr = DateFormat.DateToString(startTime);
 		String endTimeStr = DateFormat.DateToString(endTime);

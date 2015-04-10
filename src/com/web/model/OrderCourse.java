@@ -19,6 +19,15 @@ public class OrderCourse implements java.io.Serializable {
 	private String status;
 	private Integer hour;
 	private Integer costHour;
+	private Integer scheduleHour;
+
+	public Integer getScheduleHour() {
+		return scheduleHour;
+	}
+
+	public void setScheduleHour(Integer scheduleHour) {
+		this.scheduleHour = scheduleHour;
+	}
 
 	public OrderCourse() {
 

@@ -10,18 +10,20 @@ import org.apache.log4j.Logger;
 
 import com.core.app.service.BaseModelService;
 import com.util.DateFormat;
+import com.web.constant.CourseScheduleIsFinish;
 import com.web.model.CourseSchedule;
 import com.web.service.CourseScheduleService;
 import com.web.service.OrderService;
 
 /**
- * 课时作业
+ * 排课课时计算作业
  * 
  * @author tanson lam
  * @creation 2015年4月9日
  */
 public class CourseScheduleJob {
-	private static final Logger logger = Logger.getLogger(OrderJob.class);
+	private static final Logger logger = Logger
+			.getLogger(CourseScheduleJob.class);
 	@Resource
 	private BaseModelService baseModelService;
 	@Resource
@@ -34,11 +36,8 @@ public class CourseScheduleJob {
 	public void execute() {
 		try {
 			lock.lock();
-			String nowTimeStr = DateFormat.DateToString(new Date(),
-					DateFormat.DATETIME_FORMAT2);
-			List<CourseSchedule> scheduleList = baseModelService
-					.find("is_finish='0' and CONCAT(DATE_FORMAT(DATE,'%Y%m%d'),LPAD(END_TIME, 4, 0),'00')"
-							+ " <= '" + nowTimeStr + "'", CourseSchedule.class);
+			List<CourseSchedule> scheduleList = courseScheduleService
+					.getNotFinishSchedule();
 			logger.info(scheduleList.size());
 			if (scheduleList == null || scheduleList.isEmpty())
 				return;
@@ -46,8 +45,8 @@ public class CourseScheduleJob {
 				courseScheduleService.confirmCourseHour(courseSchedule);
 			}
 		} catch (Exception e) {
-			logger.error("error in checkOutTimeOrder", e);
-		}finally{
+			logger.error("error in CourseScheduleJob", e);
+		} finally {
 			lock.unlock();
 		}
 	}
