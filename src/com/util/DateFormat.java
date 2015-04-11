@@ -368,5 +368,17 @@ public class DateFormat {
 			return "00:" + timeStr;
 		return "";
 	}
+	
+	 public static  List<Date> getDateList(Date startDate, Date endDate) {
+		List<Date> dateList = new ArrayList<Date>();
+		Calendar cal = Calendar.getInstance();
+		while (startDate.compareTo(endDate) <= 0) {
+			cal.setTime(startDate);
+			dateList.add(cal.getTime());
+			cal.add(Calendar.DAY_OF_YEAR, 1);
+			startDate = cal.getTime();
+		}
+		return dateList;
+	}
 
 }

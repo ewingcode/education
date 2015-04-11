@@ -6,8 +6,25 @@
 <script>
 	Ext.onReady(function() {
 		var teacherId = jQuery.url.param("teacherId");
+		  var scheduledailyUrl = _contextPath + "/page/teacher/course/scheduledaily.jsp?teacherId="+ teacherId;
+		  var tabs = new Ext.TabPanel({  
+			    activeTab: 0, 
+		        height:430,  
+		        border : false,
+		        autoScroll:false,
+		        defaults:{autoHeight: true},
+		        items:[ 
+		               {	title : '日程表', 
+			            	height:400,  
+							autoWidth : true,
+							iconCls : 'tabs', 
+							html : '<iframe  src="'+scheduledailyUrl+ '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+						} 
+					 
+		        ]
+		    });
 		var shedulePanel = new Ext.FormPanel({
-			title : '日程表',
+			//title : '日程表',
 			region : 'center',
 			split : true,
 			width : "70%",
@@ -15,9 +32,11 @@
 			autoScroll : true,
 			defaultType : "textfield",
 			buttonAlign : 'center',
-			items : [ new Schedule.showCalender(teacherId) ]
+			items : [ tabs//new Schedule.showCalender(teacherId)
+			]
 
 		});
+	
 	  	var configPanel = new Ext.Panel({
 			title : '排课设置',
 			region : 'west',

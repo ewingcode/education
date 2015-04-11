@@ -13,7 +13,6 @@ import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
 import com.util.SqlUtil;
 import com.web.constant.CourseHourStatus;
-import com.web.constant.CourseScheduleFinish;
 import com.web.constant.CourseScheduleIsFinish;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
@@ -32,6 +31,8 @@ public class CourseScheduleService {
 	private OrderService orderService;
 	@Resource
 	private OrderCourseService orderCourseService;
+	@Resource
+	private CourseScheduleTemplateService courseScheduleTemplateService;
 
 	/**
 	 * 是否结束的排课计划
@@ -47,7 +48,7 @@ public class CourseScheduleService {
 	}
 
 	/**
-	 * 为教师增加排课
+	 * 验证排课的信息
 	 * 
 	 * @param teacherId
 	 * @param studentId
@@ -56,16 +57,18 @@ public class CourseScheduleService {
 	 * @param startTime
 	 * @param endTime
 	 * @return
-	 * @throws Exception
+	 * @throws CourseScheduleException
 	 */
-	 @Transactional
-	public boolean addSchedule(Integer teacherId, Integer studentId, Date date,
-			String courseType, Integer startTime, Integer endTime)
+	public CourseSchedule validateCourseSchedule(Integer teacherId,
+			Integer studentId, Date date, String courseType, Integer startTime,
+			Integer endTime, List<OrderCourse> orderCourseList)
 			throws CourseScheduleException {
+		String errMsg = "[日期:" + DateFormat.DateToString(date) + ",开始时间:"
+				+ startTime + ",结束时间:" + endTime + "]";
 		if (existSameScheduleForTeacher(teacherId, date, startTime, endTime))
-			throw new CourseScheduleException("教学老师的课程时间安排有相同!");
+			throw new CourseScheduleException("教学老师的课程时间安排有相同!" + errMsg);
 		if (existSameScheduleForStudent(studentId, date, startTime, endTime))
-			throw new CourseScheduleException("学生的课程时间安排有相同!");
+			throw new CourseScheduleException("学生的课程时间安排有相同!" + errMsg);
 		if (!isRelStudent(teacherId, studentId))
 			throw new CourseScheduleException("不能关联该学生!");
 		if (!hasPremitToTeach(teacherId, studentId, courseType))
@@ -74,19 +77,19 @@ public class CourseScheduleService {
 		Integer fitOrderCourseId = null;
 
 		int costHour = computeScheduleHour(endTime, startTime);
-		// 获取学生所有的签单课程信息
-		String sql = " order_id in  (select id from  "
-				+ OrderInfo.class.getName() + " a where a.studentId="
-				+ studentId + " and a.runStatus='" + OrderRunStatus.RUNNING
-				+ "' ) and course_type='" + courseType
-				+ "' order by order_id asc";
-		List<OrderCourse> orderCourseList = baseDao
-				.find(sql, OrderCourse.class);
+		if (orderCourseList == null) {
+			// 获取学生所有的签单课程信息
+			String sql = " order_id in  (select id from  "
+					+ OrderInfo.class.getName() + " a where a.studentId="
+					+ studentId + " and a.runStatus='" + OrderRunStatus.RUNNING
+					+ "' ) and course_type='" + courseType
+					+ "' order by order_id asc";
+			orderCourseList = baseDao.find(sql, OrderCourse.class);
+		}
 		// 挑选出合适的签单课程信息
 		for (OrderCourse orderCourse : orderCourseList) {
 			Integer coursehour = orderCourse.getHour();
-			Integer costcourseHour = orderCourse.getCostHour() == null
-					? 0
+			Integer costcourseHour = orderCourse.getCostHour() == null ? 0
 					: orderCourse.getCostHour();
 			Integer leaveHour = coursehour - costcourseHour;
 			// 如果有剩余的课时，则是合适的签单课程
@@ -114,12 +117,38 @@ public class CourseScheduleService {
 		scheduleVo.setIsFinish(CourseScheduleIsFinish.NOTFINISH.getValue());
 		scheduleVo.setOrderId(fitOrderId);
 		scheduleVo.setOrderCourseId(fitOrderCourseId);
+		return scheduleVo;
+	}
+
+	/**
+	 * 为教师增加排课
+	 * 
+	 * @param teacherId
+	 * @param studentId
+	 * @param date
+	 * @param courseType
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional
+	public boolean addSchedule(Integer teacherId, Integer studentId, Date date,
+			String courseType, Integer startTime, Integer endTime)
+			throws CourseScheduleException {
+		CourseSchedule scheduleVo = validateCourseSchedule(teacherId,
+				studentId, date, courseType, startTime, endTime, null);
+		addSchedule(scheduleVo);
+		return true;
+	}
+
+	public void addSchedule(CourseSchedule scheduleVo) {
 		baseDao.save(scheduleVo);
 		// 更新签单课程的已经排课的课时
-		orderCourseService.updateCourseScheduleHour(fitOrderCourseId);
+		orderCourseService.updateCourseScheduleHour(scheduleVo
+				.getOrderCourseId());
 		// 更新签单的已经排课的课时
-		orderService.updateOrderScheduleHour(fitOrderId);
-		return true;
+		orderService.updateOrderScheduleHour(scheduleVo.getOrderId());
 	}
 
 	/**
@@ -193,9 +222,9 @@ public class CourseScheduleService {
 				CourseSchedule.class);
 		for (CourseSchedule scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -211,9 +240,9 @@ public class CourseScheduleService {
 				CourseSchedule.class);
 		for (CourseSchedule scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -246,20 +275,20 @@ public class CourseScheduleService {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{1000, 1100}));
-		System.out.println(isLegalNewTime(new Integer[]{1000, 1100},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{930, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{2200, 2300}));
-		System.out.println(isLegalNewTime(new Integer[]{2200, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{800, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 1000, 1100 }));
+		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 930, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 2200, 2300 }));
+		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 900, 1000 }));
 
 		System.out.println(930 % 831);
 	}
@@ -298,7 +327,7 @@ public class CourseScheduleService {
 		return true;
 	}
 
-	private Integer computeScheduleHour(Integer startTime, Integer endTime) {
+	public Integer computeScheduleHour(Integer endTime, Integer startTime) {
 		return (endTime - startTime) / 100;
 	}
 
@@ -306,7 +335,7 @@ public class CourseScheduleService {
 	public void confirmCourseHour(CourseSchedule courseSchedule) {
 		Integer orderCourseId = courseSchedule.getOrderCourseId();
 		// 更新排课的课程已经结束
-		courseSchedule.setIsFinish(CourseScheduleFinish.FINISHED.getValue());
+		courseSchedule.setIsFinish(CourseScheduleIsFinish.FINISHED.getValue());
 		baseDao.update(courseSchedule);
 		// 计算消耗的课时，并且记录课时消耗记录到ordercoursehour
 		int costHour = computeScheduleHour(courseSchedule.getEndTime(),
@@ -321,10 +350,16 @@ public class CourseScheduleService {
 		courseHourLog.setStatus(CourseHourStatus.ALL_SETTLE.getValue());
 		courseHourLog.setOrderId(courseSchedule.getOrderId());
 		courseHourLog.setOrderCourseId(courseSchedule.getOrderCourseId());
+		courseHourLog.setScheduleTemplateId(courseSchedule
+				.getScheduleTemplateId());
 		baseDao.save(courseHourLog);
 		// 更新签单课程的消耗课时
 		orderCourseService.updateCourseCostHour(orderCourseId);
 		// 更新签单的总消耗课时
 		orderService.updateOrderCostHour(courseSchedule.getOrderId());
+		if (courseSchedule.getScheduleTemplateId() != null)
+			courseScheduleTemplateService.updateTemplateCostHour(courseSchedule
+					.getScheduleTemplateId());
 	}
+
 }

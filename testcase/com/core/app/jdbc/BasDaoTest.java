@@ -14,12 +14,8 @@ import com.core.factory.SpringCtx;
 import com.core.jdbc.BaseDao;
 import com.core.jdbc.DaoException;
 import com.core.jdbc.util.PageBean;
-import com.web.constant.OrderRunStatus;
 import com.web.model.OrderCourse;
-import com.web.model.OrderCourseHour;
 import com.web.model.OrderInfo;
-import com.web.model.OrderRelHis;
-import com.web.model.StudentInfo;
 import com.web.model.TeacherInfo;
 
 public class BasDaoTest {
@@ -32,19 +28,7 @@ public class BasDaoTest {
 		sysParamService = (SysParamService) SpringCtx
 				.getByBeanName("sysParamService");
 	}
-
-	// @Test
-	public void testQuery() throws DaoException {
-		String sql = "select sum(costHour) from  "
-				+ OrderCourseHour.class.getName()
-				+ " where order_id in  (select id from "
-				+ OrderInfo.class.getName()
-				+ " a where a.studentId=1 and a.runStatus='"
-				+ OrderRunStatus.INLEARN + "')";
-		Long hour = baseDao.queryObject(sql, Long.class);
-		System.out.print(hour);
-
-	}
+ 
 
 	// @Test
 	// @Transactional

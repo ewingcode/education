@@ -611,7 +611,8 @@ Teacher.selectRefStudent = function(teacherId, callbackFn) {
 				gridPanel.getSelectionModel().each(function(e) {
 					var studentId = e.data.studentId;
 					var studentName = e.data.name;
-					callbackFn(studentId, studentName);
+					var courseType = e.data.courseType;
+					callbackFn(studentId, studentName,courseType);
 					win.close();
 				});
 			}

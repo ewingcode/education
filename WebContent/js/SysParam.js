@@ -112,6 +112,21 @@ SysParam.translate = function(paramStore, value) {
 	} 
 	return   retStr ;
 };
+
+SysParam.translateArray = function(paramStore, value) {
+	var retStr=null; 
+	var valusArr = value.split(",");
+	for(var j=0;j < valusArr.length; j++){
+		for ( var i = 0; i < paramStore.getCount(); i++) {
+			var rec = paramStore.getAt(i);
+			if (rec.get('paramValue') == valusArr[j]) {
+				retStr += rec.get('paramName')+",";
+			}
+		} 
+	}
+	
+	return   retStr ;
+};
  
 
 SysParam.checkbox = function(fieldName, fieldId, rootCode,selectArray,checkFn) {  

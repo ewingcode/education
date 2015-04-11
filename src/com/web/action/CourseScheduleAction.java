@@ -1,10 +1,6 @@
-/**
- * 
- */
 package com.web.action;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,16 +20,17 @@ import com.core.jdbc.util.PageBean;
 import com.util.DateFormat;
 import com.util.SqlUtil;
 import com.util.StringUtil;
-import com.web.bean.CourseScheduleDto;
 import com.web.bean.CourseScheduleListDto;
 import com.web.model.CourseScheduleView;
+import com.web.model.OrderCourse;
 import com.web.model.TeacherInfo;
 import com.web.service.CoursePeriodService;
 import com.web.service.CourseScheduleService;
+import com.web.service.OrderCourseService;
 import com.web.service.TeacherService;
 
 /**
- * 
+ * 排课计划
  * 
  * @author tanson lam
  * @creation 2015年3月15日
@@ -50,6 +47,9 @@ public class CourseScheduleAction extends BaseAction {
 	private CourseScheduleService courseScheduleService;
 	@Resource
 	private SysParamService sysParamService;
+	@Resource
+	private OrderCourseService orderCourseService;
+
 	public CourseScheduleAction() {
 		super(TeacherInfo.class);
 	}
@@ -152,7 +152,7 @@ public class CourseScheduleAction extends BaseAction {
 		for (TeacherInfo t : teacherInfoList) {
 			teacherIds.add(t.getId());
 		}
-		List<Date> scheduleDateList = getDateList(startDate, endDate);
+		List<Date> scheduleDateList = DateFormat.getDateList(startDate, endDate);
 
 		List<CourseScheduleView> scheduleHis = courseScheduleService
 				.getTeacherSchedule(teacherIds, startDate, endDate);
@@ -179,7 +179,8 @@ public class CourseScheduleAction extends BaseAction {
 					String courseName = schedule.getCourseName();
 					String studentName = schedule.getStudentName();
 					periodSb.append(DateFormat.cutTime(schedule.getStartTime()))
-							.append("-").append(DateFormat.cutTime(schedule.getEndTime()));
+							.append("-")
+							.append(DateFormat.cutTime(schedule.getEndTime()));
 					periodSb.append(" ").append(courseName).append(" ")
 							.append(studentName);
 					periodSb.append("<br>");
@@ -194,16 +195,29 @@ public class CourseScheduleAction extends BaseAction {
 
 		return scheduleContents;
 	}
-	private List<Date> getDateList(Date startDate, Date endDate) {
-		List<Date> dateList = new ArrayList<Date>();
-		Calendar cal = Calendar.getInstance();
-		while (startDate.compareTo(endDate) <= 0) {
-			cal.setTime(startDate);
-			dateList.add(cal.getTime());
-			cal.add(Calendar.DAY_OF_YEAR, 1);
-			startDate = cal.getTime();
+
+	
+
+	/**
+	 * 获取学生的签单课程信息
+	 * 
+	 * @throws ActionException
+	 */
+	public void getOrderCourseForStudent() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			Integer studentId = Integer.valueOf(request
+					.getParameter("studentId"));
+			String courseType = request.getParameter("courseType");
+			OrderCourse orderCourse = orderCourseService
+					.getOrderCourseForStudent(studentId, courseType);
+			responseData = ResponseUtils.success("查询成功！");
+			responseData.setResult(orderCourse);
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("查询失败！");
 		}
-		return dateList;
+		this.outResult(responseData);
 	}
- 
+
 }

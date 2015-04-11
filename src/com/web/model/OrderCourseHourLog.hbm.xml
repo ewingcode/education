@@ -10,10 +10,13 @@
 			<generator class="identity" />
 		</id>
 		<property name="orderId" type="java.lang.Integer">
-			<column name="orderId" />
+			<column name="order_id" />
 		</property>
 		<property name="orderCourseId" type="java.lang.Integer">
-			<column name="orderCourseId" />
+			<column name="order_course_id" />
+		</property>
+		<property name="scheduleTemplateId" type="java.lang.Integer">
+			<column name="schedule_template_id" />
 		</property>
 		<property name="courseType" type="java.lang.String">
 			<column name="course_type" />
@@ -33,7 +36,7 @@
 		<property name="status" type="java.lang.String">
 			<column name="status" />
 		</property>
-	 
+
 		<property name="createTime" type="java.sql.Timestamp">
 			<column name="create_time" length="19" not-null="true" />
 		</property>

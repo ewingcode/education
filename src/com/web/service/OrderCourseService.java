@@ -11,6 +11,7 @@ import com.core.app.service.SysParamService;
 import com.core.jdbc.BaseDao;
 import com.web.constant.OrderAttachStatus;
 import com.web.constant.OrderCourseStatus;
+import com.web.constant.OrderRunStatus;
 import com.web.constant.SysParamConstant;
 import com.web.model.CourseSchedule;
 import com.web.model.OrderCourse;
@@ -62,6 +63,7 @@ public class OrderCourseService {
 		orderCourse.setScheduleHour(totalSchedulehour.intValue());
 		baseDao.update(orderCourse);
 	}
+
 	/**
 	 * 创建签单的课程信息
 	 * 
@@ -155,4 +157,38 @@ public class OrderCourseService {
 			saveOrderCourse(orderInfo.getId(), courseList);
 	}
 
+	/**
+	 * 获取学生的签单课程信息
+	 *  
+	 * @param studentId
+	 * @param courseType
+	 * @return
+	 */
+	public OrderCourse getOrderCourseForStudent(
+			Integer studentId, String courseType) {
+		OrderCourse totalOrderCourse = new OrderCourse();
+		String sql = " order_id in  (select id from  "
+				+ OrderInfo.class.getName() + " a where a.studentId="
+				+ studentId + " and a.runStatus='" + OrderRunStatus.RUNNING
+				+ "' )  and course_type='" + courseType
+				+ "' order by order_id asc";
+		List<OrderCourse> orderCourseList = baseDao
+				.find(sql, OrderCourse.class);
+		Integer hour = 0;
+		Integer costHour = 0;
+		Integer scheduleHour = 0;
+		// 挑选出合适的签单课程信息
+		for (OrderCourse orderCourse : orderCourseList) {
+			hour += orderCourse.getHour();
+			costHour += orderCourse.getCostHour() == null ? 0 : orderCourse
+					.getCostHour();
+			scheduleHour += orderCourse.getScheduleHour() == null ? 0
+					: orderCourse.getScheduleHour();
+		}
+
+		totalOrderCourse.setCostHour(costHour);
+		totalOrderCourse.setHour(hour);
+		totalOrderCourse.setScheduleHour(scheduleHour);
+		return totalOrderCourse;
+	}
 }

@@ -243,42 +243,68 @@ Schedule.addSchedulePanel = function(teacherId) {
 												new Teacher.selectRefStudent(
 														teacherId,
 														function(studentId,
-																studentName) {
-															Ext
-																	.getCmp(
-																			'studentId')
-																	.setValue(
-																			studentId);
-															Ext
-																	.getCmp(
-																			'studentName')
-																	.setValue(
-																			studentName);
+																studentName,courseType) {
+															Ext.getCmp('studentId').setValue(studentId);
+															Ext.getCmp('studentName').setValue(studentName);
+															var url = 'Busi_CourseSchedule_getOrderCourseForStudent.action?studentId=' + studentId+"&courseType="+courseType;
+															Ajax.syncRequest(url, function(data) {
+																var courseHour = data.result.hour;
+																var costHour = data.result.costHour;
+																var scheduleHour = data.result.scheduleHour;
+																$("#courseHour").val(courseHour);
+																$("#costHour").val(costHour);
+																$("#scheduleHour").val(scheduleHour);
+																var orderCourseStore = new SysParam.store("ORDER_COURSE"); 
+																var courseName = SysParam.translate(orderCourseStore, courseType);
+																$("#courseName").val(courseName);
+															});
 														});
 											}
 										}
 									} ]
 						},
 						{
+							id : "courseName",
+							fieldLabel : "科目",
+							readOnly : true
+						},
+						{
 							id : "courseHour",
-							fieldLabel : "课时",
+							fieldLabel : "科目课时",
 							readOnly : true
 						},
 						{
-							id : "remainHour",
-							fieldLabel : "剩余课时",
+							id : "costHour",
+							fieldLabel : "消耗课时",
 							readOnly : true
 						},
 						{
-							fieldLabel : "日期",
+							id : "scheduleHour",
+							fieldLabel : "排课课时",
+							readOnly : true
+						},
+						{
+							fieldLabel : "开始日期",
 							allowBlank : false,
-							id : "date",
+							id : "startDate",
 							xtype : "datefield",
 							format : "Y-m-d"
 						},
 						new CoursePeriod.ComboBox("coursePeriod", false),
 						new SysParam.ComboBox('科目', 'courseType',
-								'ORDER_COURSE', false) ],
+								'ORDER_COURSE', false),
+						new SysParam.checkbox('排课日', 'scheduleWeekday', 'WEEK'),
+						{
+							id : "scheduleCopyTime",
+							fieldLabel : "排课复制次数" 
+						},
+						{
+							fieldLabel : "结束日期",
+							allowBlank : false,
+							id : "endDate",
+							xtype : "datefield",
+							format : "Y-m-d"
+						}],
 				buttons : [ {
 					text : "保存",
 					iconCls : "btn_save",

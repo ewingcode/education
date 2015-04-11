@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.core.app.jbpm.BaseTest;
 import com.core.factory.SpringCtx;
-import com.core.jdbc.DaoException;
 
 public class StudentServiceTest extends BaseTest {
 	private static StudentService studentService;
@@ -20,7 +19,7 @@ public class StudentServiceTest extends BaseTest {
 	public void testTx() {
 		try {
 			studentService.testTx();
-		} catch (DaoException e) {
+		} catch ( Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

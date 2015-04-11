@@ -24,6 +24,15 @@ public class OrderCourseHourLog implements java.io.Serializable {
 	private Integer scheduleId;
 	private Integer orderId;
 	private Integer orderCourseId;
+	private Integer scheduleTemplateId; 
+	
+	public Integer getScheduleTemplateId() {
+		return scheduleTemplateId;
+	}
+
+	public void setScheduleTemplateId(Integer scheduleTemplateId) {
+		this.scheduleTemplateId = scheduleTemplateId;
+	}
 
 	public Integer getOrderId() {
 		return orderId;

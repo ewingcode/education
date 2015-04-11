@@ -4,6 +4,9 @@
 <script>
 	Ext.onReady(function() {
 		var orderCourseStore = new SysParam.store("ORDER_COURSE");
+		var scheduleStatusStore = new SysParam.store("SCHEDULE_STATUS");
+		
+		var weekStore = new SysParam.store("WEEK");
 		var studentId = jQuery.url.param("studentId");
 		var sm = new Ext.grid.CheckboxSelectionModel();
 		var cm = new Ext.grid.ColumnModel({
@@ -18,11 +21,8 @@
 					return Student.translate(value);
 				}
 			}, {
-				header : "签单编号",
-				dataIndex : "orderId"
-			}, {
 				header : "授课老师",
-				dataIndex : "chargerId",
+				dataIndex : "teacherId",
 				renderer : function(value) {
 					return SysUser.translate(value);
 				}
@@ -33,21 +33,35 @@
 					return SysParam.translate(orderCourseStore, value);
 				}
 			}, {
-				header : "考试时间",
-				dataIndex : "examTime",
-				renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+				header : "开始日期",
+				dataIndex : "startDay",
+				renderer : Ext.util.Format.dateRenderer('Y-m-d')
 			}, {
-				header : "考试分数",
-				dataIndex : "score"
+				header : "结束日期",
+				dataIndex : "endDay",
+				renderer : Ext.util.Format.dateRenderer('Y-m-d')
 			}, {
-				header : "创建时间",
-				dataIndex : "createTime",
-				renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-			}, {
-				header : "更新时间",
-				dataIndex : "lastUpdate",
-				renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+				header : "开始时间",
+				dataIndex : "startTime"
 
+			}, {
+				header : "结束时间",
+				dataIndex : "endTime"
+			}, {
+				header : "总课时",
+				dataIndex : "totalCourseHour"
+			}, {
+				header : "排课日",
+				dataIndex : "weekdays",
+				renderer : function(value) {
+					return SysParam.translateArray(weekStore, value);
+				}
+			},{
+				header : "状态",
+				dataIndex : "status",
+				renderer : function(value) {
+					return SysParam.translate(scheduleStatusStore, value);
+				}
 			} ],
 			defaults : {
 				sortable : true,
@@ -59,7 +73,7 @@
 		var store = new Ext.data.Store({
 			// autoLoad : true,//是否自动加载
 			proxy : new Ext.data.HttpProxy({
-				url : 'Busi_OrderCourseScore_pageQuery.action'
+				url : 'Busi_CourseScheduleTemplate_pageQuery.action'
 			}),
 			reader : new Ext.data.JsonReader({
 				root : 'result',
@@ -68,8 +82,8 @@
 				fields : [ {
 					name : "id",
 					type : "int"
-				}, "orderId", "courseType", "chargerId", "studentId", "score",
-						{
+				}, "teacherId", "courseType", "totalCourseHour",
+						"totalCostHour", "studentId", "status", "weekdays", {
 							name : "createTime",
 							type : "date",
 							mapping : 'createTime.time',
@@ -80,7 +94,12 @@
 							mapping : 'lastUpdate.time',
 							dateFormat : 'time'
 						}, {
-							name : "examTime",
+							name : "startDay",
+							type : "date",
+							mapping : 'examTime.time',
+							dateFormat : 'time'
+						}, {
+							name : "endDay",
 							type : "date",
 							mapping : 'examTime.time',
 							dateFormat : 'time'
