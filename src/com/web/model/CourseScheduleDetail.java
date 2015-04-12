@@ -7,17 +7,24 @@ import java.util.Date;
  * CourseSchedule entity. @author MyEclipse Persistence Tools
  */
 
-public class CourseScheduleTemplate implements java.io.Serializable {
+public class CourseScheduleDetail implements java.io.Serializable {
 
 	private Integer id;
+	private Integer scheduleId;
+	public Integer getScheduleId() {
+		return scheduleId;
+	}
+
+	public void setScheduleId(Integer scheduleId) {
+		this.scheduleId = scheduleId;
+	}
+
+	private Integer orderCourseId;
+	private Integer orderId;
 	private Integer teacherId;
 	private Integer studentId;
 	private String courseType;
-	private Date startDate;
-	private Date endDate;
-	private String weekDays;
-	private Integer totalCourseHour;
-	private Integer totalCostHour;
+	private Date date;
 	private Integer startTime;
 	private Integer endTime;
 	private Integer isFinish;
@@ -25,20 +32,28 @@ public class CourseScheduleTemplate implements java.io.Serializable {
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
 
-	public Integer getTotalCostHour() {
-		return totalCostHour;
+	public Integer getOrderId() {
+		return orderId;
 	}
 
-	public void setTotalCostHour(Integer totalCostHour) {
-		this.totalCostHour = totalCostHour;
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
 	}
 
-	public Integer getTotalCourseHour() {
-		return totalCourseHour;
+	public Integer getOrderCourseId() {
+		return orderCourseId;
 	}
 
-	public void setTotalCourseHour(Integer totalCourseHour) {
-		this.totalCourseHour = totalCourseHour;
+	public void setOrderCourseId(Integer orderCourseId) {
+		this.orderCourseId = orderCourseId;
+	}
+
+	public Integer getIsFinish() {
+		return isFinish;
+	}
+
+	public void setIsFinish(Integer isFinish) {
+		this.isFinish = isFinish;
 	}
 
 	public Integer getId() {
@@ -73,28 +88,16 @@ public class CourseScheduleTemplate implements java.io.Serializable {
 		this.courseType = courseType;
 	}
 
-	public Date getStartDate() {
-		return startDate;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public String getWeekDays() {
-		return weekDays;
-	}
-
-	public void setWeekDays(String weekDays) {
-		this.weekDays = weekDays;
+	public String getIseff() {
+		return iseff;
 	}
 
 	public Integer getStartTime() {
@@ -111,18 +114,6 @@ public class CourseScheduleTemplate implements java.io.Serializable {
 
 	public void setEndTime(Integer endTime) {
 		this.endTime = endTime;
-	}
-
-	public Integer getIsFinish() {
-		return isFinish;
-	}
-
-	public void setIsFinish(Integer isFinish) {
-		this.isFinish = isFinish;
-	}
-
-	public String getIseff() {
-		return iseff;
 	}
 
 	public void setIseff(String iseff) {

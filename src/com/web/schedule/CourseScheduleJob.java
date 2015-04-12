@@ -11,8 +11,8 @@ import org.apache.log4j.Logger;
 import com.core.app.service.BaseModelService;
 import com.util.DateFormat;
 import com.web.constant.CourseScheduleIsFinish;
-import com.web.model.CourseSchedule;
-import com.web.service.CourseScheduleService;
+import com.web.model.CourseScheduleDetail;
+import com.web.service.CourseScheduleDetailService;
 import com.web.service.OrderService;
 
 /**
@@ -29,20 +29,20 @@ public class CourseScheduleJob {
 	@Resource
 	private OrderService orderService;
 	@Resource
-	private CourseScheduleService courseScheduleService;
+	private CourseScheduleDetailService courseScheduleDetailService;
 
 	private static ReentrantLock lock = new ReentrantLock(false);
 
 	public void execute() {
 		try {
 			lock.lock();
-			List<CourseSchedule> scheduleList = courseScheduleService
+			List<CourseScheduleDetail> scheduleList = courseScheduleDetailService
 					.getNotFinishSchedule();
 			logger.info(scheduleList.size());
 			if (scheduleList == null || scheduleList.isEmpty())
 				return;
-			for (CourseSchedule courseSchedule : scheduleList) {
-				courseScheduleService.confirmCourseHour(courseSchedule);
+			for (CourseScheduleDetail courseSchedule : scheduleList) {
+				courseScheduleDetailService.confirmCourseHour(courseSchedule);
 			}
 		} catch (Exception e) {
 			logger.error("error in CourseScheduleJob", e);

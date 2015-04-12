@@ -7,9 +7,10 @@
 		var teacherId = jQuery.url.param("teacherId");
 		var shedulePanel = new Ext.FormPanel({ 
 			region : 'center',
-			split : true, 
-			autoScroll : true,
+			split : true,  
 			defaultType : "textfield",
+			height:1000, 
+			autoScroll : true,
 			buttonAlign : 'center',
 			items : [  new Schedule.showCalender(teacherId)
 			]  

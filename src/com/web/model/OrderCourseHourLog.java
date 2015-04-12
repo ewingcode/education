@@ -24,14 +24,14 @@ public class OrderCourseHourLog implements java.io.Serializable {
 	private Integer scheduleId;
 	private Integer orderId;
 	private Integer orderCourseId;
-	private Integer scheduleTemplateId; 
-	
-	public Integer getScheduleTemplateId() {
-		return scheduleTemplateId;
+	private Integer scheduleDetailId;
+
+	public Integer getScheduleDetailId() {
+		return scheduleDetailId;
 	}
 
-	public void setScheduleTemplateId(Integer scheduleTemplateId) {
-		this.scheduleTemplateId = scheduleTemplateId;
+	public void setScheduleDetailId(Integer scheduleDetailId) {
+		this.scheduleDetailId = scheduleDetailId;
 	}
 
 	public Integer getOrderId() {

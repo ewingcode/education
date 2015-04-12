@@ -7,19 +7,25 @@
 	Ext.onReady(function() {
 		var teacherId = jQuery.url.param("teacherId");
 		  var scheduledailyUrl = _contextPath + "/page/teacher/course/scheduledaily.jsp?teacherId="+ teacherId;
+		  var scheduleSettingUrl = _contextPath + "/page/teacher/course/schedulesetting.jsp?teacherId="+ teacherId;
 		  var tabs = new Ext.TabPanel({  
-			    activeTab: 0, 
-		        height:430,  
+			    activeTab: 0,  
 		        border : false,
-		        autoScroll:false,
-		        defaults:{autoHeight: true},
+		        autoScroll:false, 
 		        items:[ 
-		               {	title : '日程表', 
-			            	height:400,  
+		               {	title : '排课列表',  
+		            	    height:800,
 							autoWidth : true,
 							iconCls : 'tabs', 
-							html : '<iframe  src="'+scheduledailyUrl+ '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+							html : '<iframe  src="'+scheduleSettingUrl+ '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
+						} ,
+		               {	title : '日程表',  
+							autoWidth : true,
+							 height:800,
+							iconCls : 'tabs', 
+							html : '<iframe  src="'+scheduledailyUrl+ '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
 						} 
+						
 					 
 		        ]
 		    });

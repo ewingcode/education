@@ -10,13 +10,14 @@ import java.util.Date;
 public class CourseSchedule implements java.io.Serializable {
 
 	private Integer id;
-	private Integer scheduleTemplateId; 
-	private Integer orderCourseId;
-	private Integer orderId;
 	private Integer teacherId;
 	private Integer studentId;
 	private String courseType;
-	private Date date;
+	private Date startDate;
+	private Date endDate;
+	private String weekDays;
+	private Integer totalCourseHour;
+	private Integer totalCostHour;
 	private Integer startTime;
 	private Integer endTime;
 	private Integer isFinish;
@@ -24,36 +25,20 @@ public class CourseSchedule implements java.io.Serializable {
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
 
-	public Integer getScheduleTemplateId() {
-		return scheduleTemplateId;
+	public Integer getTotalCostHour() {
+		return totalCostHour;
 	}
 
-	public void setScheduleTemplateId(Integer scheduleTemplateId) {
-		this.scheduleTemplateId = scheduleTemplateId;
+	public void setTotalCostHour(Integer totalCostHour) {
+		this.totalCostHour = totalCostHour;
 	}
 
-	public Integer getOrderId() {
-		return orderId;
+	public Integer getTotalCourseHour() {
+		return totalCourseHour;
 	}
 
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
-	}
-
-	public Integer getOrderCourseId() {
-		return orderCourseId;
-	}
-
-	public void setOrderCourseId(Integer orderCourseId) {
-		this.orderCourseId = orderCourseId;
-	}
-
-	public Integer getIsFinish() {
-		return isFinish;
-	}
-
-	public void setIsFinish(Integer isFinish) {
-		this.isFinish = isFinish;
+	public void setTotalCourseHour(Integer totalCourseHour) {
+		this.totalCourseHour = totalCourseHour;
 	}
 
 	public Integer getId() {
@@ -88,16 +73,28 @@ public class CourseSchedule implements java.io.Serializable {
 		this.courseType = courseType;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
-	public String getIseff() {
-		return iseff;
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getWeekDays() {
+		return weekDays;
+	}
+
+	public void setWeekDays(String weekDays) {
+		this.weekDays = weekDays;
 	}
 
 	public Integer getStartTime() {
@@ -114,6 +111,18 @@ public class CourseSchedule implements java.io.Serializable {
 
 	public void setEndTime(Integer endTime) {
 		this.endTime = endTime;
+	}
+
+	public Integer getIsFinish() {
+		return isFinish;
+	}
+
+	public void setIsFinish(Integer isFinish) {
+		this.isFinish = isFinish;
+	}
+
+	public String getIseff() {
+		return iseff;
 	}
 
 	public void setIseff(String iseff) {

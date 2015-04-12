@@ -13,7 +13,7 @@ import com.web.constant.OrderAttachStatus;
 import com.web.constant.OrderCourseStatus;
 import com.web.constant.OrderRunStatus;
 import com.web.constant.SysParamConstant;
-import com.web.model.CourseSchedule;
+import com.web.model.CourseScheduleDetail;
 import com.web.model.OrderCourse;
 import com.web.model.OrderCourseHourLog;
 import com.web.model.OrderInfo;
@@ -57,7 +57,7 @@ public class OrderCourseService {
 	public void updateCourseScheduleHour(Integer orderCourseId) {
 		OrderCourse orderCourse = findOrderCourse(orderCourseId);
 		String sql = "select sum((endTime - startTime)/100)  from  "
-				+ CourseSchedule.class.getName() + " where order_course_id="
+				+ CourseScheduleDetail.class.getName() + " where order_course_id="
 				+ orderCourseId;
 		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
 		orderCourse.setScheduleHour(totalSchedulehour.intValue());

@@ -145,7 +145,7 @@ Ext.onReady(function() {
 					 var teacherId = e.data.teacherId;
 					 var teacherName = e.data.teacherName;  
 					 var showPage = _contextPath
-						+ "/page/teacher/course/schedule.jsp?teacherId="+teacherId ; 
+						+ "/page/teacher/course/scheduleframe.jsp?teacherId="+teacherId ; 
 				     var tab_id = "busi_tab_order_"
 						+ orderId;
 				     Frame.addTab(mainFrame, '排课['+teacherName+']', tab_id,  showPage);

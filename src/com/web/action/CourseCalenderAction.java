@@ -19,7 +19,7 @@ import com.web.bean.CourseScheduleListDto;
 import com.web.model.CourseScheduleView;
 import com.web.model.TeacherInfo;
 import com.web.service.CoursePeriodService;
-import com.web.service.CourseScheduleService;
+import com.web.service.CourseScheduleDetailService;
 import com.web.service.TeacherService;
 
 /**
@@ -35,7 +35,7 @@ public class CourseCalenderAction extends BaseAction {
 	@Resource
 	private CoursePeriodService coursePeriodService;
 	@Resource
-	private CourseScheduleService courseScheduleService;
+	private CourseScheduleDetailService courseScheduleDetailService;
 
 	public CourseCalenderAction() {
 		super(TeacherInfo.class);
@@ -90,7 +90,7 @@ public class CourseCalenderAction extends BaseAction {
 		teacherIds.add(teacherId);
 		List<List<Date>> calendarList = DateFormat.getCalendarWeekTime(month);
 
-		List<CourseScheduleView> scheduleHis = courseScheduleService
+		List<CourseScheduleView> scheduleHis = courseScheduleDetailService
 				.getTeacherSchedule(teacherIds, startDateOfmonth,
 						endDateOfmonth);
 		for (List<Date> t : calendarList) {

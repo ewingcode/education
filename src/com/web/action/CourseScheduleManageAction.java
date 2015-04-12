@@ -17,10 +17,10 @@ import com.util.DateFormat;
 import com.web.bean.CourseScheduleDto;
 import com.web.exception.CourseScheduleException;
 import com.web.model.CoursePeriod;
-import com.web.model.CourseSchedule;
+import com.web.model.CourseScheduleDetail;
 import com.web.model.CourseScheduleView;
 import com.web.service.CoursePeriodService;
-import com.web.service.CourseScheduleService;
+import com.web.service.CourseScheduleDetailService;
 import com.web.service.TeacherService;
 
 /**
@@ -38,19 +38,19 @@ public class CourseScheduleManageAction extends BaseAction {
 	@Resource
 	private CoursePeriodService coursePeriodService;
 	@Resource
-	private CourseScheduleService courseScheduleService;
+	private CourseScheduleDetailService courseScheduleDetailService;
 	@Resource
 	private SysParamService sysParamService;
 
 	public CourseScheduleManageAction() {
-		super(CourseSchedule.class);
+		super(CourseScheduleDetail.class);
 	}
 
 	@Override
 	public void save() throws ActionException {
 		ResponseData responseData = null;
 		try {
-			CourseSchedule courseSchedule = new CourseSchedule();
+			CourseScheduleDetail courseSchedule = new CourseScheduleDetail();
 			super.buildPageData(courseSchedule);
 			Integer coursePeriod = Integer.valueOf(request
 					.getParameter("coursePeriod"));
@@ -64,7 +64,7 @@ public class CourseScheduleManageAction extends BaseAction {
 				}
 			}
 
-			courseScheduleService.addSchedule(courseSchedule.getTeacherId(),
+			courseScheduleDetailService.addSchedule(courseSchedule.getTeacherId(),
 					courseSchedule.getStudentId(), courseSchedule.getDate(),
 					courseSchedule.getCourseType(),
 					courseSchedule.getStartTime(), courseSchedule.getEndTime());
@@ -131,9 +131,9 @@ public class CourseScheduleManageAction extends BaseAction {
 			if (entityBean == null)
 				throw new ActionException(
 						"entityClass must be defined in Action");
-			CourseSchedule courseSchedule = (CourseSchedule) this
+			CourseScheduleDetail courseSchedule = (CourseScheduleDetail) this
 					.buildPageData(entityBean);
-			boolean isFinished = courseScheduleService
+			boolean isFinished = courseScheduleDetailService
 					.isFinishSchedule(courseSchedule.getId());
 			if (isFinished)
 				throw new CourseScheduleException("排课计划已经结束");
