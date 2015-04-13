@@ -14,9 +14,12 @@
 		</property>
 		<property name="orderCourseId" type="java.lang.Integer">
 			<column name="order_course_id" />
+		</property> 
+		<property name="scheduleId" type="java.lang.Integer">
+			<column name="schedule_id" />
 		</property>
-		<property name="scheduleTemplateId" type="java.lang.Integer">
-			<column name="schedule_template_id" />
+		<property name="scheduleDetailId" type="java.lang.Integer">
+			<column name="schedule_detail_id" />
 		</property>
 		<property name="courseType" type="java.lang.String">
 			<column name="course_type" />
@@ -29,9 +32,6 @@
 		</property>
 		<property name="costHour" type="java.lang.Integer">
 			<column name="cost_hour" />
-		</property>
-		<property name="scheduleId" type="java.lang.Integer">
-			<column name="schedule_id" />
 		</property>
 		<property name="status" type="java.lang.String">
 			<column name="status" />

@@ -80,7 +80,7 @@ public class CourseScheduleService {
 				.find(sql, OrderCourse.class);
 		Calendar cal = Calendar.getInstance();
 		for (Date d : scheduleDateList) {
-			int week = cal.get(Calendar.WEEK_OF_YEAR);
+			int week = cal.get(Calendar.DAY_OF_WEEK);
 			for (String weekday : weekDays) {
 				if (week == Integer.valueOf(weekday)) {
 					CourseScheduleDetail courseSchedule = courseScheduleDetailService

@@ -4,8 +4,9 @@ Ext.ns("Schedule");
 /**
  * 弹出计算排课列表
  */
-Schedule.computeScheduleResult = function(teacherId, studentId, courseType,coursePeriod,scheduleWeekday,startDay,endDay) {
+Schedule.computeScheduleResult = function(teacherId, studentId, courseType,coursePeriod,scheduleWeekday,startDate,endDate) {
 	var scheduleDetailStatusStore = new SysParam.store("SCHEDULE_DETAIL_STATUS");
+	var orderCourseStore = new SysParam.store("ORDER_COURSE"); 
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
 			url : 'Busi_CourseSchedule_computeScheduleList.action'
@@ -19,7 +20,7 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 				name : "id",
 				mapping : 'id',
 				hidden : true,
-			},  "courseType","startTime","endTime","teacherId","studentId","date","isFinish", ]
+			},  "courseType","startTime","endTime","teacherId","studentId","date","isFinish" ]
 		})
 	});
 
@@ -30,9 +31,9 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 				studentId : studentId,
 				courseType : courseType,
 				coursePeriod : coursePeriod,
-				weekdays : scheduleWeekday,
-				startDay : startDay,
-				startDay : endDay,
+				weekDays : scheduleWeekday,
+				startDate : startDate,
+				endDate : endDate
 			}
 		});
 	}
@@ -480,10 +481,16 @@ Schedule.addSchedulePanel = function(teacherId) {
 					handler : function() {
 
 						if (!settingForm.getForm().isValid())
-							return; 
+							return;  
+						var coursePeriod = Ext.getCmp("coursePeriod").getValue(); 
+						var scheduleWeekday = Public.getCheckList("scheduleWeekday"); 
+						var startDate = Ext.getCmp("startDate").getValue().format("Y-m-d"); 
+						var endDate = Ext.getCmp("endDate").getValue().format("Y-m-d");
+						var courseType = Ext.getCmp("courseType").getValue();
+						var studentId = Ext.getCmp("studentId").getValue();
 						new Schedule.computeScheduleResult(teacherId,
-								$("#studentId").val(), $("#courseType").val(),
-								$("#coursePeriod").val() ,$("#scheduleWeekday").val() ,$("#startDay").val(),$("#endDay").val());
+								studentId, courseType,
+								coursePeriod ,scheduleWeekday ,startDate,endDate);
 						/*settingForm.getForm().submit({
 							url : "Busi_CourseScheduleManage_save.action",
 							method : "post",

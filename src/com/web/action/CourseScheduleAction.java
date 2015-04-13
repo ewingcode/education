@@ -30,7 +30,7 @@ public class CourseScheduleAction extends BaseAction {
 	}
 	@Resource
 	private CoursePeriodService coursePeriodService;
-
+	@Resource
 	private CourseScheduleService courseScheduleService;
 	/**
 	 * 计算出排课列表
