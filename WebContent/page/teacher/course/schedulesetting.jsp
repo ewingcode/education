@@ -1,13 +1,13 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/common/include/head.jsp"%>
-<%@ include file="/common/include/html_head.jsp"%>
+<%@ include file="/common/include/head.jsp"%> 
+<c:set var="_jsFiles" value="${_cp}/page/teacher/course/schedulecomp.js" />
+<%@ include file="/common/include/html_head.jsp"%> 
 <script>
 	Ext.onReady(function() {
 		var orderCourseStore = new SysParam.store("ORDER_COURSE");
 		var scheduleStatusStore = new SysParam.store("SCHEDULE_STATUS");
 		var teacherId = jQuery.url.param("teacherId");
-		var weekStore = new SysParam.store("WEEK");
-		var studentId = jQuery.url.param("studentId");
+		var weekStore = new SysParam.store("WEEK"); 
 		var sm = new Ext.grid.CheckboxSelectionModel();
 		var cm = new Ext.grid.ColumnModel({
 			columns : [ sm, new Ext.grid.RowNumberer(), {
@@ -20,13 +20,13 @@
 				renderer : function(value) {
 					return Student.translate(value);
 				}
-			}, {
+			}/* , {
 				header : "授课老师",
 				dataIndex : "teacherId",
 				renderer : function(value) {
 					return SysUser.translate(value);
 				}
-			}, {
+			} */, {
 				header : "课程",
 				dataIndex : "courseType",
 				renderer : function(value) {
@@ -34,39 +34,63 @@
 				}
 			}, {
 				header : "开始日期",
-				dataIndex : "startDay",
+				dataIndex : "startDate",
 				renderer : Ext.util.Format.dateRenderer('Y-m-d')
 			}, {
 				header : "结束日期",
-				dataIndex : "endDay",
+				dataIndex : "endDate",
 				renderer : Ext.util.Format.dateRenderer('Y-m-d')
 			}, {
-				header : "开始时间",
-				dataIndex : "startTime"
+				header : "课程时间",
+				dataIndex : "startTime",
+				renderer : function(value, metaData, record, rowIndex,
+						colIndex, store) { 
+					return value+"-"+record.get("endTime");
+				}
 
-			}, {
-				header : "结束时间",
-				dataIndex : "endTime"
-			}, {
+			} , {
 				header : "总课时",
 				dataIndex : "totalCourseHour"
 			}, {
 				header : "排课日",
-				dataIndex : "weekdays",
+				dataIndex : "weekDays",
 				renderer : function(value) {
-					return SysParam.translateArray(weekStore, value);
+					 return SysParam.translateArray(weekStore, value);
 				}
 			}, {
-				header : "状态",
+				header : "状态1",
 				dataIndex : "status",
 				renderer : function(value) {
-					return SysParam.translate(scheduleStatusStore, value);
+					 return SysParam.translate(scheduleStatusStore, value);
 				}
-			} ],
+			} ,
+			{
+				header : "课程时间",
+				dataIndex : "startTime",
+				renderer : function(value, metaData, record, rowIndex,
+						colIndex, store) { 
+					return value+"-"+record.get("endTime");
+				}
+
+			} ,{
+				header : "操作",
+				xtype : 'actioncolumn',
+				items : [ {
+					getClass : function(v, meta, rec) {  
+						  return "btn_edit";
+					},
+					tooltip : '编辑',
+					handler : function(grid, rowIndex, colIndex) {
+						var rec = store.getAt(rowIndex);
+						new Schedule.showScheduleDetailList(rec.get('id') );
+					}
+				} ]
+			}
+             ],
 			defaults : {
 				sortable : true,
 				menuDisabled : false,
-				width : 100
+				width : 150
 			}
 		});
 
@@ -83,27 +107,8 @@
 					name : "id",
 					type : "int"
 				}, "teacherId", "courseType", "totalCourseHour",
-						"totalCostHour", "studentId", "status", "weekdays", {
-							name : "createTime",
-							type : "date",
-							mapping : 'createTime.time',
-							dateFormat : 'time'
-						}, {
-							name : "lastUpdate",
-							type : "date",
-							mapping : 'lastUpdate.time',
-							dateFormat : 'time'
-						}, {
-							name : "startDay",
-							type : "date",
-							mapping : 'examTime.time',
-							dateFormat : 'time'
-						}, {
-							name : "endDay",
-							type : "date",
-							mapping : 'examTime.time',
-							dateFormat : 'time'
-						} ]
+						"totalCostHour", "studentId", "status", "weekDays",
+						"startDate","endDate","startTime","endTime" ]
 			})
 		});
 		var gridPanel = new Ext.grid.GridPanel({
@@ -215,6 +220,7 @@
 				} ]
 			} ]
 		});
+		loadGirdStore();
 		Frame.busiPage(formpanel, gridPanel);
 
 	});

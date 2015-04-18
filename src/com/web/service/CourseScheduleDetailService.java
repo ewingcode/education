@@ -13,7 +13,7 @@ import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
 import com.util.SqlUtil;
 import com.web.constant.CourseHourStatus;
-import com.web.constant.CourseScheduleIsFinish;
+import com.web.constant.CourseScheduleDetailIsFinish;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
 import com.web.model.CourseScheduleDetail;
@@ -44,7 +44,7 @@ public class CourseScheduleDetailService {
 		CourseScheduleDetail courseSchedule = baseDao.findOne(scheduleId,
 				CourseScheduleDetail.class);
 		return courseSchedule.getIsFinish().equals(
-				CourseScheduleIsFinish.FINISHED.getValue());
+				CourseScheduleDetailIsFinish.FINISHED.getValue());
 	}
 
 	/**
@@ -61,63 +61,69 @@ public class CourseScheduleDetailService {
 	 */
 	public CourseScheduleDetail validateCourseSchedule(Integer teacherId,
 			Integer studentId, Date date, String courseType, Integer startTime,
-			Integer endTime, List<OrderCourse> orderCourseList)
+			Integer endTime, List<OrderCourse> orderCourseList, Boolean throwErr)
 			throws CourseScheduleException {
-		String errMsg = "[日期:" + DateFormat.DateToString(date) + ",开始时间:"
-				+ startTime + ",结束时间:" + endTime + "]";
-		if (existSameScheduleForTeacher(teacherId, date, startTime, endTime))
-			throw new CourseScheduleException("教学老师的课程时间安排有相同!" + errMsg);
-		if (existSameScheduleForStudent(studentId, date, startTime, endTime))
-			throw new CourseScheduleException("学生的课程时间安排有相同!" + errMsg);
-		if (!isRelStudent(teacherId, studentId))
-			throw new CourseScheduleException("不能关联该学生!");
-		if (!hasPremitToTeach(teacherId, studentId, courseType))
-			throw new CourseScheduleException("不能关联该科目!");
-		Integer fitOrderId = null;
-		Integer fitOrderCourseId = null;
-
-		int costHour = computeScheduleHour(endTime, startTime);
-		if (orderCourseList == null) {
-			// 获取学生所有的签单课程信息
-			String sql = " order_id in  (select id from  "
-					+ OrderInfo.class.getName() + " a where a.studentId="
-					+ studentId + " and a.runStatus='" + OrderRunStatus.RUNNING
-					+ "' ) and course_type='" + courseType
-					+ "' order by order_id asc";
-			orderCourseList = baseDao.find(sql, OrderCourse.class);
-		}
-		// 挑选出合适的签单课程信息
-		for (OrderCourse orderCourse : orderCourseList) {
-			Integer coursehour = orderCourse.getHour();
-			Integer costcourseHour = orderCourse.getCostHour() == null
-					? 0
-					: orderCourse.getCostHour();
-			Integer leaveHour = coursehour - costcourseHour;
-			// 如果有剩余的课时，则是合适的签单课程
-			if (leaveHour >= costHour) {
-				fitOrderCourseId = orderCourse.getId();
-				fitOrderId = orderCourse.getOrderId();
-				break;
-			}
-		}
-
-		if (fitOrderCourseId == null) {
-			throw new CourseScheduleException("学生签单课时不足");
-		}
-		// 新增排课信息
 		CourseScheduleDetail scheduleVo = new CourseScheduleDetail();
 		scheduleVo.setCourseType(courseType);
 		scheduleVo.setDate(date);
 		scheduleVo.setEndTime(endTime);
 		scheduleVo.setStartTime(startTime);
 		scheduleVo.setStudentId(studentId);
-		scheduleVo.setOrderCourseId(fitOrderCourseId);
-		scheduleVo.setOrderId(fitOrderId);
 		scheduleVo.setTeacherId(teacherId);
 		scheduleVo.setIseff(IsEff.EFFECTIVE);
-		scheduleVo.setIsFinish(CourseScheduleIsFinish.NOTFINISH.getValue());
-		scheduleVo.setOrderId(fitOrderId);
-		scheduleVo.setOrderCourseId(fitOrderCourseId);
+		scheduleVo.setIsFinish(CourseScheduleDetailIsFinish.NOTFINISH
+				.getValue());
+		String errMsg = "[日期:" + DateFormat.DateToString(date) + ",开始时间:"
+				+ startTime + ",结束时间:" + endTime + "]";
+		try {
+			if (existSameScheduleForTeacher(teacherId, date, startTime, endTime))
+				throw new CourseScheduleException("教学老师的课程时间安排有相同!" + errMsg);
+			if (existSameScheduleForStudent(studentId, date, startTime, endTime))
+				throw new CourseScheduleException("学生的课程时间安排有相同!" + errMsg);
+			if (!isRelStudent(teacherId, studentId))
+				throw new CourseScheduleException("不能关联该学生!");
+			if (!hasPremitToTeach(teacherId, studentId, courseType))
+				throw new CourseScheduleException("不能关联该科目!");
+			Integer fitOrderId = null;
+			Integer fitOrderCourseId = null;
+
+			int costHour = computeScheduleHour(endTime, startTime);
+			if (orderCourseList == null) {
+				// 获取学生所有的签单课程信息
+				String sql = " order_id in  (select id from  "
+						+ OrderInfo.class.getName() + " a where a.studentId="
+						+ studentId + " and a.runStatus='"
+						+ OrderRunStatus.RUNNING + "' ) and course_type='"
+						+ courseType + "' order by order_id asc";
+				orderCourseList = baseDao.find(sql, OrderCourse.class);
+			}
+			// 挑选出合适的签单课程信息
+			for (OrderCourse orderCourse : orderCourseList) {
+				Integer coursehour = orderCourse.getHour();
+				Integer costcourseHour = orderCourse.getCostHour() == null ? 0
+						: orderCourse.getCostHour();
+				Integer leaveHour = coursehour - costcourseHour;
+				// 如果有剩余的课时，则是合适的签单课程
+				if (leaveHour >= costHour) {
+					fitOrderCourseId = orderCourse.getId();
+					fitOrderId = orderCourse.getOrderId();
+					break;
+				}
+			}
+
+			if (fitOrderCourseId == null) {
+				throw new CourseScheduleException("学生签单课时不足");
+			}
+			// 新增排课信息
+			scheduleVo.setOrderCourseId(fitOrderCourseId);
+			scheduleVo.setOrderId(fitOrderId);
+			scheduleVo.setDesc("通过");
+		} catch (CourseScheduleException e) {
+			if (throwErr)
+				throw e;
+			else
+				scheduleVo.setDesc("不通过：" + e.getMessage());
+		}
 		return scheduleVo;
 	}
 
@@ -138,7 +144,7 @@ public class CourseScheduleDetailService {
 			String courseType, Integer startTime, Integer endTime)
 			throws CourseScheduleException {
 		CourseScheduleDetail scheduleVo = validateCourseSchedule(teacherId,
-				studentId, date, courseType, startTime, endTime, null);
+				studentId, date, courseType, startTime, endTime, null, true);
 		addSchedule(scheduleVo);
 		return true;
 	}
@@ -162,7 +168,7 @@ public class CourseScheduleDetailService {
 				DateFormat.DATETIME_FORMAT2);
 		return baseDao
 				.find("is_finish="
-						+ CourseScheduleIsFinish.NOTFINISH.getValue()
+						+ CourseScheduleDetailIsFinish.NOTFINISH.getValue()
 						+ " and CONCAT(DATE_FORMAT(DATE,'%Y%m%d'),LPAD(END_TIME, 4, 0),'00')"
 						+ " <= '" + nowTimeStr + "'",
 						CourseScheduleDetail.class);
@@ -224,9 +230,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -242,9 +248,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -277,20 +283,20 @@ public class CourseScheduleDetailService {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{1000, 1100}));
-		System.out.println(isLegalNewTime(new Integer[]{1000, 1100},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{930, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{2200, 2300}));
-		System.out.println(isLegalNewTime(new Integer[]{2200, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{800, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 1000, 1100 }));
+		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 930, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 2200, 2300 }));
+		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 900, 1000 }));
 
 		System.out.println(930 % 831);
 	}
@@ -337,7 +343,8 @@ public class CourseScheduleDetailService {
 	public void confirmCourseHour(CourseScheduleDetail scheduleDetail) {
 		Integer orderCourseId = scheduleDetail.getOrderCourseId();
 		// 更新排课的课程已经结束
-		scheduleDetail.setIsFinish(CourseScheduleIsFinish.FINISHED.getValue());
+		scheduleDetail.setIsFinish(CourseScheduleDetailIsFinish.FINISHED
+				.getValue());
 		baseDao.update(scheduleDetail);
 		// 计算消耗的课时，并且记录课时消耗记录到ordercoursehour
 		int costHour = computeScheduleHour(scheduleDetail.getEndTime(),
@@ -361,6 +368,17 @@ public class CourseScheduleDetailService {
 		if (scheduleDetail.getScheduleId() != null)
 			courseScheduleService.updateScheduleCostHour(scheduleDetail
 					.getScheduleId());
+	}
+	
+	/**
+	 * 根据计划id查询计划详细列表
+	 * @param scheduleId
+	 * @return
+	 */
+	public List<CourseScheduleDetail> getCourseScheduleDetailList(
+			Integer scheduleId) {
+		String sql = "schedule_id = " + scheduleId + " order by is_finish";
+		return baseDao.find(sql, CourseScheduleDetail.class);
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.web.schedule;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -9,8 +8,6 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 
 import com.core.app.service.BaseModelService;
-import com.util.DateFormat;
-import com.web.constant.CourseScheduleIsFinish;
 import com.web.model.CourseScheduleDetail;
 import com.web.service.CourseScheduleDetailService;
 import com.web.service.OrderService;

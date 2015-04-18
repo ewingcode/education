@@ -114,17 +114,20 @@ SysParam.translate = function(paramStore, value) {
 };
 
 SysParam.translateArray = function(paramStore, value) {
-	var retStr=null; 
+	var retStr=''; 
 	var valusArr = value.split(",");
 	for(var j=0;j < valusArr.length; j++){
 		for ( var i = 0; i < paramStore.getCount(); i++) {
-			var rec = paramStore.getAt(i);
+			var rec = paramStore.getAt(i); 
 			if (rec.get('paramValue') == valusArr[j]) {
-				retStr += rec.get('paramName')+",";
+				retStr += rec.get('paramName');
 			}
 		} 
-	}
-	
+		
+		if(j < valusArr.length-1){
+			retStr += ",";
+		}
+	} 
 	return   retStr ;
 };
  

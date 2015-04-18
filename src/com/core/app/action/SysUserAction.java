@@ -30,10 +30,16 @@ public class SysUserAction extends BaseAction {
 		if (StringUtil.isEmpty(condition))
 			condition = "";
 		try {
-			String relAreaSql = sysRightRelService.getAreaRightSql(request);
+			String relAreaSql=null;
+			try {
+				relAreaSql = sysRightRelService.getAreaRightSql(request);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (!StringUtil.isEmpty(relAreaSql))
 				return SqlUtil.combine(condition , relAreaSql);
-		} catch (SessionException e) {
+		} catch ( Exception e) {
 			e.printStackTrace();
 		}
 		return condition;

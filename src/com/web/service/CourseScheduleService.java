@@ -14,11 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.core.app.constant.IsEff;
 import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
-import com.web.constant.CourseScheduleIsFinish;
+import com.web.constant.CourseScheduleDetailIsFinish;
+import com.web.constant.CourseScheduleStatus;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
-import com.web.model.CourseScheduleDetail;
 import com.web.model.CourseSchedule;
+import com.web.model.CourseScheduleDetail;
 import com.web.model.OrderCourse;
 import com.web.model.OrderCourseHourLog;
 import com.web.model.OrderInfo;
@@ -42,7 +43,8 @@ public class CourseScheduleService {
 			CourseSchedule scheduleTempldate) throws Exception {
 		// 总课时
 		Integer totalCourseHour = 0;
-		List<CourseScheduleDetail> scheduleList = computeScheduleDetailList(scheduleTempldate);
+		List<CourseScheduleDetail> scheduleList = computeScheduleDetailList(
+				scheduleTempldate, false);
 		for (CourseScheduleDetail schedule : scheduleList) {
 			totalCourseHour += courseScheduleDetailService.computeScheduleHour(
 					schedule.getEndTime(), schedule.getStartTime());
@@ -50,6 +52,8 @@ public class CourseScheduleService {
 		scheduleTempldate.setTotalCourseHour(totalCourseHour);
 		return scheduleTempldate;
 	}
+	
+
 
 	/**
 	 * 计算出排课列表
@@ -58,7 +62,8 @@ public class CourseScheduleService {
 	 * @throws CourseScheduleException
 	 */
 	public List<CourseScheduleDetail> computeScheduleDetailList(
-			CourseSchedule scheduleTempldate) throws CourseScheduleException {
+			CourseSchedule scheduleTempldate, Boolean throwErr)
+			throws CourseScheduleException {
 		List<CourseScheduleDetail> scheduleList = new ArrayList<CourseScheduleDetail>();
 		Integer teacherId = scheduleTempldate.getTeacherId();
 		Integer studentId = scheduleTempldate.getStudentId();
@@ -80,13 +85,14 @@ public class CourseScheduleService {
 				.find(sql, OrderCourse.class);
 		Calendar cal = Calendar.getInstance();
 		for (Date d : scheduleDateList) {
+			cal.setTime(d);
 			int week = cal.get(Calendar.DAY_OF_WEEK);
 			for (String weekday : weekDays) {
 				if (week == Integer.valueOf(weekday)) {
 					CourseScheduleDetail courseSchedule = courseScheduleDetailService
 							.validateCourseSchedule(teacherId, studentId, d,
 									courseType, startTime, endTime,
-									orderCourseList);
+									orderCourseList, throwErr);
 					scheduleList.add(courseSchedule);
 				}
 			}
@@ -106,7 +112,8 @@ public class CourseScheduleService {
 	@Transactional
 	public List<CourseScheduleDetail> addScheduleDetail(
 			CourseSchedule scheduleTempldate) throws Exception {
-		List<CourseScheduleDetail> scheduleList = computeScheduleDetailList(scheduleTempldate);
+		List<CourseScheduleDetail> scheduleList = computeScheduleDetailList(
+				scheduleTempldate, true);
 		Integer totalCourseHour = 0;
 		for (CourseScheduleDetail schedule : scheduleList) {
 			courseScheduleDetailService.addSchedule(schedule);
@@ -115,6 +122,7 @@ public class CourseScheduleService {
 		}
 		scheduleTempldate.setTotalCourseHour(totalCourseHour);
 		scheduleTempldate.setIseff(IsEff.EFFECTIVE);
+		scheduleTempldate.setStatus(CourseScheduleStatus.NOTBEGIN.getValue());
 		baseDao.save(scheduleTempldate);
 		for (CourseScheduleDetail schedule : scheduleList) {
 			schedule.setScheduleId(scheduleTempldate.getId());
@@ -141,6 +149,16 @@ public class CourseScheduleService {
 				+ scheduleId;
 		Long totalCosthour = baseDao.queryObject(sql, Long.class);
 		scheduleTemplate.setTotalCostHour(totalCosthour.intValue());
+		if (scheduleTemplate.getTotalCourseHour() > scheduleTemplate
+				.getTotalCostHour())
+			scheduleTemplate.setStatus(CourseScheduleStatus.RUNNING.getValue());
+		else if (scheduleTemplate.getTotalCourseHour() == scheduleTemplate
+				.getTotalCostHour())
+			scheduleTemplate
+					.setStatus(CourseScheduleStatus.FINISHED.getValue());
+		else if (totalCosthour == 0)
+			scheduleTemplate
+					.setStatus(CourseScheduleStatus.NOTBEGIN.getValue());
 		baseDao.update(scheduleTemplate);
 	}
 
@@ -157,7 +175,7 @@ public class CourseScheduleService {
 		String deleteSql = "delete from course_schedule_detail  where schedule_id ="
 				+ scheduleId
 				+ " and is_finish="
-				+ CourseScheduleIsFinish.NOTFINISH.getValue();
+				+ CourseScheduleDetailIsFinish.NOTFINISH.getValue();
 		baseDao.executeSql(deleteSql);
 		baseDao.delete(scheduleTemplate);
 	}

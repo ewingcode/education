@@ -24,6 +24,15 @@ public class CourseSchedule implements java.io.Serializable {
 	private String iseff;
 	private Timestamp createTime;
 	private Timestamp lastUpdate;
+	private String status;
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public Integer getTotalCostHour() {
 		return totalCostHour;

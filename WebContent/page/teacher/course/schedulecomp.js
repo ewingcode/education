@@ -1,15 +1,16 @@
 Ext.ns("Schedule");
 
 
+
 /**
- * 弹出计算排课列表
+ * 显示课程计划的详细列表
  */
-Schedule.computeScheduleResult = function(teacherId, studentId, courseType,coursePeriod,scheduleWeekday,startDate,endDate) {
+Schedule.showScheduleDetailList = function(scheduleId) {
 	var scheduleDetailStatusStore = new SysParam.store("SCHEDULE_DETAIL_STATUS");
 	var orderCourseStore = new SysParam.store("ORDER_COURSE"); 
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
-			url : 'Busi_CourseSchedule_computeScheduleList.action'
+			url : 'Busi_CourseSchedule_showScheduleDetailList.action'
 
 		}),
 		reader : new Ext.data.JsonReader({
@@ -20,21 +21,22 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 				name : "id",
 				mapping : 'id',
 				hidden : true,
-			},  "courseType","startTime","endTime","teacherId","studentId","date","isFinish" ]
+			},  "courseType","startTime","endTime","teacherId","studentId",
+			"date","isFinish","desc","totalScheduleHour","totalCostScheduleHour" ]
 		})
 	});
 
 	function loadStore() {
-		store.reload({
+		store.load({
 			params : {
-				teacherId : teacherId,
-				studentId : studentId,
-				courseType : courseType,
-				coursePeriod : coursePeriod,
-				weekDays : scheduleWeekday,
-				startDate : startDate,
-				endDate : endDate
-			}
+				scheduleId : scheduleId
+			},
+		    callback: function(r, options, success){   
+		        if(success){     
+		        	 Ext.getCmp("totalScheduleHour").setValue(r[0].get('totalScheduleHour'));  
+		        	 Ext.getCmp("totalCostScheduleHour").setValue(r[0].get('totalCostScheduleHour'));  
+		        }  
+		    }    
 		});
 	}
 
@@ -64,70 +66,24 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 							renderer : function(value) {
 								return SysParam.translate(orderCourseStore, value);
 							}
-						} , {
-							header : "开始时间",
-							dataIndex : "startTime"
-
+						} ,{
+							header : "日期",
+							dataIndex : "date",
+							renderer : Ext.util.Format.dateRenderer('Y-m-d')
 						}, {
-							header : "结束时间",
-							dataIndex : "endTime"
+							header : "课程时间",
+							dataIndex : "startTime",
+							renderer : function(value, metaData, record, rowIndex,
+									colIndex, store) { 
+								return value+"-"+record.get("endTime");
+							}
+
 						} , {
 							header : "状态",
 							dataIndex : "isFinish",
 							renderer : function(value) { 
 								return SysParam.translate(scheduleDetailStatusStore, value);
 							}
-						},
-						{
-							header : "操作",
-							xtype : 'actioncolumn',
-							items : [ {
-								getClass : function(v, meta, rec) { 
-									//只对没有结束的计划提供删除的按钮
-									if(rec.get("isFinish") ==0)
-									  return "btn_remove";
-								},
-								tooltip : '删除',
-								handler : function(grid, rowIndex, colIndex) {
-									var rec = store.getAt(rowIndex);
-									Ext.Msg
-											.confirm(
-													"信息确认",
-													"您确认要删除该记录吗？",
-													function(c) {
-														if (c == "yes") {
-															Ext.Ajax
-																	.request({
-																		url : "Busi_CourseScheduleManage_delete.action",
-																		params : {
-																			id : rec
-																					.get('id')
-																		},
-																		method : "post",
-																		success : function() {
-																			Ext.Msg
-																					.show({
-																						title : '编辑',
-																						msg : '成功删除记录',
-																						buttons : Ext.MessageBox.OK,
-																						icon : Ext.Msg.INFO
-																					});
-																			loadStore();
-																		},
-																		failure : function() {
-																			Ext.MessageBox
-																					.show({
-																						title : "操作信息",
-																						msg : "信息保存出错，请联系管理员！",
-																						buttons : Ext.MessageBox.OK,
-																						icon : "ext-mb-error"
-																					});
-																		}
-																	});
-														}
-													});
-								}
-							} ]
 						} ],
 				defaults : {
 					width : 160,
@@ -148,22 +104,97 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 			showPreview : false
 		}
 	});
+	var formpanel = new Ext.FormPanel({
+		labelAlign : 'left',// 字样显示在顶部
+		bodyStyle : 'padding:5px',
+		plain : true,
+		items : [  {
+			xtype : 'fieldset',
+			layout : "column",  
+			autoHeight : true,
+			items : [ {
+				xtype : "container",
+				columnWidth : 0.5,
+				defaultType : "textfield",
+				layout : "form",
+				defaults : {
+					anchor : "96%,96%",
+					labelStyle : 'text-align:right;'
+				},
 
+				items : [ {
+					id : "totalScheduleHour",
+					fieldLabel : "总课时",
+					readOnly:true
+				} ]
+			} ,{
+				xtype : "container",
+				columnWidth : 0.5,
+				defaultType : "textfield",
+				layout : "form",
+				defaults : {
+					anchor : "96%,96%",
+					labelStyle : 'text-align:right;'
+				},
+
+				items : [ {
+					id : "totalCostScheduleHour",
+					fieldLabel : "已消耗课时",
+					readOnly:true
+				} ]
+			} ]
+		} ]
+	});
 	loadStore();
 
 	var win = new Ext.Window({
 		id : "editScheduleWin",
-		title : '排课编辑',
-		width : 750,
-		height : 350,
+		title : '排课计划详细',
+		width : 600,
+		height : 400,
 		minWidth : 500,
 		minHeight : 300,
-		layout : 'fit',
 		plain : true,
 		bodyStyle : 'padding:5px;',
-		buttonAlign : 'center',
-		items : [ gridPanel ],
+		buttonAlign : 'center', 
+		items : [ formpanel,gridPanel ],
 		buttons : [ {
+			text : "保存",
+			iconCls : "btn_save",
+			handler : function() { 
+				Ext.Msg.confirm(
+								"信息确认",
+								"您确认新建改排课计划吗？",
+								function(c) {
+									if (c == "yes") {
+										Ext.Ajax
+												.request({
+													url : "Busi_CourseSchedule_saveSchedule.action",
+													params : {
+														teacherId : teacherId,
+														studentId : studentId,
+														courseType : courseType,
+														coursePeriod : coursePeriod,
+														weekDays : scheduleWeekday,
+														startDate : startDate,
+														endDate : endDate
+													},
+													method : "post",
+													waitMsg : "正在提交数据...",
+													success : function(response, opts) {
+														var rec = Ext.util.JSON.decode(response.responseText); 
+														Common.SucMegBox(rec.retinfo); 
+													},
+													failure : function(response, opts) {
+														var rec = Ext.util.JSON.decode(response.responseText); 
+														Common.ErrMegBox(rec.retinfo); 
+													}
+												});
+									}
+								});
+			
+			}
+		} , {
 			text : "关闭",
 			iconCls : "btn_cancel",
 			handler : function() {
@@ -173,6 +204,214 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 	});
 	win.show();
 }
+
+
+/**
+ * 弹出计算排课列表
+ */
+Schedule.computeScheduleResult = function(teacherId, studentId, courseType,coursePeriod,scheduleWeekday,startDate,endDate) {
+	var scheduleDetailStatusStore = new SysParam.store("SCHEDULE_DETAIL_STATUS");
+	var orderCourseStore = new SysParam.store("ORDER_COURSE"); 
+	var store = new Ext.data.Store({
+		proxy : new Ext.data.HttpProxy({
+			url : 'Busi_CourseSchedule_computeScheduleList.action'
+
+		}),
+		reader : new Ext.data.JsonReader({
+			root : 'result',
+			totalProperty : 'totalProperty',
+			remoteSort : true,
+			fields : [ {
+				name : "id",
+				mapping : 'id',
+				hidden : true,
+			},  "courseType","startTime","endTime","teacherId","studentId","date","isFinish","desc","totalScheduleHour" ]
+		})
+	});
+
+	function loadStore() {
+		store.load({
+			params : {
+				teacherId : teacherId,
+				studentId : studentId,
+				courseType : courseType,
+				coursePeriod : coursePeriod,
+				weekDays : scheduleWeekday,
+				startDate : startDate,
+				endDate : endDate
+			},
+			 callback: function(r, options, success){  
+				
+				  
+			        if(success){     
+			        	 Ext.getCmp("totalScheduleHour").setValue(r[0].get('totalScheduleHour'));  
+			        }  
+			    }       
+		});
+	}
+
+	var cm = new Ext.grid.ColumnModel(
+			{
+				columns : [
+						new Ext.grid.RowNumberer(),
+						{
+							header : "id",
+							dataIndex : "id",
+							hidden : true
+						}, {
+							header : "描述",
+							width : 250,
+							dataIndex : "desc",
+							renderer : function(value) {
+								if(value != '通过')
+									return "<span style='color:red'>" + value
+									+ "</span>";
+								else
+								    return value;
+							}
+						}, {
+							header : "学生名称",
+							dataIndex : "studentId",
+							renderer : function(value) {
+								return Student.translate(value);
+							}
+						}, {
+							header : "授课老师",
+							dataIndex : "teacherId",
+							renderer : function(value) {
+								return SysUser.translate(value);
+							}
+						}, {
+							header : "课程",
+							dataIndex : "courseType",
+							renderer : function(value) {
+								return SysParam.translate(orderCourseStore, value);
+							}
+						} ,{
+							header : "日期",
+							dataIndex : "date",
+							renderer : Ext.util.Format.dateRenderer('Y-m-d')
+						}, {
+							header : "课程时间",
+							dataIndex : "startTime",
+							renderer : function(value, metaData, record, rowIndex,
+									colIndex, store) { 
+								return value+"-"+record.get("endTime");
+							}
+
+						} /*, {
+							header : "状态",
+							dataIndex : "isFinish",
+							renderer : function(value) { 
+								return SysParam.translate(scheduleDetailStatusStore, value);
+							}
+						}*/ ],
+				defaults : {
+					width : 160,
+					align : "center"
+				}
+			});
+	var gridPanel = new Ext.grid.EditorGridPanel({
+		id : "fileGird",
+		store : store,
+		region : "center",
+		autoScroll : true,
+		cm : cm,
+		height : 600,
+		clicksToEdit : 1,
+		viewConfig : {
+			forceFit : true,// 填满width.
+			enableRowBody : true,
+			showPreview : false
+		}
+	});
+	var formpanel = new Ext.FormPanel({
+		labelAlign : 'left',// 字样显示在顶部
+		bodyStyle : 'padding:5px',
+		plain : true,
+		items : [  {
+			xtype : 'fieldset',
+			layout : "column",  
+			autoHeight : true,
+			items : [ {
+				xtype : "container",
+				columnWidth : 0.3,
+				defaultType : "textfield",
+				layout : "form",
+				defaults : {
+					anchor : "96%,96%",
+					labelStyle : 'text-align:right;'
+				},
+
+				items : [ {
+					id : "totalScheduleHour",
+					fieldLabel : "总课时",
+					readOnly:true
+				} ]
+			} ]
+		} ]
+	});
+	loadStore();
+
+	var win = new Ext.Window({
+		id : "editScheduleWin",
+		title : '排课计划',
+		width : 850,
+		height : 500,
+		minWidth : 500,
+		minHeight : 300,
+		plain : true,
+		bodyStyle : 'padding:5px;',
+		buttonAlign : 'center', 
+		items : [ formpanel,gridPanel ],
+		buttons : [ {
+			text : "保存",
+			iconCls : "btn_save",
+			handler : function() { 
+				Ext.Msg.confirm(
+								"信息确认",
+								"您确认新建改排课计划吗？",
+								function(c) {
+									if (c == "yes") {
+										Ext.Ajax
+												.request({
+													url : "Busi_CourseSchedule_saveSchedule.action",
+													params : {
+														teacherId : teacherId,
+														studentId : studentId,
+														courseType : courseType,
+														coursePeriod : coursePeriod,
+														weekDays : scheduleWeekday,
+														startDate : startDate,
+														endDate : endDate
+													},
+													method : "post",
+													waitMsg : "正在提交数据...",
+													success : function(response, opts) {
+														var rec = Ext.util.JSON.decode(response.responseText); 
+														Common.SucMegBox(rec.retinfo); 
+													},
+													failure : function(response, opts) {
+														var rec = Ext.util.JSON.decode(response.responseText); 
+														Common.ErrMegBox(rec.retinfo); 
+													}
+												});
+									}
+								});
+			
+			}
+		} , {
+			text : "关闭",
+			iconCls : "btn_cancel",
+			handler : function() {
+				win.close();
+			}
+		} ]
+	});
+	win.show();
+}
+
+
 /**
  * 弹出单日排课列表
  */

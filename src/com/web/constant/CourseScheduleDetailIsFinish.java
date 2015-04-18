@@ -1,10 +1,10 @@
 package com.web.constant;
 
-public enum CourseScheduleIsFinish {
+public enum CourseScheduleDetailIsFinish {
 	NOTFINISH(0), FINISHED(1);
 	private Integer value;
 
-	private CourseScheduleIsFinish(Integer value) {
+	private CourseScheduleDetailIsFinish(Integer value) {
 		this.value = value;
 	}
 

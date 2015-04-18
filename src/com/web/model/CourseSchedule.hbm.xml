@@ -38,6 +38,12 @@
 		<property name="endTime" type="java.lang.Integer">
 			<column name="end_time" length="4" not-null="true" />
 		</property>
+		<property name="weekDays" type="java.lang.String">
+			<column name="week_days"   not-null="true" />
+		</property>
+		<property name="status" type="java.lang.String">
+			<column name="status"   not-null="true" />
+		</property>
 		<property name="iseff" type="java.lang.String">
 			<column name="iseff" length="1" not-null="true" />
 		</property>
