@@ -108,7 +108,7 @@
 		<tx:attributes>
 			<tx:method name="get*" read-only="true" propagation="NOT_SUPPORTED" />
 			<tx:method name="find*" read-only="true" propagation="NOT_SUPPORTED" />
-			<tx:method name="*" propagation="REQUIRED" />
+			<tx:method name="*" propagation="SUPPORTS" />
 		</tx:attributes>
 	</tx:advice>
 	<!--

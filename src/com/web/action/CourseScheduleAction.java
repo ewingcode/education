@@ -148,4 +148,23 @@ public class CourseScheduleAction extends BaseAction {
 		this.outResult(responseData);
 	}
 
+	/**
+	 * 删除排课计划
+	 * 
+	 * @throws ActionException
+	 */
+	@Override
+	public void delete() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			Integer scheduleId = Integer.valueOf(request
+					.getParameter("scheduleId"));
+			courseScheduleDetailService.deleteScheduleDetail(scheduleId);
+			responseData = ResponseUtils.success("删除成功！");
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("删除失败！");
+		}
+		this.outResult(responseData);
+	}
 }

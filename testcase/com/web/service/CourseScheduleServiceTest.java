@@ -50,14 +50,14 @@ public class CourseScheduleServiceTest extends BaseTest {
 	public void testAddScheduleDetail() throws Exception {
 		CourseSchedule courseSchedule = new CourseSchedule();
 		courseSchedule.setCourseType("2");
-		courseSchedule.setEndDate(DateFormat.stringToDate("2015-04-24"));
-		courseSchedule.setStartDate(DateFormat.stringToDate("2015-04-14"));
+		courseSchedule.setStartDate(DateFormat.stringToDate("2015-04-18"));
+		courseSchedule.setEndDate(DateFormat.stringToDate("2015-05-01"));
 		courseSchedule.setStartTime(900);
 		courseSchedule.setEndTime(1000);
 		courseSchedule.setStudentId(1);
 		courseSchedule.setTeacherId(19);
-		courseSchedule.setWeekDays("2");
-		courseScheduleService.addScheduleDetail(courseSchedule);
-
+		courseSchedule.setWeekDays("2,3");
+		courseScheduleService.addScheduleDetail(courseSchedule); 
 	}
+
 }

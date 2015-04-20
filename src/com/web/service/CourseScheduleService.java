@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.core.app.constant.IsEff;
 import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
-import com.web.constant.CourseScheduleDetailIsFinish;
 import com.web.constant.CourseScheduleStatus;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
@@ -52,8 +51,6 @@ public class CourseScheduleService {
 		scheduleTempldate.setTotalCourseHour(totalCourseHour);
 		return scheduleTempldate;
 	}
-	
-
 
 	/**
 	 * 计算出排课列表
@@ -109,14 +106,15 @@ public class CourseScheduleService {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	@Transactional
+
+	@Transactional(rollbackFor = Exception.class)
 	public List<CourseScheduleDetail> addScheduleDetail(
 			CourseSchedule scheduleTempldate) throws Exception {
-		List<CourseScheduleDetail> scheduleList = computeScheduleDetailList(
-				scheduleTempldate, true);
+		List<CourseScheduleDetail> scheduleList;
+
+		scheduleList = computeScheduleDetailList(scheduleTempldate, true);
 		Integer totalCourseHour = 0;
 		for (CourseScheduleDetail schedule : scheduleList) {
-			courseScheduleDetailService.addSchedule(schedule);
 			totalCourseHour += courseScheduleDetailService.computeScheduleHour(
 					schedule.getEndTime(), schedule.getStartTime());
 		}
@@ -124,11 +122,12 @@ public class CourseScheduleService {
 		scheduleTempldate.setIseff(IsEff.EFFECTIVE);
 		scheduleTempldate.setStatus(CourseScheduleStatus.NOTBEGIN.getValue());
 		baseDao.save(scheduleTempldate);
+
 		for (CourseScheduleDetail schedule : scheduleList) {
 			schedule.setScheduleId(scheduleTempldate.getId());
 			courseScheduleDetailService.addSchedule(schedule);
 		}
-		return scheduleList;
+		return scheduleList; 
 	}
 
 	public CourseSchedule findOne(Integer templateId) {
@@ -161,23 +160,4 @@ public class CourseScheduleService {
 					.setStatus(CourseScheduleStatus.NOTBEGIN.getValue());
 		baseDao.update(scheduleTemplate);
 	}
-
-	/**
-	 * 删除排课模板，并且删除没有结束的排课计划
-	 * 
-	 * @param scheduleId
-	 */
-	@Transactional
-	public void deleteScheduleDetail(Integer scheduleId) {
-		CourseSchedule scheduleTemplate = findOne(scheduleId);
-		if (scheduleTemplate == null)
-			return;
-		String deleteSql = "delete from course_schedule_detail  where schedule_id ="
-				+ scheduleId
-				+ " and is_finish="
-				+ CourseScheduleDetailIsFinish.NOTFINISH.getValue();
-		baseDao.executeSql(deleteSql);
-		baseDao.delete(scheduleTemplate);
-	}
-
 }

@@ -57,6 +57,7 @@ public class OrderService {
 		}
 		return (OrderInfo) object;
 	}
+
 	/**
 	 * 更新签单消耗的课时
 	 * 
@@ -65,11 +66,16 @@ public class OrderService {
 	public void updateOrderCostHour(int orderId) {
 		OrderInfo orderInfo = findOne(orderId);
 		String sql = "select sum(costHour) from  "
-				+ OrderCourse.class.getName() + " where order_id=" + orderId;
+				+ OrderCourse.class.getName() + " where order_id=" + orderId
+				+ " group by order_id";
 		Long totalCosthour = baseDao.queryObject(sql, Long.class);
-		orderInfo.setCostCourseHour(totalCosthour.intValue());
+		orderInfo.setCostCourseHour(totalCosthour == null ? 0 : totalCosthour
+				.intValue());
+
 		if (orderInfo.getCostCourseHour() >= orderInfo.getCourseHour()) {
 			orderInfo.setRunStatus(OrderRunStatus.OVER);
+		} else {
+			orderInfo.setRunStatus(OrderRunStatus.RUNNING);
 		}
 		baseDao.update(orderInfo);
 	}
@@ -78,13 +84,18 @@ public class OrderService {
 	 * 更新签单的已经排课的课时
 	 * 
 	 * @param orderCourseId
+	 * @throws OrderException
 	 */
-	public void updateOrderScheduleHour(Integer orderId) {
+	public void updateOrderScheduleHour(Integer orderId) throws OrderException {
 		OrderInfo orderInfo = findOne(orderId);
 		String sql = "select sum(scheduleHour) from  "
 				+ OrderCourse.class.getName() + " where order_id=" + orderId;
 		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
-		orderInfo.setScheduleHour(totalSchedulehour.intValue());
+		if (totalSchedulehour != null
+				&& totalSchedulehour.intValue() > orderInfo.getCourseHour())
+			throw new OrderException("计划时间不能大于签单总课时");
+		orderInfo.setScheduleHour(totalSchedulehour == null ? 0
+				: totalSchedulehour.intValue());
 		baseDao.update(orderInfo);
 	}
 
@@ -118,7 +129,7 @@ public class OrderService {
 	 * 创建新的签单
 	 * 
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public boolean createNewOrder(OrderInfo orderInfo, int operator,
 			Map<OrderAttach, File> attachMap, String[] courses)
 			throws Exception {
@@ -170,7 +181,7 @@ public class OrderService {
 		return true;
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public boolean orderEdit(OrderInfo orderInfo, String[] courses,
 			int operator, int orderId, List<OrderCourse> courseList,
 			Map<OrderAttach, File> attachMap) throws Exception {
@@ -415,6 +426,7 @@ public class OrderService {
 	 * 
 	 * @param orderId
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	public void cancelOrder(int orderId) {
 		baseDao.executeSql("delete from order_info where id=" + orderId);
 		baseDao.executeSql("delete from order_course where order_id=" + orderId);

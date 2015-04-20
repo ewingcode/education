@@ -16,6 +16,8 @@ import com.web.constant.CourseHourStatus;
 import com.web.constant.CourseScheduleDetailIsFinish;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
+import com.web.exception.OrderException;
+import com.web.model.CourseSchedule;
 import com.web.model.CourseScheduleDetail;
 import com.web.model.CourseScheduleView;
 import com.web.model.OrderCourse;
@@ -137,25 +139,60 @@ public class CourseScheduleDetailService {
 	 * @param startTime
 	 * @param endTime
 	 * @return
+	 * @throws OrderException
 	 * @throws Exception
 	 */
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public boolean addSchedule(Integer teacherId, Integer studentId, Date date,
 			String courseType, Integer startTime, Integer endTime)
-			throws CourseScheduleException {
+			throws CourseScheduleException, OrderException {
 		CourseScheduleDetail scheduleVo = validateCourseSchedule(teacherId,
 				studentId, date, courseType, startTime, endTime, null, true);
 		addSchedule(scheduleVo);
 		return true;
 	}
 
-	public void addSchedule(CourseScheduleDetail scheduleVo) {
+	public void addSchedule(CourseScheduleDetail scheduleVo)
+			throws OrderException {
 		baseDao.save(scheduleVo);
 		// 更新签单课程的已经排课的课时
 		orderCourseService.updateCourseScheduleHour(scheduleVo
 				.getOrderCourseId());
 		// 更新签单的已经排课的课时
 		orderService.updateOrderScheduleHour(scheduleVo.getOrderId());
+	}
+
+	/**
+	 * 删除排课模板，并且删除没有结束的排课计划
+	 * 
+	 * @param scheduleId
+	 * @throws OrderException
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteScheduleDetail(Integer scheduleId) throws OrderException {
+		try {
+			CourseSchedule scheduleTemplate = courseScheduleService
+					.findOne(scheduleId);
+			if (scheduleTemplate == null)
+				return;
+			List<CourseScheduleDetail> scheduleDetailList = baseDao
+					.find("is_finish="
+							+ CourseScheduleDetailIsFinish.NOTFINISH.getValue(),
+							CourseScheduleDetail.class);
+			for (CourseScheduleDetail scheduleDetail : scheduleDetailList) {
+				baseDao.delete(scheduleDetail);
+				// 更新签单科目的排课时间
+				orderCourseService.updateCourseScheduleHour(scheduleDetail
+						.getOrderCourseId());
+				// 更新签单的已经排课的课时
+				orderService.updateOrderScheduleHour(scheduleDetail
+						.getOrderId());
+			}
+			scheduleTemplate.setIseff(IsEff.INEFFECTIVE);
+			baseDao.update(scheduleTemplate);
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 
 	/**
@@ -339,7 +376,7 @@ public class CourseScheduleDetailService {
 		return (endTime - startTime) / 100;
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void confirmCourseHour(CourseScheduleDetail scheduleDetail) {
 		Integer orderCourseId = scheduleDetail.getOrderCourseId();
 		// 更新排课的课程已经结束
@@ -360,6 +397,7 @@ public class CourseScheduleDetailService {
 		courseHourLog.setOrderId(scheduleDetail.getOrderId());
 		courseHourLog.setOrderCourseId(scheduleDetail.getOrderCourseId());
 		courseHourLog.setScheduleDetailId(scheduleDetail.getId());
+		courseHourLog.setScheduleId(scheduleDetail.getScheduleId());
 		baseDao.save(courseHourLog);
 		// 更新签单课程的消耗课时
 		orderCourseService.updateCourseCostHour(orderCourseId);
@@ -369,9 +407,10 @@ public class CourseScheduleDetailService {
 			courseScheduleService.updateScheduleCostHour(scheduleDetail
 					.getScheduleId());
 	}
-	
+
 	/**
 	 * 根据计划id查询计划详细列表
+	 * 
 	 * @param scheduleId
 	 * @return
 	 */
@@ -379,6 +418,33 @@ public class CourseScheduleDetailService {
 			Integer scheduleId) {
 		String sql = "schedule_id = " + scheduleId + " order by is_finish";
 		return baseDao.find(sql, CourseScheduleDetail.class);
+	}
+
+	/**
+	 * 手工取消课时记录，并且更新签单课时信息
+	 * 
+	 * @param courseHourLogId
+	 * @throws CourseScheduleException
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void rollbackCourseHour(Integer courseHourLogId, Integer operator)
+			throws CourseScheduleException {
+		OrderCourseHourLog courseHourLog = baseDao.findOne(courseHourLogId,
+				OrderCourseHourLog.class);
+		if (courseHourLog == null)
+			throw new CourseScheduleException("没有匹配的课时记录");
+		if (courseHourLog.getStatus()
+				.equals(CourseHourStatus.CANCEL.getValue()))
+			throw new CourseScheduleException("课时记录已为取消状态");
+
+		courseHourLog.setStatus(CourseHourStatus.CANCEL.getValue());
+		courseHourLog.setOperator(operator);
+		// 更新签单课程的消耗课时
+		orderCourseService.updateCourseCostHour(courseHourLog
+				.getOrderCourseId());
+		// 更新签单的总消耗课时
+		orderService.updateOrderCostHour(courseHourLog.getOrderId());
+
 	}
 
 }

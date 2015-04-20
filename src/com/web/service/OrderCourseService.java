@@ -9,10 +9,12 @@ import org.springframework.stereotype.Repository;
 import com.core.app.model.SysParam;
 import com.core.app.service.SysParamService;
 import com.core.jdbc.BaseDao;
+import com.web.constant.CourseHourStatus;
 import com.web.constant.OrderAttachStatus;
 import com.web.constant.OrderCourseStatus;
 import com.web.constant.OrderRunStatus;
 import com.web.constant.SysParamConstant;
+import com.web.exception.OrderException;
 import com.web.model.CourseScheduleDetail;
 import com.web.model.OrderCourse;
 import com.web.model.OrderCourseHourLog;
@@ -43,9 +45,12 @@ public class OrderCourseService {
 		OrderCourse orderCourse = findOrderCourse(orderCourseId);
 		String sql = "select sum(costHour) from  "
 				+ OrderCourseHourLog.class.getName()
-				+ " where order_course_id=" + orderCourseId;
+				+ " where order_course_id=" + orderCourseId + " and status='"
+				+ CourseHourStatus.ALL_SETTLE.getValue() + "'";
 		Long totalCosthour = baseDao.queryObject(sql, Long.class);
-		orderCourse.setCostHour(totalCosthour.intValue());
+
+		orderCourse.setCostHour(totalCosthour == null ? 0 : totalCosthour
+				.intValue());
 		baseDao.update(orderCourse);
 	}
 
@@ -53,14 +58,25 @@ public class OrderCourseService {
 	 * 更新签单课程的已经排课的课时
 	 * 
 	 * @param orderCourseId
+	 * @throws OrderException
 	 */
-	public void updateCourseScheduleHour(Integer orderCourseId) {
+	public void updateCourseScheduleHour(Integer orderCourseId)
+			throws OrderException {
 		OrderCourse orderCourse = findOrderCourse(orderCourseId);
 		String sql = "select sum((endTime - startTime)/100)  from  "
-				+ CourseScheduleDetail.class.getName() + " where order_course_id="
-				+ orderCourseId;
+				+ CourseScheduleDetail.class.getName()
+				+ " where order_course_id=" + orderCourseId;
 		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
-		orderCourse.setScheduleHour(totalSchedulehour.intValue());
+		if (totalSchedulehour != null
+				&& totalSchedulehour.intValue() > orderCourse.getHour()) {
+			SysParam courseTypeSysParam = sysParamService.getParamByValue(
+					SysParamConstant.ORDER_COURSE.name(),
+					orderCourse.getCourseType());
+			throw new OrderException("计划时间不能大于科目["
+					+ courseTypeSysParam.getParamName() + "]总课时!");
+		}
+		orderCourse.setScheduleHour(totalSchedulehour == null ? 0
+				: totalSchedulehour.intValue());
 		baseDao.update(orderCourse);
 	}
 
@@ -95,7 +111,6 @@ public class OrderCourseService {
 	 * 
 	 * @param courseTypes
 	 * @param orderId
-	 *            @
 	 */
 	public void saveOrderCourse(int orderId, List<OrderCourse> courses) {
 		if (courses == null || courses.size() == 0)
@@ -112,7 +127,7 @@ public class OrderCourseService {
 	 * @param orderId
 	 * @param courseType
 	 * @param chargerId
-	 *            @
+	 * 
 	 */
 	public void chooseCourseCharger(int orderId, String courseType,
 			int chargerId) {
@@ -140,7 +155,7 @@ public class OrderCourseService {
 	 * 批量更新课程
 	 * 
 	 * @param courseList
-	 *            @
+	 * 
 	 */
 	public void batchUpdate(List<OrderCourse> courseList) {
 		for (OrderCourse orderCourse : courseList) {
@@ -159,13 +174,13 @@ public class OrderCourseService {
 
 	/**
 	 * 获取学生的签单课程信息
-	 *  
+	 * 
 	 * @param studentId
 	 * @param courseType
 	 * @return
 	 */
-	public OrderCourse getOrderCourseForStudent(
-			Integer studentId, String courseType) {
+	public OrderCourse getOrderCourseForStudent(Integer studentId,
+			String courseType) {
 		OrderCourse totalOrderCourse = new OrderCourse();
 		String sql = " order_id in  (select id from  "
 				+ OrderInfo.class.getName() + " a where a.studentId="

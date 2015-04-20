@@ -30,4 +30,12 @@ public class SysParamService {
 		return baseDao.findOne("root_code='" + rootCode + "' and param_name='"
 				+ paramName + "'", SysParam.class);
 	}
+	
+	
+	@Cacheable(cacheName = "cacheManager")
+	public SysParam getParamByValue(String rootCode, String paramValue) {
+		return baseDao.findOne("root_code='" + rootCode + "' and param_value='"
+				+ paramValue + "'", SysParam.class);
+	}
+	
 }

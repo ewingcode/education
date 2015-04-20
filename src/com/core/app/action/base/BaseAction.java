@@ -36,13 +36,13 @@ import com.web.model.OrderAttach;
 
 public class BaseAction extends ActionSupport implements ServletRequestAware,
 		ServletResponseAware {
-	private static Logger logger = Logger.getLogger(BaseAction.class);
+	protected static Logger logger = Logger.getLogger(BaseAction.class);
 	private static final long serialVersionUID = 1L;
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
 	protected Object entityBean;
 	protected Class entityClass;
-	protected String condition; 
+	protected String condition;
 	private final static String SEARCH_CODE = "_QUERY";
 	private final static String SEARCH_ORDER_CODE = "_ORDERBY";
 	@Resource
@@ -85,15 +85,16 @@ public class BaseAction extends ActionSupport implements ServletRequestAware,
 	 */
 	public void pageQuery() throws ActionException {
 		ResponseData responseData = null;
-		try { 
+		try {
 			if (entityBean == null)
 				throw new ActionException(
 						"entityClass must be defined in Action");
 			String start = request.getParameter("start");
-			String limit = request.getParameter("limit"); 
+			String limit = request.getParameter("limit");
 			PageBean pageBean = baseModelService.pageQuery(bulidConditionSql(),
-					bulidOrderBySql(), Integer.valueOf(limit), Integer
-							.valueOf(start), entityClass);
+					bulidOrderBySql(),
+					limit == null ? 20 : Integer.valueOf(limit),
+					start == null ? 0 : Integer.valueOf(start), entityClass);
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setTotalProperty(pageBean.getTotalCount());
 			responseData.setResult(pageBean.getResult());
@@ -283,9 +284,10 @@ public class BaseAction extends ActionSupport implements ServletRequestAware,
 								.stringToDate(value, DateFormat.DATE_FORMAT)
 								.getTime()));
 					} else if (value.length() == 19) {
-						f.set(entityBean, new java.sql.Timestamp(
-								DateFormat.stringToDate(value,
-										DateFormat.DATETIME_FORMAT).getTime()));
+						f.set(entityBean,
+								new java.sql.Timestamp(DateFormat.stringToDate(
+										value, DateFormat.DATETIME_FORMAT)
+										.getTime()));
 					}
 				}
 

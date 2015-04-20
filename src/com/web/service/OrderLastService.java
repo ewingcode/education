@@ -37,11 +37,11 @@ public class OrderLastService {
 	private OrderAttachService orderAttachService;
 	public final static String PROCESS_NAME = OrderProcess.LAST_PROCESSNAME;
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public boolean lastOrder(int operator, OrderInfo orderInfo,
 			Map<OrderAttach, File> attachMap, List<OrderCourse> courseList,
 			boolean isOnlyEdit) throws Exception {
-		int studentId = orderInfo.getStudentId(); 
+		int studentId = orderInfo.getStudentId();
 		orderInfo.setIsLast(OrderIsLast.NOTLAST);
 		orderInfo.setRunStatus(OrderRunStatus.INAPPLY);
 		orderInfo.setOrderType(OrderType.LAST);
@@ -60,9 +60,6 @@ public class OrderLastService {
 		return true;
 	}
 
- 
- 
-
 	private void processFlow(OrderInfo orderInfo, int operator)
 			throws Exception {
 		FlowTask startFlowTask = flowTaskService.getStartTask(PROCESS_NAME);
@@ -72,7 +69,7 @@ public class OrderLastService {
 				.getTaskTransition(PROCESS_NAME, startFlowTask.getTaskName());
 		orderService.logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
 				TransitionArrangeType.UNARRANGE, null, startFlowTask,
-				orderInfo, operator, operator,null);
+				orderInfo, operator, operator, null);
 		String preTaskName = orderInfo.getStatus();
 		if (transition != null && transition.size() == 1) {
 			curTaskName = transition.get(0).getTo();
@@ -82,6 +79,6 @@ public class OrderLastService {
 		baseDao.update(orderInfo);
 		orderService.logOrderTrace(PROCESS_NAME, NoticeWay.SEND,
 				TransitionArrangeType.UNARRANGE, startFlowTask, curTask,
-				orderInfo, operator, 0,null);
+				orderInfo, operator, 0, null);
 	}
 }

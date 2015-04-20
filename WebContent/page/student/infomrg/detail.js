@@ -28,7 +28,8 @@ DetailWindow.prototype.editform = function() {
 	  var orderInfoUrl = _contextPath + "/page/student/detail/orderinfo.jsp?studentId="+ this.primaryId;
 	  var commuicateUrl = _contextPath + "/page/student/detail/commuicateinfo.jsp?studentId="+ this.primaryId;
 	  var socreUrl = _contextPath + "/page/student/detail/scoreinfo.jsp?studentId="+ this.primaryId;
-					 
+	  var scheduleUrl = _contextPath + "/page/student/detail/scheduleinfo.jsp?studentId="+ this.primaryId;
+						 
 	  var tabs = new Ext.TabPanel({  
 	        activeTab: 0, 
 	        height:430,  
@@ -47,6 +48,11 @@ DetailWindow.prototype.editform = function() {
 					iconCls : 'tabs', 
 					html : '<iframe src="'+orderInfoUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
 				}, 
+				{   title : '排课信息', 
+					autoWidth : true,
+					iconCls : 'tabs', 
+					html : '<iframe  src="'+scheduleUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+				},
 	            {   title : '交流沟通', 
 					autoWidth : true,
 					iconCls : 'tabs', 

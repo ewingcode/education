@@ -58,7 +58,7 @@
 					 return SysParam.translateArray(weekStore, value);
 				}
 			}, {
-				header : "状态1",
+				header : "状态",
 				dataIndex : "status",
 				renderer : function(value) {
 					 return SysParam.translate(scheduleStatusStore, value);
@@ -84,7 +84,16 @@
 						var rec = store.getAt(rowIndex);
 						new Schedule.showScheduleDetailList(rec.get('id') );
 					}
-				} ]
+				}, {
+					getClass : function(v, meta, rec) {  
+						  return "btn_remove";
+					},
+					tooltip : '删除',
+					handler : function(grid, rowIndex, colIndex) {
+						var rec = store.getAt(rowIndex);
+						removeData(rec.get('id') );
+					}
+				}  ]
 			}
              ],
 			defaults : {
@@ -94,6 +103,37 @@
 			}
 		});
 
+		
+		var removeData = function(b) { 
+			Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
+				if (c == "yes") {
+					Ext.Ajax.request( {
+						url : "Busi_CourseSchedule_delete.action",
+						params : {
+							scheduleId : b
+						},
+						method : "post",
+						success : function() {
+							Ext.Msg.show( {
+								title : '编辑',
+								msg : '成功删除记录',
+								buttons : Ext.MessageBox.OK,
+								icon : Ext.Msg.INFO
+							});
+							loadGirdStore();
+						}, 
+						failure : function() {
+							 Ext.MessageBox.show( {
+								title : "操作信息",
+								msg : "信息保存出错，请联系管理员！",
+								buttons : Ext.MessageBox.OK,
+								icon : "ext-mb-error"
+							}); 
+						}
+					});
+				}
+			});
+		};
 		var store = new Ext.data.Store({
 			// autoLoad : true,//是否自动加载
 			proxy : new Ext.data.HttpProxy({
@@ -140,6 +180,7 @@
 			store.setBaseParam('start', 0);
 			store.setBaseParam('limit', 20);
 			store.setBaseParam('_QUERY_n_eq_student_id', $("#studentId").val());
+			store.setBaseParam('_QUERY_s_eq_iseff', 0);
 			store.setBaseParam('_QUERY_n_eq_teacher_id', teacherId);
 			store.setBaseParam('_ORDERBY', 'order by create_time desc');
 			store.reload();

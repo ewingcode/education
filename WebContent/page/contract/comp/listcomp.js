@@ -1,9 +1,9 @@
 Ext.ns("OrderList");
-OrderList.loadGirdStore = function(dataStore) { 
+OrderList.loadGirdStore = function(dataStore) {
 	dataStore.setBaseParam('start', 0);
 	dataStore.setBaseParam('limit', 20);
 	dataStore.setBaseParam('_QUERY_s_rlike_id', Ext.getCmp('QUERY_orderId')
-			.getValue()); 
+			.getValue());
 	dataStore.setBaseParam('_QUERY_s_eq_iseff', new Constant.IsEff().EFFECTIVE);
 	dataStore.setBaseParam('_QUERY_n_in_student_id', Student.mutipleId($(
 			"#QUERY_name").val()));
@@ -300,27 +300,31 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
 										.getSelectionModel()
 										.each(
 												function(e) {
-													var orderId = e.data.id; 
-													Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
-														if (c == "yes") {
-															Ext.Ajax
-															.request({
-																url : 'Busi_OrderControl_cancelOrder.action?orderId='
-																		+ orderId
-																		+ '&userId='
-																		+ session_userId,
-																method : "post",
-																success : function(
-																		response) {
-																	var rec = Ext.util.JSON
-																			.decode(response.responseText);
-																	Common
-																			.SucMegBox(rec.retinfo);
-																}
-															});
-														}
-													});
-												
+													var orderId = e.data.id;
+													Ext.Msg
+															.confirm(
+																	"信息确认",
+																	"您确认要删除该记录吗？",
+																	function(c) {
+																		if (c == "yes") {
+																			Ext.Ajax
+																					.request({
+																						url : 'Busi_OrderControl_cancelOrder.action?orderId='
+																								+ orderId
+																								+ '&userId='
+																								+ session_userId,
+																						method : "post",
+																						success : function(
+																								response) {
+																							var rec = Ext.util.JSON
+																									.decode(response.responseText);
+																							Common
+																									.SucMegBox(rec.retinfo);
+																						}
+																					});
+																		}
+																	});
+
 												});
 							}
 						} ]
@@ -358,7 +362,13 @@ OrderList.ColumnModel = function(selectModel) {
 
 				},
 				{
-					header : "剩余课时",
+					header : "排课课时",
+					width : 50,
+					dataIndex : "scheduleHour"
+
+				},
+				{
+					header : "消耗课时",
 					width : 80,
 					dataIndex : "costCourseHour",
 					renderer : function(value, metaData, record, rowIndex,
@@ -366,10 +376,10 @@ OrderList.ColumnModel = function(selectModel) {
 						var remainHour = record.get("courseHour")
 								- record.get("costCourseHour");
 						if (remainHour < 30) {
-							return "<span style='color:red'>" + remainHour
+							return "<span style='color:red'>" + value
 									+ "</span>";
 						}
-						return remainHour;
+						return value;
 					}
 				}, {
 					header : "审批",
@@ -399,13 +409,7 @@ OrderList.ColumnModel = function(selectModel) {
 					renderer : function(value) {
 						return SysParam.translate(iseffStore, value);
 					}
-				} /*
-					 * , { header : "生效时间", dataIndex : "startTime", renderer :
-					 * Ext.util.Format.dateRenderer('Y-m-d H:i:s') }, { header :
-					 * "结束时间", dataIndex : "endTime", renderer :
-					 * Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-					 *  }
-					 */, {
+				}, {
 					header : "创建时间",
 					dataIndex : "createTime",
 					width : 120,
@@ -467,28 +471,29 @@ OrderList.store = function(queryUrl) {
 			fields : [ {
 				name : "id",
 				type : "int"
-			}, "studentId", "status", "grade", "courseHour", {
-				name : "startTime",
-				type : "date",
-				mapping : 'createTime.time',
-				dateFormat : 'time'
-			}, {
-				name : "endTime",
-				type : "date",
-				mapping : 'endTime.time',
-				dateFormat : 'time'
-			}, {
-				name : "createTime",
-				type : "date",
-				mapping : 'createTime.time',
-				dateFormat : 'time'
-			}, {
-				name : "lastUpdate",
-				type : "date",
-				mapping : 'lastUpdate.time',
-				dateFormat : 'time'
-			}, "iseff", "des", "isLast", "curOperator", "costCourseHour",
-					"runStatus" ]
+			}, "studentId", "status", "grade", "courseHour", "costCourseHour",
+					"scheduleHour", {
+						name : "startTime",
+						type : "date",
+						mapping : 'createTime.time',
+						dateFormat : 'time'
+					}, {
+						name : "endTime",
+						type : "date",
+						mapping : 'endTime.time',
+						dateFormat : 'time'
+					}, {
+						name : "createTime",
+						type : "date",
+						mapping : 'createTime.time',
+						dateFormat : 'time'
+					}, {
+						name : "lastUpdate",
+						type : "date",
+						mapping : 'lastUpdate.time',
+						dateFormat : 'time'
+					}, "iseff", "des", "isLast", "curOperator",
+					"costCourseHour", "runStatus" ]
 		})
 	});
 }
