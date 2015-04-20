@@ -63,16 +63,7 @@
 				renderer : function(value) {
 					 return SysParam.translate(scheduleStatusStore, value);
 				}
-			} ,
-			{
-				header : "课程时间",
-				dataIndex : "startTime",
-				renderer : function(value, metaData, record, rowIndex,
-						colIndex, store) { 
-					return value+"-"+record.get("endTime");
-				}
-
-			} ,{
+			}  ,{
 				header : "操作",
 				xtype : 'actioncolumn',
 				items : [ {

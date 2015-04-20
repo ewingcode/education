@@ -15,6 +15,13 @@ var cm = new Ext.grid.ColumnModel(
 							hidden : true
 						},
 						{
+							header : "区域",
+							dataIndex : "areaId", 
+							renderer: function(value) { 
+								return  SysArea.translate(value);    
+							}
+						},
+						{
 							header : "学生",
 							dataIndex : "name"
 						},
@@ -42,10 +49,7 @@ var cm = new Ext.grid.ColumnModel(
 							header : "联系电话",
 							dataIndex : "phone"
 						},
-						{
-							header : "家庭电话",
-							dataIndex : "homephone"
-						}, 
+						 
 						{
 							header : "创建时间",
 							dataIndex : "createTime" ,
@@ -123,7 +127,7 @@ var store = new Ext.data.Store( {
 		remoteSort : true,
 		fields : [ 
 		   { name : "id", type : "int" }, 
-		"name","age","grade", "addr", "sex", "school", "phone","homephone",
+		"name","age","grade", "addr", "sex", "school", "phone","homephone","areaId",
 		{name:"createTime" , type : "date", mapping : 'createTime.time',dateFormat : 'time'},
 		{name:"lastUpdate" , type : "date",mapping : 'createTime.time',dateFormat : 'time'} ]
 	})
@@ -141,7 +145,7 @@ var toolbar = new Ext.Toolbar( {
 			}
 		},{
 			iconCls : "btn_detail", 
-			text : "详细信息",
+			text : "学生详细信息",
 			xtype : "button",
 			 scale: 'medium',
 			handler : function() {

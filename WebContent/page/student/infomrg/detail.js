@@ -4,11 +4,10 @@ var DetailWindow = function(b) {
 	 var editform = this.editform();
 	var win =   new Ext.Window( {
 		id : "studentEditForm",
-	    title: '学生信息', 
-        height:500,
-        width:1000, 
-        layout: 'form',
-        autoScroll:true,
+	    title: '学生信息中心', 
+        height:560,
+        width:1200, 
+        layout: 'form', 
         plain:true,
         bodyStyle:'padding:5px;',
         buttonAlign:'center',
@@ -32,36 +31,35 @@ DetailWindow.prototype.editform = function() {
 						 
 	  var tabs = new Ext.TabPanel({  
 	        activeTab: 0, 
-	        height:430,  
+	        height:530,  
 	        border : false,
 	        autoScroll:false,
 	        defaults:{autoHeight: true},
 	        items:[ 
-	             {	title : '基本信息', 
-	            	height:400,  
+	             {	title : '基本信息',  
 					autoWidth : true,
 					iconCls : 'tabs', 
-					html : '<iframe  src="'+baseInfoUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+					html : '<iframe  src="'+baseInfoUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="450"/>'
 				}, 
 	            {   title : '签单信息', 
 					autoWidth : true,
 					iconCls : 'tabs', 
-					html : '<iframe src="'+orderInfoUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+					html : '<iframe src="'+orderInfoUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="450"/>'
 				}, 
 				{   title : '排课信息', 
 					autoWidth : true,
 					iconCls : 'tabs', 
-					html : '<iframe  src="'+scheduleUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+					html : '<iframe  src="'+scheduleUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="450"/>'
 				},
 	            {   title : '交流沟通', 
 					autoWidth : true,
 					iconCls : 'tabs', 
-					html : '<iframe  src="'+commuicateUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+					html : '<iframe  src="'+commuicateUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="450"/>'
 				},
 	            {   title : '各课成绩', 
 					autoWidth : true,
 					iconCls : 'tabs', 
-					html : '<iframe  src="'+socreUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="400"/>'
+					html : '<iframe  src="'+socreUrl+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="450"/>'
 				}
 	        ]
 	    });

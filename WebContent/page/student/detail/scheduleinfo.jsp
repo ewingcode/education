@@ -129,7 +129,7 @@
 		}
  
 		loadGirdStore();
-		Frame.busiPage(gridPanel);
+		Frame.editPage(gridPanel);
 
 	});
 </script>

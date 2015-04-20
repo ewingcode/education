@@ -336,12 +336,12 @@ OrderList.ColumnModel = function(selectModel) {
 				selectModel,
 				new Ext.grid.RowNumberer(),
 				{
-					header : "编号",
+					header : "签单合同号",
 					width : 60,
-					dataIndex : "id"
-				},
+					dataIndex : "orderNo", 
+				}, 
 				{
-					header : "学生名称",
+					header : "学生",
 					dataIndex : "studentId",
 					renderer : function(value) {
 						return Student.translate(value);
@@ -362,13 +362,13 @@ OrderList.ColumnModel = function(selectModel) {
 
 				},
 				{
-					header : "排课课时",
+					header : "已排课时",
 					width : 50,
 					dataIndex : "scheduleHour"
 
 				},
 				{
-					header : "消耗课时",
+					header : "已花课时",
 					width : 80,
 					dataIndex : "costCourseHour",
 					renderer : function(value, metaData, record, rowIndex,
@@ -382,10 +382,10 @@ OrderList.ColumnModel = function(selectModel) {
 						return value;
 					}
 				}, {
-					header : "审批",
+					header : "审批状态",
 					dataIndex : "status"
 				}, {
-					header : "状态",
+					header : "授课状态",
 					dataIndex : "runStatus",
 					renderer : function(value) {
 						return SysParam.translate(runStatusStore, value);
@@ -396,14 +396,14 @@ OrderList.ColumnModel = function(selectModel) {
 					renderer : function(value) {
 						return SysUser.translate(value);
 					}
-				}, {
+				}/*, {
 					header : "是否被续单",
 					width : 80,
 					dataIndex : "isLast",
 					renderer : function(value) {
 						return SysParam.translate(yesOrNoStore, value);
 					}
-				}, {
+				}*/, {
 					header : "是否有效",
 					dataIndex : "iseff",
 					renderer : function(value) {
@@ -414,13 +414,13 @@ OrderList.ColumnModel = function(selectModel) {
 					dataIndex : "createTime",
 					width : 120,
 					renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-				}, {
+				}/*, {
 					header : "更新时间",
 					width : 120,
 					dataIndex : "lastUpdate",
 					renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
 
-				} ],
+				}*/ ],
 		defaults : {
 			sortable : true,
 			menuDisabled : false,
@@ -493,12 +493,13 @@ OrderList.store = function(queryUrl) {
 						mapping : 'lastUpdate.time',
 						dateFormat : 'time'
 					}, "iseff", "des", "isLast", "curOperator",
-					"costCourseHour", "runStatus" ]
+					"costCourseHour", "runStatus","orderNo" ]
 		})
 	});
 }
 
-OrderList.formpanel = function() {
+OrderList.formpanel = function(studentId) {
+	var readOnlyStudent = studentId!=null?true:false
 	return new Ext.FormPanel(
 			{
 				labelAlign : 'left',// 字样显示在顶部
@@ -525,10 +526,10 @@ OrderList.formpanel = function() {
 								items : [ {
 									id : "QUERY_orderId",
 									fieldLabel : "签单编号"
-								}, {
-									id : "QUERY_name",
-									fieldLabel : "学生名称"
-								} ]
+								},
+								new SysParam.ComboBox('授课状态',
+										'QUERY_runStatus',
+										'ORDER_RUN_STATUS') ]
 							},
 							{
 								xtype : "container",
@@ -562,10 +563,11 @@ OrderList.formpanel = function() {
 														vtype : 'daterange',
 														startDateField : 'QUERY_create_startTime'
 													} ]
-										},
-										new SysParam.ComboBox('状态',
-												'QUERY_runStatus',
-												'ORDER_RUN_STATUS') ]
+										}, {
+											id : "QUERY_name",
+											fieldLabel : "学生名称",
+											hidden: readOnlyStudent
+										} ]
 							} ]
 				} ]
 			});

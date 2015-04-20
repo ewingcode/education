@@ -14,7 +14,7 @@ var studentInfoForm = function(studentId){
 	reader : new Ext.data.JsonReader( {
 		  successProperty : 'success',
 			root : 'result'
-		}, ['id','name','sex','grade', 'school','brithday','age','homephone','addr','fatherName',"fatherUnit","fatherPhone",
+		}, ['id','name','sex','areaId','grade', 'school','brithday','age','phone','homephone','addr','fatherName',"fatherUnit","fatherPhone",
 		    'fatherPosition','motherName','motherUnit', 'motherPhone','motherPosition',
 		    {name:"lastExamDate" , type : "date", mapping : 'lastExamDate',dateFormat : 'Y-m-d H:i:s'},'scoreYuwen',
 		    'scoreHuaxue','scoreShuxue','scoreZhengzhi', 'scoreYingwen','scoreLishi','scoreWuli','scoreShengwu',
@@ -37,12 +37,12 @@ var studentInfoForm = function(studentId){
 				labelStyle: 'text-align:right;'
 			},
 			 
-				items : [ { 
+				items : [new SysArea.ComboBox('areaId',true), { 
 					id : "name",
 					fieldLabel : "学生姓名", 
 					maxLength :10,
 					listeners:{ 
-						   "blur": function(field){ 
+						   "blur": function(field){  
 							 Ajax.syncRequest("Busi_Student_query.action?condition=name='"+field.getValue()+"'",  
 									 function(data) {  
 								      if(data.result && data.result.length>=1){
@@ -71,7 +71,12 @@ var studentInfoForm = function(studentId){
 					id : "school",
 					fieldLabel : "学校",
 					maxLength :100
-				} ]
+				} , {
+					fieldLabel : "移动电话", 
+					id : "phone",
+				    xtype:"numberfield", 
+					maxLength :20
+				}]
 		} ,{
 			xtype : "container",
 			columnWidth : 0.33,
