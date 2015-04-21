@@ -78,6 +78,16 @@ public class BaseAction extends ActionSupport implements ServletRequestAware,
 		this.response.setContentType("text/html;charset=UTF-8");
 	}
 
+	public String getUTFParameter(String key) {
+		String value = request.getParameter(key);
+		try {
+			return StringUtil.iso2Utf8(value);
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
+		}
+		return null;
+	}
+
 	/**
 	 * dao查询
 	 * 

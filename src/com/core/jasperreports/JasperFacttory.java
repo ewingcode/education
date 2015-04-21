@@ -1,6 +1,7 @@
 package com.core.jasperreports;
 
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -8,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import net.sf.jasperreports.engine.JRAlignment;
 import net.sf.jasperreports.engine.JRException;
@@ -28,22 +31,30 @@ import net.sf.jasperreports.engine.design.JRDesignStyle;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
+import com.core.app.action.base.BaseAction;
 import com.core.factory.SpringCtx;
 import com.core.jdbc.BaseDao;
+import com.util.StringUtil;
 
 /**
  * @author Administrator
- *
+ * 
  */
 public class JasperFacttory {
-	
+	private static Logger logger = Logger.getLogger(JasperFacttory.class);
+
 	private String getValueFromParam(Map paramMap, String specifidField) {
 		Iterator itor = paramMap.keySet().iterator();
 		while (itor.hasNext()) {
 			String key = itor.next().toString();
 			if (key.equals(specifidField)) {
 				Object[] sValue = (Object[]) paramMap.get(key);
-				String value = sValue[0].toString();
+				String value = null;
+				try {
+					value = StringUtil.iso2Utf8(sValue[0].toString());
+				} catch (UnsupportedEncodingException e) {
+					logger.error(e);
+				}
 				return value;
 			}
 		}
@@ -64,7 +75,7 @@ public class JasperFacttory {
 
 		// Title
 		JRDesignBand band = new JRDesignBand();
-		band.setHeight(100); 
+		band.setHeight(100);
 		JRDesignStaticText staticText = new JRDesignStaticText();
 
 		staticText.setX(280);
@@ -82,8 +93,8 @@ public class JasperFacttory {
 		staticText2.setY(50);
 		staticText2.setWidth(350);
 		staticText2.setHeight(30);
-		staticText2.setFontSize(15);
-		//staticText2.setItalic(true);
+		staticText2.setFontSize(18);
+		// staticText2.setItalic(true);
 		staticText2.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_LEFT); // 设置文本的对齐方式
 		staticText2.setStyle(normalStyle);
 		if (getValueFromParam(paramMap, JasperParam.STATISTIC_TIME_FIELD) != null) {
@@ -92,7 +103,7 @@ public class JasperFacttory {
 							JasperParam.STATISTIC_TIME_FIELD));
 		}
 		band.addElement(staticText);
-	 	band.addElement(staticText2);
+		band.addElement(staticText2);
 		/*
 		 * JRDesignLine line = new JRDesignLine(); line.setX(0); line.setY(19);
 		 * line.setWidth(500); line.setHeight(1);
@@ -113,7 +124,7 @@ public class JasperFacttory {
 		// 开始添加列字段
 		int X = 80;
 		int columnHeaderfontSize = 15;
-		int fontSize = 12;
+		int fontSize = 15;
 		int textHeight = 30;
 		int textWidth = 80;
 		int detailHeight = 30;
@@ -122,13 +133,15 @@ public class JasperFacttory {
 		for (int i = 0; i < headers.length; i++) {
 			JRDesignStaticText jrstaticText = new JRDesignStaticText();
 			jrstaticText.setText(headers[i]);
-			jrstaticText.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
-			jrstaticText.setVerticalAlignment(JRAlignment.VERTICAL_ALIGN_MIDDLE);
-			jrstaticText.setFontSize(columnHeaderfontSize); 
+			jrstaticText
+					.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
+			jrstaticText
+					.setVerticalAlignment(JRAlignment.VERTICAL_ALIGN_MIDDLE);
+			jrstaticText.setFontSize(columnHeaderfontSize);
 			jrstaticText.setHeight(textHeight);
-			jrstaticText.setWidth(textWidth); 
+			jrstaticText.setWidth(textWidth);
 			jrstaticText.setBorderColor(Color.BLACK);
-			jrstaticText.setBold(true);
+			jrstaticText.setBold(false);
 			if (i == 0) {
 				X = 0;
 			} else {
@@ -172,10 +185,11 @@ public class JasperFacttory {
 			textField.setTopBorder(JRBaseLine.PEN_1_POINT);
 			textField.setRightBorder(JRBaseLine.PEN_1_POINT);
 			textField.setBottomBorder(JRBaseLine.PEN_1_POINT);
-			textField.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
+			textField
+					.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
 			textField.setVerticalAlignment(JRAlignment.VERTICAL_ALIGN_BOTTOM);
 			textField.setBorderColor(Color.BLACK);
-			// textField.setForecolor(new Color(0x99,0xFF,0xFF)); 
+			// textField.setForecolor(new Color(0x99,0xFF,0xFF));
 			textField.setStretchWithOverflow(true);
 			detail.addElement(textField);
 		}
@@ -201,12 +215,11 @@ public class JasperFacttory {
 		staticText.setPdfFontName("STSong-Light");
 		staticText.setPdfEmbedded(true);
 		staticText.setPdfEncoding("UniGB-UCS2-H");
-		//staticText.setItalic(true);
+		// staticText.setItalic(true);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-		String tt = "制表日期：" + sdf.format(new Date());
-		System.out.println(tt);
+		String tt = "制表日期：" + sdf.format(new Date()); 
 		staticText.setText(tt);
-		//band.addElement(staticText);
+		// band.addElement(staticText);
 
 		JRDesignTextField textField = new JRDesignTextField();
 		textField.setX(450);
@@ -242,20 +255,15 @@ public class JasperFacttory {
 
 		// band.addElement(chart1);
 		jasperDesign.setSummary(band);
-
-		System.out.println("After Connection");
+ 
 
 		JasperReport jasperReport = JasperCompileManager
 				.compileReport(jasperDesign);
-		Map parameters = new HashMap();
-		System.out.println("After Parameter");
+		Map parameters = new HashMap(); 
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
-				parameters, connection);
-		System.out.println("After Print");
+				parameters, connection); 
 		JasperExportManager.exportReportToHtmlFile(jasperPrint,
-				"D://test2.html");
-
-		System.out.println("After Export");
+				"D://test2.html"); 
 		return jasperPrint;
 
 	}
@@ -323,8 +331,10 @@ public class JasperFacttory {
 		JasperFacttory obj = new JasperFacttory();
 		Map map = new HashMap();
 		map.put(JasperParam.STATISTIC_TIME_FIELD, "2012-10-10 到 2012-11-01");
-		obj.dynamicGenerate("select date_format(create_time,'%Y-%m-%d') as create_date,count(*) as total from order_info where 1=1 group by date_format(create_time,'%Y-%m-%d')", "签单日统计报表",
-				new String[] { "签单日期","签单总数" }, new String[] { "create_date", "total" },map);
+		obj.dynamicGenerate(
+				"select date_format(create_time,'%Y-%m-%d') as create_date,count(*) as total from order_info where 1=1 group by date_format(create_time,'%Y-%m-%d')",
+				"签单日统计报表", new String[] { "签单日期", "签单总数" }, new String[] {
+						"create_date", "total" }, map);
 	}
 
 }

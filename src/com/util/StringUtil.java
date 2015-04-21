@@ -2,6 +2,7 @@ package com.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,13 @@ public class StringUtil extends StringUtils {
 	public static final Logger log = Logger.getLogger(StringUtil.class);
 	public static final String TA_LEFT = "left";
 	public static final String TA_RIGHT = "right";
+
+	public static String iso2Utf8(String str)
+			throws UnsupportedEncodingException {
+		if (str == null || str.trim().length() == 0)
+			return str;
+		return new String(str.getBytes("iso8859-1"), "UTF-8");
+	}
 
 	public static String toStringAlign(String str, int len, String align) {
 		String AlignText = new String(str);
@@ -91,8 +99,7 @@ public class StringUtil extends StringUtils {
 			return false;
 		for (int index = 0; index < str2.length(); ++index) {
 			if (str1.charAt(str1.length() - index - 1) != str2.charAt(str2
-					.length()
-					- 1 - index))
+					.length() - 1 - index))
 				return false;
 		}
 		return true;

@@ -43,7 +43,7 @@
 					           if($("#endDate").val()!='')
 					        	   sql += " and date_format(create_time,'%Y-%m-%d') <='"+$("#endDate").val()+"'";
 						      sql +=" group by date_format(create_time,'%Y-%m-%d')";
-					      var title="签单日统计报表"
+					      var title="签单日统计报表";
 					      var headers="签单日期,签单总数";
 					      var alias="create_date,total";
 					      var paramMap = {

@@ -106,9 +106,9 @@ public class JasperReportAction extends BaseAction {
 			 */
 			// dynamic report.
 			String sql = request.getParameter("sql");
-			String title = request.getParameter("title");
-			String headersStr = request.getParameter("headers");
-			String aliasStr = request.getParameter("alias");
+			String title = getUTFParameter("title");
+			String headersStr = getUTFParameter("headers"); 
+			String aliasStr = getUTFParameter("alias");
 			String[] headers = headersStr.split(",");
 			String[] alias = aliasStr.split(",");
 			JasperFacttory jFactory = new JasperFacttory();
