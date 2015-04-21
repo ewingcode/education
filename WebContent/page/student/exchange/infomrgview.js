@@ -9,92 +9,74 @@ function closeTabPanel(studentId){
 }
 var sexTypeStore = new SysParam.store("SEXTYPE");
 var positionStore = new SysParam.store("POSITION");
+var gradeStore = new SysParam.store("GRADE");
 var sm = new Ext.grid.CheckboxSelectionModel(); 
 var cm = new Ext.grid.ColumnModel(
-			{
-				columns : [
-						sm,
-						new Ext.grid.RowNumberer(),
-						{
-							header : "id",
-							dataIndex : "id",
-							hidden : true
-						},
-						{
-							header : "学生",
-							dataIndex : "name"
-						},
-						{
-							header : "性别",
-							dataIndex : "sex",
-							 renderer: function(value) { 
-								return  SysParam.translate(sexTypeStore,value);    
-							}
-						},
-						{
-							header : "年龄",
-							dataIndex : "age"
-						},
-						{
-							header : "年级",
-							dataIndex : "grade"
-						},
-						{
-							header : "学校",
-							dataIndex : "school"  
-						},
-						{
-							header : "联系电话",
-							dataIndex : "phone"
-						},
-						{
-							header : "家庭电话",
-							dataIndex : "homephone"
-						}, 
-						{
-							header : "创建时间",
-							dataIndex : "createTime" ,
-							renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')  
-						},
-						{
-							header : "更新时间",
-							dataIndex : "lastUpdate" ,
-							renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-							 
-						},
-					    {
-							header : "操作",
-			                xtype: 'actioncolumn',
-			                defaults: {width: 230},// 默认每个子item大小
-			                width: 50,
-			                items: [{
-			                	getClass :function(v, meta, rec) {          
-		                        	return "btn_detail";
-		                        } ,	
-			                    tooltip: '编辑',
-			                    handler: function(grid, rowIndex, colIndex) {
-			                        var rec = store.getAt(rowIndex);  
-			                        var studentId=rec.get('id');
-			                        var student=Student.translate(studentId);
-			                        showPage = _contextPath+"/page/student/exchange/exchangelist.jsp?studentId="+studentId;
-	            					var tab_id="busi_tab_student_"+studentId; 
-		            					mainFrame.add({  
-			                    			title : '学生['+student+']',
-			                    			id : tab_id,
-			                    			autoWidth:true,
-			                    			iconCls : 'tabs', 
-			                    			closable : true,
-			                    			html : '<iframe  src="'+showPage+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
-			                    		}).show(); 
-			                    } 
-			                }]
-			            } ],
-				defaults : {
-					sortable : true,
-					menuDisabled : false,
-					width : 100
-				}
-			});
+		{
+			columns : [
+					sm,
+					new Ext.grid.RowNumberer(),
+					{
+						header : "id",
+						dataIndex : "id",
+						hidden : true
+					},
+					{
+						header : "区域",
+						dataIndex : "areaId", 
+						renderer: function(value) { 
+							return  SysArea.translate(value);    
+						}
+					},
+					{
+						header : "学生",
+						dataIndex : "name"
+					},
+					{
+						header : "性别",
+						dataIndex : "sex",
+						 renderer: function(value) { 
+							return  SysParam.translate(sexTypeStore,value);    
+						}
+					},
+					{
+						id:'col_age',
+						header : "年龄",
+						dataIndex : "age"
+					},
+					{
+						header : "年级",
+						dataIndex : "grade", 
+						 renderer: function(value) { 
+							return  SysParam.translate(gradeStore,value);    
+						}
+					},
+					{
+						header : "学校",
+						dataIndex : "school"  
+					},
+					{
+						header : "联系电话",
+						dataIndex : "phone"
+					},
+					 
+					{
+						header : "创建时间",
+						dataIndex : "createTime" ,
+						renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')  
+					},
+					{
+						header : "更新时间",
+						dataIndex : "lastUpdate" ,
+						renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+						 
+					}  ],
+			defaults : {
+				sortable : true,
+				menuDisabled : false,
+				width : 100
+			}
+		});
  
 var store = new Ext.data.Store( {
 	// autoLoad : true,//是否自动加载
@@ -107,11 +89,11 @@ var store = new Ext.data.Store( {
 		remoteSort : true,
 		fields : [ 
 		   { name : "id", type : "int" }, 
-		"name","age","grade", "addr", "sex", "school", "phone","homephone",
+		"name","age","grade", "addr", "sex", "school", "phone","homephone","areaId",
 		{name:"createTime" , type : "date", mapping : 'createTime.time',dateFormat : 'time'},
 		{name:"lastUpdate" , type : "date",mapping : 'createTime.time',dateFormat : 'time'} ]
 	})
-}); 
+});
 
 var toolbar = new Ext.Toolbar( {
 		id : "topBar",  
@@ -131,7 +113,35 @@ var toolbar = new Ext.Toolbar( {
 			handler : function() {
 			formpanel.form.reset();
 			}
-		}  ]
+		},{
+			iconCls : "btn_communicate", 
+			text : "记录沟通信息",
+			xtype : "button",
+			 scale: 'medium',
+			handler : function() {
+				if (!Common.SingleCheck(gridPanel)) {
+					return;
+				}
+				gridPanel
+						.getSelectionModel()
+						.each(
+								function(e) {
+									var studentId = e.data.id; 
+			                        var student=Student.translate(studentId);
+				                        showPage = _contextPath+"/page/student/exchange/exchangelist.jsp?studentId="+studentId;
+	            					var tab_id="busi_tab_student_"+studentId; 
+			            					mainFrame.add({  
+				                    			title : '学生['+student+']',
+				                    			id : tab_id,
+				                    			autoWidth:true,
+				                    			iconCls : 'tabs', 
+				                    			closable : true,
+				                    			html : '<iframe  src="'+showPage+'" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
+				                    		}).show(); 
+								});
+				
+			}
+		} ]
 	}); 
 var gridPanel =  new Ext.grid.GridPanel( {
 	id : "grid",
@@ -143,7 +153,7 @@ var gridPanel =  new Ext.grid.GridPanel( {
 	region : "center",
 	cm : cm,
 	sm : sm,
-	height:400,
+	height:600,
 	viewConfig : {
 		forceFit : true,// 填满width.
 		enableRowBody : true,
@@ -200,6 +210,7 @@ var formpanel =  new Ext.FormPanel( {
   
 	gridPanel.addListener("rowdblclick", function(g, f, h) {
 	g.getSelectionModel().each(function(e) {  
-		new EditWindow(e.data.id); 
+		new studentEditWindow(e.data.id,null,false); 
 	});
-	});  
+	});
+	

@@ -97,7 +97,7 @@ SysParam.ComboBox = function(fieldName, filedId, rootCode, allowBlank,isReadOnly
 				   "select": function(combo,  record, index){
 							if($.isFunction(selectFn))
 								selectFn(combo,record,index)
-								}
+							}
 				}
 			});
 };

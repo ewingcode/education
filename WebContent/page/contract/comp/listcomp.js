@@ -338,7 +338,14 @@ OrderList.ColumnModel = function(selectModel) {
 				{
 					header : "签单合同号", 
 					dataIndex : "orderNo", 
-				}, 
+				},  
+				{
+					header : "签单费用(元)",
+					dataIndex : "fee",
+					renderer : function(value) {
+						return parseFloat(value)/100;
+					}
+				},
 				{
 					header : "学生",
 					dataIndex : "studentId",
@@ -367,7 +374,7 @@ OrderList.ColumnModel = function(selectModel) {
 
 				},
 				{
-					header : "已花课时",
+					header : "已用课时",
 					width : 80,
 					dataIndex : "costCourseHour",
 					renderer : function(value, metaData, record, rowIndex,
@@ -470,7 +477,7 @@ OrderList.store = function(queryUrl) {
 			fields : [ {
 				name : "id",
 				type : "int"
-			}, "studentId", "status", "grade", "courseHour", "costCourseHour",
+			}, "studentId", "status","fee", "grade", "courseHour", "costCourseHour",
 					"scheduleHour", {
 						name : "startTime",
 						type : "date",

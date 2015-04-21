@@ -26,6 +26,7 @@
 
 				var sexTypeStore = new SysParam.store("SEXTYPE");
 				var positionStore = new SysParam.store("POSITION");
+				var gradeStore = new SysParam.store("GRADE");
 				var sm = new Ext.grid.CheckboxSelectionModel();
 				var cm = new Ext.grid.ColumnModel( {
 					columns : [ sm, new Ext.grid.RowNumberer(), {
@@ -47,7 +48,11 @@
 						dataIndex : "age"
 					}, {
 						header : "年级",
-						dataIndex : "grade"
+						dataIndex : "grade", 
+						 renderer: function(value) { 
+							return  SysParam.translate(gradeStore,value);    
+						}
+						
 					} ],
 					defaults : {
 						sortable : true,

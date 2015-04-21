@@ -1,5 +1,6 @@
 var sexTypeStore = new SysParam.store("SEXTYPE");
 var positionStore = new SysParam.store("POSITION");
+var gradeStore = new SysParam.store("GRADE");
 Ext.onReady(function() { 
 	isOnlyQuery = jQuery.url.param("isOnlyQuery") == 'true' ? true : false; 
 	   
@@ -32,14 +33,16 @@ var cm = new Ext.grid.ColumnModel(
 								return  SysParam.translate(sexTypeStore,value);    
 							}
 						},
-						{
-							id:'col_age',
+						{ 
 							header : "年龄",
-							dataIndex : "age"
+							dataIndex : "age" 
 						},
 						{
 							header : "年级",
-							dataIndex : "grade"
+							dataIndex : "grade", 
+							 renderer: function(value) { 
+								return  SysParam.translate(gradeStore,value);    
+							}
 						},
 						{
 							header : "学校",
@@ -74,7 +77,7 @@ var cm = new Ext.grid.ColumnModel(
 			                    tooltip: '编辑',
 			                    handler: function(grid, rowIndex, colIndex) {
 			                        var rec = store.getAt(rowIndex); 
-			                        new EditWindow(rec.get('id'));
+			                        new studentEditWindow(rec.get('id'),function(){loadGirdStore()},true);
 			                    }
 			                }, { 
 			                	getClass :function(v, meta, rec) {         
@@ -240,8 +243,9 @@ var formpanel =  new Ext.FormPanel( {
   
 	gridPanel.addListener("rowdblclick", function(g, f, h) {
 	g.getSelectionModel().each(function(e) {  
-		new EditWindow(e.data.id); 
+		new studentEditWindow(e.data.id,function(){loadGirdStore()},true); 
 	});
 	});  
+	loadGirdStore();
 	Frame.busiPage(formpanel,gridPanel);
 });

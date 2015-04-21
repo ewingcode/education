@@ -1,6 +1,7 @@
 
-var EditWindow = function(b) {
+var studentEditWindow = function(b,successFn,editable) {
    this.primaryId = b;
+   
 	var editform = this.editform();
 	var win =   new Ext.Window( {
 		id : "studentEditForm",
@@ -18,6 +19,7 @@ var EditWindow = function(b) {
 			buttons : [ {
 				text : "保存",
 				iconCls : "btn_save",
+				hidden : !editable,
 				handler : function() { 
 				if(!editform.getForm().isValid())
 					return;
@@ -31,6 +33,9 @@ var EditWindow = function(b) {
 									buttons : Ext.MessageBox.OK,
 									icon : Ext.Msg.INFO
 								});  
+								 if($.isFunction(successFn)){
+									 successFn();
+								};
 								win.close();
 							},
 							failure : function(i, j) {
@@ -48,7 +53,7 @@ var EditWindow = function(b) {
 					}
 				}
 			 , { 
-				text : "取消",
+				text : "关闭",
 				iconCls : "btn_cancel",
 				handler : function() {
 					win.close();
@@ -57,7 +62,7 @@ var EditWindow = function(b) {
 	}); 
 	win.show();
 }; 
-EditWindow.prototype.editform = function() {  
+studentEditWindow.prototype.editform = function() {  
 	var studentForm =new studentInfoForm(this.primaryId); 
 		studentForm.getForm().load(
 				{
