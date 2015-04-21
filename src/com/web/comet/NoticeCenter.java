@@ -9,7 +9,6 @@ import nl.justobjects.pushlet.core.EventPullSource;
 import org.apache.log4j.Logger;
 
 import com.core.factory.SpringCtx;
-import com.core.jdbc.DaoException;
 import com.web.service.NoticeService;
 
 public class NoticeCenter {

@@ -43,9 +43,9 @@ var studentInfoForm = function(studentId){
 					maxLength :10,
 					listeners:{ 
 						   "blur": function(field){  
-							 Ajax.syncRequest("Busi_Student_query.action?condition=name='"+field.getValue()+"'",  
-									 function(data) {  
-								      if(data.result && data.result.length>=1){
+							 Ajax.syncRequest("Busi_Student_validateStudent.action?studentName="+field.getValue(),  
+									 function(data) {   
+								      if(data.result){
 								    	  Common.ErrMegBox('该学生：'+field.getValue()+'名称已重复！');
 								    	  field.reset();
 								      }

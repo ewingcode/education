@@ -329,15 +329,14 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
 							}
 						} ]
 			});
-}
+};
 OrderList.ColumnModel = function(selectModel) {
 	return new Ext.grid.ColumnModel({
 		columns : [
 				selectModel,
 				new Ext.grid.RowNumberer(),
 				{
-					header : "签单合同号",
-					width : 60,
+					header : "签单合同号", 
 					dataIndex : "orderNo", 
 				}, 
 				{
@@ -363,7 +362,7 @@ OrderList.ColumnModel = function(selectModel) {
 				},
 				{
 					header : "已排课时",
-					width : 50,
+					width : 80,
 					dataIndex : "scheduleHour"
 
 				},
@@ -427,7 +426,7 @@ OrderList.ColumnModel = function(selectModel) {
 			width : 100
 		}
 	});
-}
+};
 OrderList.gridPanel = function(toolbar, columnModel, selectModel, dataStore) {
 	return new Ext.grid.GridPanel({
 		id : "contractListGird",
@@ -456,7 +455,7 @@ OrderList.gridPanel = function(toolbar, columnModel, selectModel, dataStore) {
 
 		})
 	});
-}
+};
 
 OrderList.store = function(queryUrl) {
 	return new Ext.data.Store({
@@ -496,10 +495,10 @@ OrderList.store = function(queryUrl) {
 					"costCourseHour", "runStatus","orderNo" ]
 		})
 	});
-}
+};
 
 OrderList.formpanel = function(studentId) {
-	var readOnlyStudent = studentId!=null?true:false
+	var readOnlyStudent = studentId!=null?true:false;
 	return new Ext.FormPanel(
 			{
 				labelAlign : 'left',// 字样显示在顶部
