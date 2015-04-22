@@ -13,10 +13,10 @@
 
 		<link rel="stylesheet" type="text/css"
 			href="${_contextPath}/resources/css/ext-all.css"></link>
-		<!--灰色样式
+		<!--灰色样式-->
 		<link rel="stylesheet" type="text/css" title="gray"
 			href="${_contextPath}/resources/css/xtheme-gray.css" /> 
-		-->
+		
 		<link rel="stylesheet" type="text/css"
 			href="${_contextPath}/resources/css/debug.css"></link>
 		<link rel="stylesheet" type="text/css"

@@ -1,6 +1,6 @@
 Ext.ns("Teacher");
 
-Teacher.selectWin = function(parentSelectId, parentSelectUserName, frameId) {
+Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 
 	var sexTypeStore = new SysParam.store("SEXTYPE"); 
 	var courseStore = new SysParam.store("ORDER_COURSE");
@@ -202,8 +202,12 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, frameId) {
 	});
 	gridPanel.addListener("rowdblclick", function(g, f, h) {
 		g.getSelectionModel().each(function(e) {
-			$("#" + parentSelectId).val(e.data.id);
-			$("#" + parentSelectUserName).val(e.data.userName);
+			if($.isFunction(successFn)){
+				successFn(e.data.id,e.data.userName); 
+			}else{
+				$("#" + parentSelectId).val(e.data.id);
+				$("#" + parentSelectUserName).val(e.data.userName);
+			}
 		});
 	});
 
@@ -211,7 +215,7 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, frameId) {
 		id : "editScheduleWin",
 		title : '教师信息',
 		width : 650,
-		height : 500,
+		height : 420,
 		minWidth : 500,
 		minHeight : 300,
 		plain : true,
@@ -227,8 +231,12 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, frameId) {
 					return;
 				}
 				gridPanel.getSelectionModel().each(function(e) { 
-					$("#" + parentSelectId).val(e.data.id);
-					$("#" + parentSelectUserName).val(e.data.userName);
+					if($.isFunction(successFn)){ 
+						successFn(e.data.id,e.data.userName); 
+					}else{
+						$("#" + parentSelectId).val(e.data.id);
+						$("#" + parentSelectUserName).val(e.data.userName);
+					}
 					win.close();
 				});
 			}

@@ -2,6 +2,8 @@ package com.web.model;
 
 import java.sql.Timestamp;
 
+import com.core.app.anno.IgnoreField;
+
 /**
  * OrderInfo entity. @author MyEclipse Persistence Tools
  */
@@ -31,7 +33,28 @@ public class OrderInfo implements java.io.Serializable {
 	private Integer costCourseHour;
 	private String iseff;
 	private Integer scheduleHour;
+	@IgnoreField
+	private String studentName;
+	@IgnoreField
+	private Float feeFloat;
+
 	// Constructors
+
+	public Float getFeeFloat() {
+		return feeFloat;
+	}
+
+	public void setFeeFloat(Float feeFloat) {
+		this.feeFloat = feeFloat;
+	}
+
+	public String getStudentName() {
+		return studentName;
+	}
+
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
 
 	public Integer getScheduleHour() {
 		return scheduleHour;

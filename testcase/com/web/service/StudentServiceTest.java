@@ -15,13 +15,4 @@ public class StudentServiceTest extends BaseTest {
 				.getByBeanName("studentService");
 	}
 
-	@Test
-	public void testTx() {
-		try {
-			studentService.testTx();
-		} catch ( Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

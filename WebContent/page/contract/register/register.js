@@ -1,6 +1,6 @@
 Ext.onReady(function() {
 
-	var orderCourseGrid = new OrderCourse.courseEditGrid();
+	var orderCourseGrid = new OrderCourse.courseEditGrid(null, false);
 	var registerForm = new Ext.FormPanel({
 		fileUpload : true,
 		labelAlign : 'left',// 字样显示在顶部

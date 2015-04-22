@@ -2,7 +2,7 @@ Ext.ns("OrderList");
 OrderList.loadGirdStore = function(dataStore) {
 	dataStore.setBaseParam('start', 0);
 	dataStore.setBaseParam('limit', 20);
-	dataStore.setBaseParam('_QUERY_s_rlike_id', Ext.getCmp('QUERY_orderId')
+	dataStore.setBaseParam('_QUERY_s_rlike_order_no', Ext.getCmp('QUERY_orderNo')
 			.getValue());
 	dataStore.setBaseParam('_QUERY_s_eq_iseff', new Constant.IsEff().EFFECTIVE);
 	dataStore.setBaseParam('_QUERY_n_in_student_id', Student.mutipleId($(
@@ -530,8 +530,8 @@ OrderList.formpanel = function(studentId) {
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {
-									id : "QUERY_orderId",
-									fieldLabel : "签单编号"
+									id : "QUERY_orderNo",
+									fieldLabel : "签单合同号"
 								},
 								new SysParam.ComboBox('授课状态',
 										'QUERY_runStatus',

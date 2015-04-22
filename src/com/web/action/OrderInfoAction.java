@@ -16,14 +16,40 @@ import com.core.app.control.SessionControl;
 import com.core.jdbc.util.PageBean;
 import com.web.model.OrderInfo;
 import com.web.service.OrderQueryService;
+import com.web.service.StudentService;
 
 public class OrderInfoAction extends BaseAction {
 	private static Logger logger = Logger.getLogger(OrderInfoAction.class);
 	@Resource
 	private OrderQueryService orderQueryService;
+	@Resource
+	private StudentService studentService;
 
 	public OrderInfoAction() {
 		super(OrderInfo.class);
+	}
+
+	/**
+	 * dao查询
+	 * 
+	 * @throws ActionException
+	 */
+	public void findOrderInfo() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			Integer orderId = Integer.valueOf(request.getParameter("orderId"));
+			OrderInfo orderInfo = baseModelService.findOne(orderId,
+					OrderInfo.class);
+			orderInfo.setStudentName(studentService.getStudentName(orderInfo
+					.getStudentId()));
+			orderInfo.setFeeFloat(Float.valueOf(orderInfo.getFee() / 100f));
+			responseData = ResponseUtils.success("查询成功！");
+			responseData.setResult(orderInfo);
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("查询失败！");
+		}
+		this.outResult(responseData);
 	}
 
 	/**
@@ -37,9 +63,9 @@ public class OrderInfoAction extends BaseAction {
 			UserInfo userInfo = SessionControl.getUserInfo(request);
 			String start = request.getParameter("start");
 			String limit = request.getParameter("limit");
-			PageBean pageBean = orderQueryService.findPersonalTasks(userInfo
-					.getId(), userInfo.getRoleId(), Integer.valueOf(limit),
-					Integer.valueOf(start));
+			PageBean pageBean = orderQueryService.findPersonalTasks(
+					userInfo.getId(), userInfo.getRoleId(),
+					Integer.valueOf(limit), Integer.valueOf(start));
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setTotalProperty(pageBean.getTotalCount());
 			responseData.setResult(pageBean.getResult());
@@ -105,15 +131,14 @@ public class OrderInfoAction extends BaseAction {
 		try {
 			String userId = request.getParameter("userId");
 			String studentId = request.getParameter("studentId");
-			OrderInfo orderInfo = orderQueryService.queryLastestOrder(Integer
-					.valueOf(userId), Integer.valueOf(studentId));
+			OrderInfo orderInfo = orderQueryService.queryLastestOrder(
+					Integer.valueOf(userId), Integer.valueOf(studentId));
 			List list = new ArrayList();
 			if (orderInfo != null) {
 				list.add(orderInfo);
 			}
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(list);
-		
 
 		} catch (Exception e) {
 			logger.error(e, e);

@@ -2,128 +2,251 @@
 <%@ include file="/common/include/head.jsp"%>
 <%@ include file="/common/include/html_head.jsp"%>
 <%@ include file="/page/contract/comp/ordercompinc.jsp"%>
-<script> 
+<script>
 	Ext.onReady(function() {
 		var orderId = jQuery.url.param("orderId");
-		var isOnlyEdit = jQuery.url.param("isOnlyEdit");
-		Order.initData();
-		var courseMangeFiled = new Order.courseManage(orderId, true, false,
-				true);
-		var editform = new Ext.FormPanel( {
-			layout : "form",
-			autoDestroy : true,
-			id : "contractEditForm",
-			frame : false,
-			border : false,
+		var orderCourseGrid = new OrderCourse.courseEditGrid(orderId, true);
+		var orderInfoForm = new Ext.FormPanel({
 			fileUpload : true,
+			labelAlign : 'left',// 字样显示在顶部
+			id : "card-1",
 			autoScroll : true,
-			bodyStyle : "padding:5px;",
-			defaultType : "textfield",
-			height : 600,
 			buttonAlign : 'center',
+			reader : new Ext.data.JsonReader({
+				successProperty : 'success',
+				root : 'result'
+			}, [ {
+				name : "id",
+				type : "int"
+			}, "studentId","studentName", "status", "fee", "grade", "courseHour",
+					"costCourseHour", "scheduleHour","feeFloat", {
+						name : "startTime",
+						type : "date",
+						mapping : 'createTime.time',
+						dateFormat : 'time'
+					}, {
+						name : "endTime",
+						type : "date",
+						mapping : 'endTime.time',
+						dateFormat : 'time'
+					}, {
+						name : "createTime",
+						type : "date",
+						mapping : 'createTime.time',
+						dateFormat : 'time'
+					}, {
+						name : "lastUpdate",
+						type : "date",
+						mapping : 'lastUpdate.time',
+						dateFormat : 'time'
+					}, "iseff", "des", "isLast", "curOperator",
+					"costCourseHour", "runStatus", "orderNo" ]),
 			items : [
-					Order.courseTimeEdit(orderId),
-					new Order.fileUploadComp('初期辅导方案', "1", orderId, true,
-							false, true,true),
-					new Order.fileUploadComp('华实模拟协议', "2", orderId, true,
-							false, true,true),
-					new Order.fileUploadComp('华实全方位测评报告', "3", orderId, true,
-							false, true,true),
-					new Order.fileUploadComp('教学安排表', "4", orderId, true,
-							false, true,true)
-
-			],
+					{
+						xtype : 'fieldset',
+						title : '签单信息',
+						layout : "column",
+						items : [
+								{
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "orderNo",
+										fieldLabel : "合同编号",
+										allowBlank : false,
+									} ]
+								},
+								{
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "studentId",
+										fieldLabel : "学生id",
+										hidden:true
+									} , {
+										id : "studentName",
+										fieldLabel : "学生名称",
+										allowBlank : false,
+										readOnly:true
+									}  ]
+								},
+								{
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "fee", 
+										hidden:true
+									}, {
+										id : "feeFloat",
+										fieldLabel : "签单费用(元)",  
+										allowBlank : false
+									} ]
+								},
+								{
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ new SysParam.ComboBox('年级',
+											'grade', 'GRADE', false) ]
+								}, {
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "courseHour",
+										fieldLabel : "课时总数(小时)",
+										maxLength : 10,
+										allowBlank : false
+									} ]
+								}, {
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "costCourseHour",
+										fieldLabel : "已消耗课时(小时/可选)",
+										maxLength : 10,
+									} ]
+								}, {
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "startTime",
+										xtype : "datefield",
+										format : "Y-m-d",
+										fieldLabel : "开始时间",
+										allowBlank : false,
+										maxLength : 10,
+										vtype : 'daterange',
+										endDateField : 'endTime'
+									} ]
+								}, {
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "endTime",
+										xtype : "datefield",
+										format : "Y-m-d",
+										fieldLabel : "结束时间",
+										allowBlank : false,
+										maxLength : 10,
+										vtype : 'daterange',
+										startDateField : 'startTime'
+									} ]
+								} ]
+					}, orderCourseGrid.grid ],
 			buttons : [ {
 				text : "保存",
 				iconCls : "btn_save",
 				handler : function() {
-					var courseList = Ext.getCmp("courseList").getValue();
+
+					if (!orderInfoForm.getForm().isValid())
+						return;
+					var totalHour = $('#courseHour').val();
+					if (!orderCourseGrid.validate(totalHour))
+						return;
 					var checkCourse = '';
-					// 验证是否有选择课程
-				for (i = 0; i < courseList.length; i++) {
-					checkCourse += courseList[i].inputValue;
-					if (i < courseList.length - 1)
-						checkCourse += ",";
+					checkCourse = orderCourseGrid.getCourseList();
+
+					// 验证是否有上传文件
+					/*
+					 * if (!Order.validateAttach(SUBMITTYPE_UPLOAD_FILE)) return;
+					 */
+				/* 	 orderInfoForm.getForm().submit({
+						url : "Busi_OrderControl_createNewOrder.action",
+						method : "post",
+						params : {
+							courseList : checkCourse
+						},
+						waitMsg : "正在提交数据...",
+						success : function(i, j) {
+							Common.SucMegBox(j.result.retinfo);
+							registerForm.form.reset();
+							orderCourseGrid.reset();
+							// Order.resetAttach();
+						},
+						failure : function(i, j) {
+							Common.ErrMegBox(j.result.retinfo);
+
+						}
+					}); */
 				}
-				if (checkCourse == '') {
-					Ext.MessageBox.show( {
-						title : "操作信息",
-						msg : "可选课程不能为空！",
-						buttons : Ext.MessageBox.OK,
-						icon : "ext-mb-error"
-					});
-					return;
-				}
-				if (!Order.validateCourse(COURSEOPER_CHARGER))
-					return;
-				if (!Order.validateAttach(SUBMITTYPE_UPLOAD_FILE))
-					return;
-				sumitForm(editform, orderId,isOnlyEdit);
-			}
 			}, {
-				text : "关闭",
+				text : "重置",
 				iconCls : "btn_cancel",
 				handler : function() {
-					parent.window.closeTabPanel(orderId);
+					registerForm.form.reset();
+					orderCourseGrid.reset();
+
 				}
 			} ]
 		});
-		var courseTypeFiled = new Order.courseTypeEdit(orderId,
-				courseMangeFiled, editform);
-		var file5Filed = new Order.fileUploadComp('教学方案', "5", orderId, true,
-				false, true,true); 
-		editform.add(file5Filed);
-		editform.add(courseTypeFiled);
-		editform.add(courseMangeFiled);
 
-		Frame.editPage(editform);
+		if (orderId != null) {
+			orderInfoForm.getForm().load({
+				deferredRender : false,
+				url : "Busi_OrderInfo_findOrderInfo.action?orderId=" + orderId,
+				waitMsg : "正在载入数据...",
+				success : function(d, e) {
+
+				},
+				failure : function(b, c) {
+					Ext.MessageBox.show({
+						title : "编辑",
+						msg : "载入失败！",
+						buttons : Ext.MessageBox.OK,
+						icon : "ext-mb-error"
+					});
+				}
+			});
+		}
+		Frame.editPage(orderInfoForm);
 	});
-
-/**
-	 * 流程提交
-	 *  
-	 * @param parentOrderId 
-	 * @return
-	 */
-	function sumitForm(editform, orderId ,isOnlyEdit) { 
-		if (!editform.getForm().isValid())
-			return; 
-		Ext.Msg.confirm("信息确认", "您确认要保存该记录吗？", function(c) {
-			if (c == "yes") {
-
-				editform.getForm().submit( {
-					url : "Busi_OrderControl_editOrder.action",
-					method : "post",
-					params : { 
-						orderId : orderId,
-						isOnlyEdit:isOnlyEdit
-					},
-					waitMsg : "正在提交数据...",
-					success : function(i, j) {
-						Ext.Msg.show( {
-							title : '编辑',
-							msg : '保存成功',
-							fn : function() {
-								parent.window.closeTabPanel(orderId);
-							},
-							buttons : Ext.MessageBox.OK,
-							icon : Ext.Msg.INFO
-						});
-					},
-					failure : function(i, j) {
-						Ext.MessageBox.show( {
-							title : "操作信息",
-							msg : "信息保存出错，请联系管理员！",
-							buttons : Ext.MessageBox.OK,
-							icon : "ext-mb-error"
-						});
-					}
-				});
-			}
-		});
-
-	};
-	 
 </script>
 
 <%@ include file="/common/include/html_bottom.jsp"%>

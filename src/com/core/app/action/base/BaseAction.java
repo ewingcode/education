@@ -116,6 +116,11 @@ public class BaseAction extends ActionSupport implements ServletRequestAware,
 	}
 
 	public String getCondition() {
+		try {
+			condition = StringUtil.iso2Utf8(condition);
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
+		}
 		return condition;
 	}
 

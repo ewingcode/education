@@ -93,13 +93,11 @@ public class OrderCourseService {
 		baseDao.executeSql("delete from order_course where order_id=" + orderId);
 		for (String coursestr : courseTypes) {
 			String[] courseArr = coursestr.split("_");
-			String courseName = courseArr[0];
-			String courseHour = courseArr[1];
-			SysParam sysParam = sysParamService.getParamByName(
-					SysParamConstant.ORDER_COURSE.name(), courseName);
+			String courseType = courseArr[0];
+			String courseHour = courseArr[1]; 
 			OrderCourse orderCourse = new OrderCourse();
 			orderCourse.setOrderId(orderId);
-			orderCourse.setCourseType(sysParam.getParamValue());
+			orderCourse.setCourseType(courseType);
 			orderCourse.setHour(Integer.valueOf(courseHour));
 			orderCourse.setStatus(OrderCourseStatus.WAIT);
 			baseDao.save(orderCourse);
