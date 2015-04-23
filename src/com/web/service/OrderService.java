@@ -94,7 +94,8 @@ public class OrderService {
 		if (totalSchedulehour != null
 				&& totalSchedulehour.intValue() > orderInfo.getCourseHour())
 			throw new OrderException("计划时间不能大于签单总课时");
-		orderInfo.setScheduleHour(totalSchedulehour == null ? 0
+		orderInfo.setScheduleHour(totalSchedulehour == null
+				? 0
 				: totalSchedulehour.intValue());
 		baseDao.update(orderInfo);
 	}
@@ -376,8 +377,9 @@ public class OrderService {
 
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	public boolean editOrder(int operator, OrderInfo orderInfo,
-			Map<OrderAttach, File> attachMap, List<OrderCourse> courseList,
+			Map<OrderAttach, File> attachMap, String[] courseArray,
 			boolean isOnlyEdit) throws Exception {
 		orderInfo.setIsLast(OrderIsLast.NOTLAST);
 		orderInfo.setRunStatus(OrderRunStatus.INAPPLY);
@@ -386,7 +388,7 @@ public class OrderService {
 			baseDao.update(orderInfo);
 		}
 		orderAttachService.processAttach(orderInfo, attachMap);
-		orderCourseService.processCourse(orderInfo, courseList);
+		orderCourseService.saveOrderCourse(orderInfo.getId(), courseArray);
 		return true;
 	}
 

@@ -89,6 +89,7 @@ SysParam.ComboBox = function(fieldName, filedId, rootCode, allowBlank,isReadOnly
 				hidden:isHidden,
 				mode: 'local',  
 				region : "center",
+				readOnly:_isReadOnly,
 				valueField : "paramValue",
 				displayField : "paramName",
 				allowBlank : _allowBlank,

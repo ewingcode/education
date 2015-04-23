@@ -36,15 +36,15 @@ public class OrderInfo implements java.io.Serializable {
 	@IgnoreField
 	private String studentName;
 	@IgnoreField
-	private Float feeFloat;
+	private String feeFloat;
 
 	// Constructors
 
-	public Float getFeeFloat() {
+	public String getFeeFloat() {
 		return feeFloat;
 	}
 
-	public void setFeeFloat(Float feeFloat) {
+	public void setFeeFloat(String feeFloat) {
 		this.feeFloat = feeFloat;
 	}
 

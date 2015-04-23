@@ -13,7 +13,13 @@ OrderCourse.courseEditGrid = function(orderId, needChooseCharger) {
 				var courseType = records[i].get('courseType');
 				var courseHour = records[i].get('hour');
 				var chargerId = records[i].get('chargerId');
-				courseList += courseType + "_" + courseHour + '_'+chargerId+',';
+				var orderCourseId = records[i].get('id');
+				if(orderCourseId!=null && orderCourseId != "undefined"){ 
+					courseList += courseType + "_" + courseHour + '_'
+							+ orderCourseId + "_" + chargerId + ',';
+				}else{
+					courseList += courseType + "_" + courseHour + ',';
+				}
 			}
 			return courseList;
 		},
@@ -132,8 +138,10 @@ OrderCourse.courseEditGrid = function(orderId, needChooseCharger) {
 								},
 								tooltip : '编辑',
 								handler : function(grid, rowIndex, colIndex) {
-									var rec = store.getAt(rowIndex); 
-									new OrderCourse.editCourseWin(store, grid, needChooseCharger,rec.get('id'));
+									var rec = store.getAt(rowIndex);
+									new OrderCourse.editCourseWin(store, grid,
+											needChooseCharger, rec.get('id'),
+											rec);
 								}
 							},
 							{
@@ -211,8 +219,9 @@ OrderCourse.courseEditGrid = function(orderId, needChooseCharger) {
 };
 
 OrderCourse.editCourseWin = function(store, grid, needChooseCharger,
-		orderCourseId) {
-	var editCourseForm = new Ext.FormPanel({ 
+		orderCourseId, record) {
+	var isUpdate = orderCourseId != null ? true : false;
+	var editCourseForm = new Ext.FormPanel({
 		layout : "form",
 		autoDestroy : true,
 		id : "RoleForm",
@@ -226,15 +235,23 @@ OrderCourse.editCourseWin = function(store, grid, needChooseCharger,
 		reader : new Ext.data.JsonReader({
 			successProperty : 'success',
 			root : 'result'
-		}, [  {name: 'editCourseType', mapping: 'courseType'},
-		      {name: 'editCourseHour', mapping: 'hour'},
-		      {name: 'editChargerId', mapping: 'chargerId'},
-		      {name: 'editChargerName', mapping: 'chargerName'},
-		      'courseType', 'id', 'chargerId', 'costHour', 'hour',
-				'scheduleHour', 'status' ]),
+		}, [ {
+			name : 'editCourseType',
+			mapping : 'courseType'
+		}, {
+			name : 'editCourseHour',
+			mapping : 'hour'
+		}, {
+			name : 'editChargerId',
+			mapping : 'chargerId'
+		}, {
+			name : 'editChargerName',
+			mapping : 'chargerName'
+		}, 'courseType', 'id', 'chargerId', 'costHour', 'hour', 'scheduleHour',
+				'status' ]),
 		items : [
 				new SysParam.ComboBox('科目', 'editCourseType', 'ORDER_COURSE',
-						false, false),
+						false, isUpdate),
 				{
 					id : "editCourseHour",
 					fieldLabel : "课时"
@@ -284,27 +301,30 @@ OrderCourse.editCourseWin = function(store, grid, needChooseCharger,
 								} ]
 					} ]
 				} ]
-	}); 
- 
-	if (orderCourseId != null ) {
-	 
-		editCourseForm.getForm().load(
-				{
-					deferredRender : false,
-					url :  "Busi_OrderCourse_findOrderCourse.action?orderCourseId="+orderCourseId,
-					waitMsg : "正在载入数据...",
-					success : function(d, e) {
-					 
-					},
-					failure : function(b, c) { 
-						Ext.MessageBox.show( {
-							title : "编辑",
-							msg : "载入失败！",
-							buttons : Ext.MessageBox.OK,
-							icon : "ext-mb-error"
+	});
+
+	if (orderCourseId != null) {
+
+		editCourseForm
+				.getForm()
+				.load(
+						{
+							deferredRender : false,
+							url : "Busi_OrderCourse_findOrderCourse.action?orderCourseId="
+									+ orderCourseId,
+							waitMsg : "正在载入数据...",
+							success : function(d, e) {
+
+							},
+							failure : function(b, c) {
+								Ext.MessageBox.show({
+									title : "编辑",
+									msg : "载入失败！",
+									buttons : Ext.MessageBox.OK,
+									icon : "ext-mb-error"
+								});
+							}
 						});
-					}
-				});
 	}
 	var win = new Ext.Window({
 		id : "userEditForm",
@@ -316,33 +336,46 @@ OrderCourse.editCourseWin = function(store, grid, needChooseCharger,
 		bodyStyle : 'padding:5px;',
 		buttonAlign : 'center',
 		items : [ editCourseForm ],
-		buttons : [ {
-			text : "保存",
-			iconCls : "btn_save",
-			handler : function() {
-				if (!editCourseForm.getForm().isValid())
-					return;
-				var Plant = grid.getStore().recordType;
-				var p = new Plant({
-					courseType : Ext.getCmp('editCourseType').getValue(),
-					hour : Ext.getCmp('editCourseHour').getValue(),
-					chargerName : Ext.getCmp('editChargerName').getValue(),
-					chargerId : Ext.getCmp('editChargerId').getValue(),
-					costHour : 0,
-					scheduleHour : 0
-				});
-				grid.stopEditing();
-				store.insert(0, p);
-				grid.startEditing(0, 0);
-				win.close();
-			}
-		}, {
-			text : "取消",
-			iconCls : "btn_cancel",
-			handler : function() {
-				win.close();
-			}
-		} ]
+		buttons : [
+				{
+					text : "保存",
+					iconCls : "btn_save",
+					handler : function() {
+						if (!editCourseForm.getForm().isValid())
+							return;
+						if (isUpdate) {
+							record.set('hour', Ext.getCmp('editCourseHour')
+									.getValue());
+							record.set('chargerId', Ext.getCmp('editChargerId')
+									.getValue());
+							record.commit();
+							 
+						} else {
+							var Plant = grid.getStore().recordType;
+							var p = new Plant({
+								courseType : Ext.getCmp('editCourseType')
+										.getValue(),
+								hour : Ext.getCmp('editCourseHour').getValue(),
+								chargerName : Ext.getCmp('editChargerName')
+										.getValue(),
+								chargerId : Ext.getCmp('editChargerId')
+										.getValue(),
+								costHour : 0,
+								scheduleHour : 0
+							});
+							grid.stopEditing();
+							store.insert(0, p);
+							grid.startEditing(0, 0);
+						}
+						win.close();
+					}
+				}, {
+					text : "取消",
+					iconCls : "btn_cancel",
+					handler : function() {
+						win.close();
+					}
+				} ]
 	});
 	win.show();
 };

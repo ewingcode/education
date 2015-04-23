@@ -421,9 +421,13 @@ public class OrderControlAction extends BaseAction {
 	public void editOrder() throws ActionException {
 		ResponseData responseData = null;
 		try {
-			String orderId = request.getParameter("orderId");
 			String studentId = request.getParameter("studentId");
+			String courseList = request.getParameter("courseList");
+			String fee = request.getParameter("fee");
+
+			String[] courseArray = StringUtils.split(courseList, ",");
 			String courseHour = request.getParameter("courseHour");
+			String orderId = request.getParameter("orderId");
 			String grade = request.getParameter("grade");
 			boolean isOnlyEdit = true;
 			OrderInfo orderInfo = orderService
@@ -431,11 +435,13 @@ public class OrderControlAction extends BaseAction {
 			orderInfo.setStudentId(Integer.valueOf(studentId));
 			orderInfo.setGrade(grade);
 			orderInfo.setCourseHour(Integer.valueOf(courseHour));
+			BigDecimal feeBD = new BigDecimal(fee);
+			orderInfo.setFee(feeBD.multiply(new BigDecimal(100)).longValue());
+
 			UserInfo userInfo = SessionControl.getUserInfo(request);
 			Map<OrderAttach, File> attachMap = uploadAttachFile(this);
-			List<OrderCourse> courseList = processOrderCourse();
 			orderService.editOrder(userInfo.getId(), orderInfo, attachMap,
-					courseList, isOnlyEdit);
+					courseArray, isOnlyEdit);
 			responseData = ResponseUtils.success("处理成功！");
 		} catch (Exception e) {
 			logger.error(e, e);

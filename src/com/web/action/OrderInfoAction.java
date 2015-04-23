@@ -29,6 +29,10 @@ public class OrderInfoAction extends BaseAction {
 		super(OrderInfo.class);
 	}
 
+	public static void main(String[] args) {
+		Float s = Float.valueOf(2563l / 100f);
+		System.out.println(s);
+	}
 	/**
 	 * dao查询
 	 * 
@@ -42,7 +46,7 @@ public class OrderInfoAction extends BaseAction {
 					OrderInfo.class);
 			orderInfo.setStudentName(studentService.getStudentName(orderInfo
 					.getStudentId()));
-			orderInfo.setFeeFloat(Float.valueOf(orderInfo.getFee() / 100f));
+			orderInfo.setFeeFloat(Float.valueOf(orderInfo.getFee() / 100f).toString());
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(orderInfo);
 		} catch (Exception e) {

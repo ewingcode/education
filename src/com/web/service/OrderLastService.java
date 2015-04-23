@@ -56,7 +56,7 @@ public class OrderLastService {
 			baseDao.update(orderInfo);
 		}
 		orderAttachService.processParentAttach(orderInfo, attachMap);
-		orderCourseService.processCourse(orderInfo, courseList);
+		//orderCourseService.processCourse(orderInfo, courseList);
 		return true;
 	}
 

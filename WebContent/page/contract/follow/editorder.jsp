@@ -20,6 +20,12 @@
 				type : "int"
 			}, "studentId","studentName", "status", "fee", "grade", "courseHour",
 					"costCourseHour", "scheduleHour","feeFloat", {
+						name : "fee", 
+						mapping : 'fee',
+						convert : function(value,rec){  
+								return rec.feeFloat;
+						}
+					}, {
 						name : "startTime",
 						type : "date",
 						mapping : 'createTime.time',
@@ -91,11 +97,8 @@
 										width : 300,
 										labelStyle : 'text-align:right;'
 									},
-									items : [ {
-										id : "fee", 
-										hidden:true
-									}, {
-										id : "feeFloat",
+									items : [  {
+										id : "fee",
 										fieldLabel : "签单费用(元)",  
 										allowBlank : false
 									} ]
@@ -197,32 +200,30 @@
 					/*
 					 * if (!Order.validateAttach(SUBMITTYPE_UPLOAD_FILE)) return;
 					 */
-				/* 	 orderInfoForm.getForm().submit({
-						url : "Busi_OrderControl_createNewOrder.action",
+				  	 orderInfoForm.getForm().submit({
+						url : "Busi_OrderControl_editOrder.action",
 						method : "post",
 						params : {
-							courseList : checkCourse
+							courseList : checkCourse,
+							orderId:orderId
 						},
 						waitMsg : "正在提交数据...",
 						success : function(i, j) {
-							Common.SucMegBox(j.result.retinfo);
-							registerForm.form.reset();
-							orderCourseGrid.reset();
-							// Order.resetAttach();
+							 Ext.Msg.show( {
+									title : '编辑',
+									msg : '保存成功',
+									fn:function(){
+									   parent.window.closeTabPanel(orderId);
+								 	},
+									buttons : Ext.MessageBox.OK,
+									icon : Ext.Msg.INFO
+								});     
 						},
 						failure : function(i, j) {
 							Common.ErrMegBox(j.result.retinfo);
 
 						}
-					}); */
-				}
-			}, {
-				text : "重置",
-				iconCls : "btn_cancel",
-				handler : function() {
-					registerForm.form.reset();
-					orderCourseGrid.reset();
-
+					});  
 				}
 			} ]
 		});

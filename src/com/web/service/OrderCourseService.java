@@ -75,7 +75,8 @@ public class OrderCourseService {
 			throw new OrderException("计划时间不能大于科目["
 					+ courseTypeSysParam.getParamName() + "]总课时!");
 		}
-		orderCourse.setScheduleHour(totalSchedulehour == null ? 0
+		orderCourse.setScheduleHour(totalSchedulehour == null
+				? 0
 				: totalSchedulehour.intValue());
 		baseDao.update(orderCourse);
 	}
@@ -85,25 +86,50 @@ public class OrderCourseService {
 	 * 
 	 * @param courseTypes
 	 * @param orderId
-	 *            @
+	 * @throws OrderException
+	 *             @
 	 */
-	public void saveOrderCourse(int orderId, String[] courseTypes) {
+	public void saveOrderCourse(int orderId, String[] courseTypes)
+			throws OrderException {
 		if (courseTypes == null || courseTypes.length == 0)
 			return;
-		baseDao.executeSql("delete from order_course where order_id=" + orderId);
 		for (String coursestr : courseTypes) {
-			String[] courseArr = coursestr.split("_");
-			String courseType = courseArr[0];
-			String courseHour = courseArr[1]; 
 			OrderCourse orderCourse = new OrderCourse();
 			orderCourse.setOrderId(orderId);
-			orderCourse.setCourseType(courseType);
-			orderCourse.setHour(Integer.valueOf(courseHour));
-			orderCourse.setStatus(OrderCourseStatus.WAIT);
-			baseDao.save(orderCourse);
+
+			boolean isUpdate = false;
+			String[] courseArr = coursestr.split("_");
+			String courseType = courseArr[0];
+			Integer courseHour = Integer.valueOf(courseArr[1]);
+			Integer orderCourseId;
+			Integer chargerId;
+			if (courseArr.length >= 3)
+				isUpdate = true;
+			if (isUpdate) {
+				orderCourseId = Integer.valueOf(courseArr[2]);
+				chargerId = Integer.valueOf(courseArr[3]);
+				orderCourse = findOrderCourse(orderCourseId);
+				if (orderCourse == null)
+					throw new OrderException("没有对应的签单课程记录[" + orderCourseId
+							+ "]");
+				if (courseHour < orderCourse.getCostHour())
+					throw new OrderException("修改的课程时间不能低于已花课时");
+				if (courseHour < orderCourse.getScheduleHour())
+					throw new OrderException("修改的课程时间不能低于已设置排课课时");
+				orderCourse.setChargerId(chargerId);
+				orderCourse.setHour(courseHour);
+				baseDao.update(orderCourse);
+			} else {
+				orderCourse.setCourseType(courseType);
+				orderCourse.setCostHour(0);
+				orderCourse.setScheduleHour(0);
+				orderCourse.setStatus(OrderCourseStatus.WAIT);
+				orderCourse.setHour(courseHour);
+				baseDao.save(orderCourse);
+			}
+
 		}
 	}
-
 	/**
 	 * 创建签单的课程信息
 	 * 
@@ -161,15 +187,6 @@ public class OrderCourseService {
 		}
 	}
 
-	public void processCourse(OrderInfo orderInfo, List<OrderCourse> courseList) {
-		for (OrderCourse orderCourse : courseList) {
-			orderCourse.setOrderId(orderInfo.getId());
-			orderCourse.setStatus(OrderAttachStatus.ACCEPT);
-		}
-		if (courseList != null && !courseList.isEmpty())
-			saveOrderCourse(orderInfo.getId(), courseList);
-	}
-
 	/**
 	 * 获取学生的签单课程信息
 	 * 
@@ -195,7 +212,8 @@ public class OrderCourseService {
 			hour += orderCourse.getHour();
 			costHour += orderCourse.getCostHour() == null ? 0 : orderCourse
 					.getCostHour();
-			scheduleHour += orderCourse.getScheduleHour() == null ? 0
+			scheduleHour += orderCourse.getScheduleHour() == null
+					? 0
 					: orderCourse.getScheduleHour();
 		}
 
