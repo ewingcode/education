@@ -1,16 +1,18 @@
 package com.web.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.stereotype.Repository;
 
 import com.core.app.model.SysParam;
 import com.core.app.service.SysParamService;
 import com.core.jdbc.BaseDao;
 import com.web.constant.CourseHourStatus;
-import com.web.constant.OrderAttachStatus;
 import com.web.constant.OrderCourseStatus;
 import com.web.constant.OrderRunStatus;
 import com.web.constant.SysParamConstant;
@@ -34,6 +36,10 @@ public class OrderCourseService {
 
 	public OrderCourse findOrderCourse(Integer orderCourseId) {
 		return baseDao.findOne(orderCourseId, OrderCourse.class);
+	}
+
+	public List<OrderCourse> findByOrderId(Integer orderId) {
+		return baseDao.find("order_id=" + orderId, OrderCourse.class);
 	}
 
 	/**
@@ -75,8 +81,7 @@ public class OrderCourseService {
 			throw new OrderException("计划时间不能大于科目["
 					+ courseTypeSysParam.getParamName() + "]总课时!");
 		}
-		orderCourse.setScheduleHour(totalSchedulehour == null
-				? 0
+		orderCourse.setScheduleHour(totalSchedulehour == null ? 0
 				: totalSchedulehour.intValue());
 		baseDao.update(orderCourse);
 	}
@@ -93,21 +98,34 @@ public class OrderCourseService {
 			throws OrderException {
 		if (courseTypes == null || courseTypes.length == 0)
 			return;
+		 
+		List<OrderCourse> orderCourseList = findByOrderId(orderId);
+		Set<Integer> existCourseIds = new HashSet<Integer>();
 		for (String coursestr : courseTypes) {
 			OrderCourse orderCourse = new OrderCourse();
 			orderCourse.setOrderId(orderId);
-
 			boolean isUpdate = false;
 			String[] courseArr = coursestr.split("_");
-			String courseType = courseArr[0];
-			Integer courseHour = Integer.valueOf(courseArr[1]);
-			Integer orderCourseId;
-			Integer chargerId;
-			if (courseArr.length >= 3)
+			Integer orderCourseId = courseArr[0] == null
+					|| (courseArr[0] != null && courseArr[0]
+							.equals("undefined")) ? null : Integer
+					.valueOf(courseArr[0]);
+			String courseType = courseArr[1] == null
+					|| (courseArr[1] != null && courseArr[1]
+							.equals("undefined")) ? null : String
+					.valueOf(courseArr[1]);
+			Integer courseHour = courseArr[2] == null
+					|| (courseArr[2] != null && courseArr[2]
+							.equals("undefined")) ? null : Integer
+					.valueOf(courseArr[2]);
+			Integer chargerId = courseArr[3] == null
+					|| (courseArr[3] != null && courseArr[3]
+							.equals("undefined")) ? null : Integer
+					.valueOf(courseArr[3]);
+			if (orderCourseId != null)
 				isUpdate = true;
 			if (isUpdate) {
-				orderCourseId = Integer.valueOf(courseArr[2]);
-				chargerId = Integer.valueOf(courseArr[3]);
+				existCourseIds.add(orderCourseId);
 				orderCourse = findOrderCourse(orderCourseId);
 				if (orderCourse == null)
 					throw new OrderException("没有对应的签单课程记录[" + orderCourseId
@@ -116,7 +134,8 @@ public class OrderCourseService {
 					throw new OrderException("修改的课程时间不能低于已花课时");
 				if (courseHour < orderCourse.getScheduleHour())
 					throw new OrderException("修改的课程时间不能低于已设置排课课时");
-				orderCourse.setChargerId(chargerId);
+				if (chargerId != null)
+					orderCourse.setChargerId(chargerId);
 				orderCourse.setHour(courseHour);
 				baseDao.update(orderCourse);
 			} else {
@@ -125,11 +144,20 @@ public class OrderCourseService {
 				orderCourse.setScheduleHour(0);
 				orderCourse.setStatus(OrderCourseStatus.WAIT);
 				orderCourse.setHour(courseHour);
+				if (chargerId != null)
+					orderCourse.setChargerId(chargerId);
 				baseDao.save(orderCourse);
 			}
-
+		}
+		// 处理删除的课程信息
+		for (OrderCourse orderCourse : orderCourseList) {
+			if (!existCourseIds.contains(orderCourse.getId())
+					&& orderCourse.getCostHour() == 0) {
+				baseDao.delete(orderCourse);
+			}
 		}
 	}
+
 	/**
 	 * 创建签单的课程信息
 	 * 
@@ -212,8 +240,7 @@ public class OrderCourseService {
 			hour += orderCourse.getHour();
 			costHour += orderCourse.getCostHour() == null ? 0 : orderCourse
 					.getCostHour();
-			scheduleHour += orderCourse.getScheduleHour() == null
-					? 0
+			scheduleHour += orderCourse.getScheduleHour() == null ? 0
 					: orderCourse.getScheduleHour();
 		}
 

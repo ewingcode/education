@@ -30,7 +30,7 @@ public class CourseScheduleDetailServiceTest extends BaseTest {
 
 	@Test
 	public void testRollbackCourseHour() throws CourseScheduleException {
-		courseScheduleDetailService.rollbackCourseHour(10, 1);
+		courseScheduleDetailService.rollbackCourseHour(10,"无上课", 1);
 	}
 
 }

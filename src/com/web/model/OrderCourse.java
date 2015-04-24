@@ -20,10 +20,10 @@ public class OrderCourse implements java.io.Serializable {
 	private Timestamp lastUpdate;
 	private String status;
 	private Integer hour;
-	private Integer costHour; 
+	private Integer costHour;
 	private Integer scheduleHour;
 	@IgnoreField
-	private String chargerName;
+	private String chargerName; 
 
 	public String getChargerName() {
 		return chargerName;

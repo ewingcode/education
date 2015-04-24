@@ -18,7 +18,7 @@
 			}, [ {
 				name : "id",
 				type : "int"
-			}, "studentId","studentName", "status", "fee", "grade", "courseHour",
+			}, "studentId","studentName", "status", "fee", "grade", "courseHour","adjustHour",
 					"costCourseHour", "scheduleHour","feeFloat", {
 						name : "fee", 
 						mapping : 'fee',
@@ -129,6 +129,20 @@
 										maxLength : 10,
 										allowBlank : false
 									} ]
+								},{
+									xtype : "container",
+									columnWidth : 1,
+									layout : "form",
+									defaultType : "textfield",
+									defaults : {
+										width : 300,
+										labelStyle : 'text-align:right;'
+									},
+									items : [ {
+										id : "adjustHour",
+										fieldLabel : "调整课时(小时)",
+										maxLength : 10 
+									} ]
 								}, {
 									xtype : "container",
 									columnWidth : 1,
@@ -140,8 +154,9 @@
 									},
 									items : [ {
 										id : "costCourseHour",
-										fieldLabel : "已消耗课时(小时/可选)",
+										fieldLabel : "已消耗课时(小时)",
 										maxLength : 10,
+										readOnly:true
 									} ]
 								}, {
 									xtype : "container",
@@ -190,7 +205,7 @@
 
 					if (!orderInfoForm.getForm().isValid())
 						return;
-					var totalHour = $('#courseHour').val();
+					var totalHour = $('#courseHour').val() - $('#adjustHour').val();;
 					if (!orderCourseGrid.validate(totalHour))
 						return;
 					var checkCourse = '';

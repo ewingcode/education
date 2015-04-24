@@ -78,23 +78,6 @@ var cm = new Ext.grid.ColumnModel({
 				dataIndex : "lastUpdate",
 				renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
 
-			}, {
-				header : "操作",
-				xtype : 'actioncolumn',
-				defaults : {
-					width : 230
-				},// 默认每个子item大小
-				width : 50,
-				items : [ {
-					getClass : function(v, meta, rec) {
-						return "btn_remove";
-					},
-					tooltip : '取消',
-					handler : function(grid, rowIndex, colIndex) {
-						var rec = store.getAt(rowIndex);
-						removeData(rec.get('id'))
-					}
-				} ]
 			} ],
 	defaults : {
 		sortable : true,
@@ -102,37 +85,7 @@ var cm = new Ext.grid.ColumnModel({
 		width : 100
 	}
 });
-var removeData = function(b) {
-	Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
-		if (c == "yes") {
-			Ext.Ajax.request({
-				url : "Busi_OrderCourseHour_rollbackCourseHour.action",
-				params : {
-					courseHourLogId : b
-				},
-				method : "post",
-				success : function() {
-					Ext.Msg.show({
-						title : '编辑',
-						msg : '成功删除记录',
-						buttons : Ext.MessageBox.OK,
-						icon : Ext.Msg.INFO
-					});
-					loadGirdStore();
-				},
-				failure : function() {
-					Ext.MessageBox.show({
-						title : "操作信息",
-						msg : "信息保存出错，请联系管理员！",
-						buttons : Ext.MessageBox.OK,
-						icon : "ext-mb-error"
-					});
-				}
-			});
-		}
-	});
-};
-
+ 
 var store = new Ext.data.Store({
 	// autoLoad : true,//是否自动加载
 	proxy : new Ext.data.HttpProxy({
@@ -146,7 +99,7 @@ var store = new Ext.data.Store({
 			name : "id",
 			type : "int"
 		}, "orderId", "courseType", "operator", "studentId", "teacherId",
-				"status", "costHour", {
+				"status", "costHour","teachTime", {
 					name : "createTime",
 					type : "date",
 					mapping : 'createTime.time',
@@ -171,11 +124,19 @@ var toolbar = new Ext.Toolbar({
 		}
 	}, {
 		iconCls : "btn_add",
-		text : "新建",
+		text : "回滚课时",
 		xtype : "button",
 		scale : 'medium',
 		handler : function() {
-			new EditWindow();
+			if (gridPanel.getSelectionModel().getCount() != 1) {
+				Common.ErrMegBox('请选择一项进行操作');
+				return;
+			}
+			
+			gridPanel.getSelectionModel().each(function(e) { 
+				new EditWindow(e.data.id);
+			});
+		
 		}
 	}, {
 		iconCls : "btn_reset",

@@ -35,9 +35,10 @@ public class OrderCourseHourLogAction extends BaseAction {
 		try {
 			Integer courseHourLogId = Integer.valueOf(request
 					.getParameter("courseHourLogId"));
+			String desc = request.getParameter("desc");
 			UserInfo userInfo = SessionControl.getUserInfo(request);
 			courseScheduleDetailService.rollbackCourseHour(courseHourLogId,
-					userInfo.getId());
+					desc, userInfo.getId());
 			responseData = ResponseUtils.success("删除成功！");
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -45,5 +46,4 @@ public class OrderCourseHourLogAction extends BaseAction {
 		}
 		this.outResult(responseData);
 	}
-
 }

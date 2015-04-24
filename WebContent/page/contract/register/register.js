@@ -91,9 +91,10 @@ Ext.onReady(function() {
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {
-									id : "costCourseHour",
-									fieldLabel : "已消耗课时(小时/可选)",
+									id : "adjustHour",
+									fieldLabel : "调整课时(小时/可选)",
 									maxLength : 10,
+									value:0
 								} ]
 							}, {
 								xtype : "container",
@@ -151,7 +152,7 @@ Ext.onReady(function() {
 
 				if (!registerForm.getForm().isValid())
 					return;
-				var totalHour = $('#courseHour').val();
+				var totalHour = $('#courseHour').val() - $('#adjustHour').val();
 				if (!orderCourseGrid.validate(totalHour))
 					return;
 				var checkCourse = '';

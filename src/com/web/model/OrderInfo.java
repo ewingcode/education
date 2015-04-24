@@ -31,12 +31,21 @@ public class OrderInfo implements java.io.Serializable {
 	private Integer curOperator;
 	private String isLast;
 	private Integer costCourseHour;
+	private Integer adjustHour;
 	private String iseff;
 	private Integer scheduleHour;
 	@IgnoreField
 	private String studentName;
 	@IgnoreField
 	private String feeFloat;
+
+	public Integer getAdjustHour() {
+		return adjustHour;
+	}
+
+	public void setAdjustHour(Integer adjustHour) {
+		this.adjustHour = adjustHour;
+	}
 
 	// Constructors
 
@@ -211,6 +220,12 @@ public class OrderInfo implements java.io.Serializable {
 
 	public void setGrade(String grade) {
 		this.grade = grade;
+	}
+
+	public Integer getTotalCourseHour() {
+		if (this.adjustHour != null)
+			return this.courseHour - this.adjustHour;
+		return this.courseHour;
 	}
 
 	public Integer getCourseHour() {

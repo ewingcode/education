@@ -368,6 +368,12 @@ OrderList.ColumnModel = function(selectModel) {
 
 				},
 				{
+					header : "调整课时",
+					width : 80,
+					dataIndex : "adjustHour"
+
+				},
+				{
 					header : "已排课时",
 					width : 80,
 					dataIndex : "scheduleHour"
@@ -380,7 +386,7 @@ OrderList.ColumnModel = function(selectModel) {
 					renderer : function(value, metaData, record, rowIndex,
 							colIndex, store) {
 						var remainHour = record.get("courseHour")
-								- record.get("costCourseHour");
+								- record.get("costCourseHour") - record.get("adjustHour");
 						if (remainHour < 30) {
 							return "<span style='color:red'>" + value
 									+ "</span>";
@@ -477,7 +483,7 @@ OrderList.store = function(queryUrl) {
 			fields : [ {
 				name : "id",
 				type : "int"
-			}, "studentId", "status","fee", "grade", "courseHour", "costCourseHour",
+			}, "studentId", "status","fee", "grade", "courseHour", "costCourseHour","adjustHour",
 					"scheduleHour", {
 						name : "startTime",
 						type : "date",

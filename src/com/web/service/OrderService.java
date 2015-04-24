@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.core.app.constant.IsEff;
+import com.core.app.model.SysUser;
+import com.core.app.service.MailService;
+import com.core.app.service.SysUserService;
 import com.core.jbpm.FlowTaskService;
 import com.core.jbpm.constant.FlowTaskType;
 import com.core.jbpm.constant.TransitionArrangeType;
@@ -48,6 +51,8 @@ public class OrderService {
 	private OrderRoleService orderRoleService;
 	@Resource
 	private NoticeService noticeService;
+	@Resource
+	private SysUserService sysUserService;
 	public final static String PROCESS_NAME = OrderProcess.APPLY_PROCESSNAME;
 
 	public OrderInfo findOne(int id) {
@@ -72,7 +77,7 @@ public class OrderService {
 		orderInfo.setCostCourseHour(totalCosthour == null ? 0 : totalCosthour
 				.intValue());
 
-		if (orderInfo.getCostCourseHour() >= orderInfo.getCourseHour()) {
+		if (orderInfo.getCostCourseHour() >= orderInfo.getTotalCourseHour()) {
 			orderInfo.setRunStatus(OrderRunStatus.OVER);
 		} else {
 			orderInfo.setRunStatus(OrderRunStatus.RUNNING);
@@ -92,10 +97,10 @@ public class OrderService {
 				+ OrderCourse.class.getName() + " where order_id=" + orderId;
 		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
 		if (totalSchedulehour != null
-				&& totalSchedulehour.intValue() > orderInfo.getCourseHour())
+				&& totalSchedulehour.intValue() > orderInfo
+						.getTotalCourseHour())
 			throw new OrderException("计划时间不能大于签单总课时");
-		orderInfo.setScheduleHour(totalSchedulehour == null
-				? 0
+		orderInfo.setScheduleHour(totalSchedulehour == null ? 0
 				: totalSchedulehour.intValue());
 		baseDao.update(orderInfo);
 	}
@@ -138,6 +143,8 @@ public class OrderService {
 		orderInfo.setOrderType(OrderType.APPLY);
 		orderInfo.setIsLast(OrderIsLast.NOTLAST);
 		orderInfo.setIseff(IsEff.EFFECTIVE);
+		orderInfo.setCostCourseHour(0);
+		orderInfo.setScheduleHour(0);
 		baseDao.save(orderInfo);
 		FlowTask startFlowTask = flowTaskService.getStartTask(PROCESS_NAME);
 		orderInfo.setStatus(startFlowTask.getTaskName());
@@ -299,17 +306,23 @@ public class OrderService {
 		}
 
 		if (NoticeWay.SEND.equals(noticeWay)) {
+			String sendContent = "你有1条新的未办签单信息，请查看签单编号【" + order.getOrderNo()
+					+ "】";
 			if (curOrderTrace.getRoleId() != null
 					&& curOrderTrace.getUserId() == null) {
 				noticeService.AddSysNotice(operator, NoticeReceiverType.ROLE,
 						orderRoleService.getRoleId(curOrderTrace.getRoleId()),
-						"你有1条新的未办签单信息，请查看签单编号【" + order.getId() + "】");
+						sendContent);
 			} else if (curOrderTrace.getRoleId() == null
 					&& curOrderTrace.getUserId() != null) {
 				noticeService.AddSysNotice(operator,
 						NoticeReceiverType.PERSONAL, curOrderTrace.getUserId(),
-						"你有1条新的未办签单信息，请查看签单编号【" + order.getId() + "】");
-
+						sendContent);
+				SysUser sysUser = sysUserService.findOne(curOrderTrace
+						.getUserId());
+				if (sysUser != null && !StringUtils.isEmpty(sysUser.getEmail()))
+					MailService.asyncSendMail(sysUser.getEmail(),
+							MailService.MAIL_TITLE, sendContent);
 			}
 		}
 		baseDao.save(curOrderTrace);

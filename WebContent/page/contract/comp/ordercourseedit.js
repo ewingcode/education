@@ -13,14 +13,13 @@ OrderCourse.courseEditGrid = function(orderId, needChooseCharger) {
 				var courseType = records[i].get('courseType');
 				var courseHour = records[i].get('hour');
 				var chargerId = records[i].get('chargerId');
+			    if(chargerId == '')
+			    	chargerId = "undefined";
 				var orderCourseId = records[i].get('id');
-				if(orderCourseId!=null && orderCourseId != "undefined"){ 
-					courseList += courseType + "_" + courseHour + '_'
-							+ orderCourseId + "_" + chargerId + ',';
-				}else{
-					courseList += courseType + "_" + courseHour + ',';
-				}
+				courseList += orderCourseId + "_" + courseType + "_"
+						+ courseHour + "_" + chargerId + ','; 
 			}
+			alert(courseList);
 			return courseList;
 		},
 		getTotalCourseHour : function() {
@@ -349,7 +348,7 @@ OrderCourse.editCourseWin = function(store, grid, needChooseCharger,
 							record.set('chargerId', Ext.getCmp('editChargerId')
 									.getValue());
 							record.commit();
-							 
+
 						} else {
 							var Plant = grid.getStore().recordType;
 							var p = new Plant({

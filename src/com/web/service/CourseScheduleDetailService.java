@@ -427,8 +427,8 @@ public class CourseScheduleDetailService {
 	 * @throws CourseScheduleException
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void rollbackCourseHour(Integer courseHourLogId, Integer operator)
-			throws CourseScheduleException {
+	public void rollbackCourseHour(Integer courseHourLogId, String desc,
+			Integer operator) throws CourseScheduleException {
 		OrderCourseHourLog courseHourLog = baseDao.findOne(courseHourLogId,
 				OrderCourseHourLog.class);
 		if (courseHourLog == null)
@@ -436,7 +436,8 @@ public class CourseScheduleDetailService {
 		if (courseHourLog.getStatus()
 				.equals(CourseHourStatus.CANCEL.getValue()))
 			throw new CourseScheduleException("课时记录已为取消状态");
-
+		// 更新课时记录日志状态
+		courseHourLog.setDesc(desc);
 		courseHourLog.setStatus(CourseHourStatus.CANCEL.getValue());
 		courseHourLog.setOperator(operator);
 		// 更新签单课程的消耗课时

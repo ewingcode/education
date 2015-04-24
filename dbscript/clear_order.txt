@@ -10,12 +10,10 @@ delete from order_exchange  where order_id =2;
 delete from order_rel_his where order_id =2;
 
 
- delete from order_info;
-delete from order_attach ;
+delete from order_info; 
 delete from order_course ;
-delete from order_course_hour ;
-delete from order_course_score ;
-delete from order_course_evaluation;
-delete from order_trace ;
-delete from order_exchange ;
+delete from `course_schedule` ;
+delete from `course_schedule_detail` ; 
+delete from `order_course_hour_log`;
+delete from order_trace ; 
 delete from order_rel_his ;

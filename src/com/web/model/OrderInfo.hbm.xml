@@ -60,6 +60,9 @@
 				<comment>课时总数</comment>
 			</column>
 		</property>
+		<property name="adjustHour" type="java.lang.Integer">
+			<column name="adjust_hour" />
+		</property>
 		<property name="scheduleHour" type="java.lang.Integer">
 			<column name="schedule_hour" />
 		</property>
