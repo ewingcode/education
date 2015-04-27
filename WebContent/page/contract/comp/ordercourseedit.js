@@ -19,7 +19,6 @@ OrderCourse.courseEditGrid = function(orderId, needChooseCharger) {
 				courseList += orderCourseId + "_" + courseType + "_"
 						+ courseHour + "_" + chargerId + ','; 
 			}
-			alert(courseList);
 			return courseList;
 		},
 		getTotalCourseHour : function() {

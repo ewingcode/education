@@ -25,6 +25,15 @@ public class TeacherInfo implements java.io.Serializable {
 	private String email;
 	private String courseType;
 	private String gradeType;
+	private String teacherType;
+
+	public String getTeacherType() {
+		return teacherType;
+	}
+
+	public void setTeacherType(String teacherType) {
+		this.teacherType = teacherType;
+	}
 
 	public Integer getAreaId() {
 		return areaId;

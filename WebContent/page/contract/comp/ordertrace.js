@@ -137,7 +137,7 @@ Order.loadOrderRoleStore =function(){
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var charger =data.result[i].charger;
 		 			var roleId =data.result[i].roleId;

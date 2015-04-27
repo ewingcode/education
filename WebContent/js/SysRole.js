@@ -14,7 +14,7 @@ SysRole.store=function(){
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].id;
 		 			var paramName =data.result[i].name;
@@ -40,7 +40,7 @@ SysRole.ComboBox = function( filedId, allowBlank) {
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].id;
 		 			var paramName =data.result[i].name;
@@ -155,8 +155,7 @@ SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
 		})
 	});
 
-	var toolbar = new Ext.Toolbar({
-		id : "userTopBar",
+	var roleToolbar = new Ext.Toolbar({ 
 		items : [ {
 			iconCls : "btn_query",
 			text : "查询",
@@ -176,8 +175,8 @@ SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
 		} ]
 	});
 	var gridPanel = new Ext.grid.GridPanel({
-		id : "userGrid",
-		tbar : toolbar,
+		id : "roleWinGrid",
+		tbar : roleToolbar,
 		store : store,
 		trackMouseOver : true,
 		autoExpandColumn : true,

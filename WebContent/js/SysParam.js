@@ -35,7 +35,7 @@ SysParam.store=function(rootCode){
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].paramValue;
 		 			var paramName =data.result[i].paramName;
@@ -63,7 +63,7 @@ SysParam.ComboBox = function(fieldName, filedId, rootCode, allowBlank,isReadOnly
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].paramValue;
 		 			var paramName =data.result[i].paramName;

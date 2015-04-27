@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.core.app.model.SysUser;
 import com.core.jdbc.BaseDao;
+import com.util.StringUtil;
 
 /**
  * 系统用户
@@ -51,6 +52,7 @@ public class SysUserService {
 	}
 	/**
 	 * 重置密码
+	 * 
 	 * @param userId
 	 * @return
 	 */
@@ -63,6 +65,28 @@ public class SysUserService {
 		if (!StringUtils.isEmpty(sysUser.getEmail()))
 			MailService.asyncSendMail(sysUser.getEmail(),
 					MailService.MAIL_TITLE, "你的登陆密码已经重置,新密码:" + newPwd);
+		return true;
+	}
+
+	/**
+	 * 设置新密码
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public Boolean setPwd(Integer userId, String oldPwd, String newPwd)
+			throws Exception {
+		SysUser sysUser = findOne(userId);
+		if (StringUtil.isEmpty(oldPwd) || StringUtil.isEmpty(oldPwd)  )
+			throw new Exception("新旧密码不能为空！");
+		if (!sysUser.getPassword().equals(oldPwd))
+			throw new Exception("请输入正确的旧密码！");
+		if(newPwd.equals(oldPwd))
+			throw new Exception("新旧密码不能相同！");
+		
+		sysUser.setPassword(newPwd);
+		baseDao.update(sysUser);
 		return true;
 	}
 

@@ -6,7 +6,7 @@ var DetailWindow = function(b) {
 		id : "studentEditForm",
 	    title: '学生信息中心', 
         height:500,
-        width:800, 
+        width:900, 
         layout: 'form', 
         plain:true,
         bodyStyle:'padding:5px;',

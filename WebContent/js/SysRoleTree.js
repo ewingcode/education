@@ -20,11 +20,7 @@ SysRoleTree.viewWin = function(singleCheck, parentSelectId,
 		plain : true,
 		bodyStyle : 'padding:5px;',
 		buttonAlign : 'center',
-		items : [ {
-			html : '<iframe  src="' + url
-					+ '" frameborder="0"   scrolling="yes"  name="' + _frameId
-					+ '"  id="' + _frameId + '" width="100%" height="100%"/>'
-		} ],
+		items : [  ],
 		buttons : [ {
 			text : "确定",
 			iconCls : "btn_accept",

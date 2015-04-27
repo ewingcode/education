@@ -15,7 +15,7 @@ Department.store=function(){
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].id;
 		 			var paramName =data.result[i].name;
@@ -41,7 +41,7 @@ Department.ComboBox = function( filedId, allowBlank) {
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].id;
 		 			var paramName =data.result[i].name;

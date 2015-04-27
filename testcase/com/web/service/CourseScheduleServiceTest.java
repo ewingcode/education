@@ -1,5 +1,7 @@
 package com.web.service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -28,26 +30,46 @@ public class CourseScheduleServiceTest extends BaseTest {
 				.getByBeanName("courseScheduleService");
 	}
 
-	// @Test
+	//@Test
 	public void testComputeScheduleDetailList() throws CourseScheduleException {
+		List<Date> filterDateList = new ArrayList<Date>();
+		filterDateList.add(DateFormat.stringToDate("2015-06-01"));
 		CourseSchedule courseSchedule = new CourseSchedule();
-		courseSchedule.setCourseType("3");
-		courseSchedule.setEndDate(DateFormat.stringToDate("2015-04-24"));
-		courseSchedule.setStartDate(DateFormat.stringToDate("2015-04-14"));
+		courseSchedule.setCourseType("2");
+		courseSchedule.setEndDate(DateFormat.stringToDate("2015-06-07"));
+		courseSchedule.setStartDate(DateFormat.stringToDate("2015-06-01"));
 		courseSchedule.setStartTime(900);
 		courseSchedule.setEndTime(1000);
 		courseSchedule.setStudentId(1);
 		courseSchedule.setTeacherId(19);
 		courseSchedule.setWeekDays("2");
 		List<CourseScheduleDetail> list = courseScheduleService
-				.computeScheduleDetailList(courseSchedule, false);
+				.computeScheduleDetailList(courseSchedule, filterDateList,
+						false);
 		for (CourseScheduleDetail c : list) {
 			System.out.println(c);
 		}
 	}
-
 	@Test
+	public void testComputeScheduleEndDate() {
+		List<Date> filterDateList = new ArrayList<Date>();
+		//filterDateList.add(DateFormat.stringToDate("2015-06-01"));
+		CourseSchedule courseSchedule = new CourseSchedule();
+		courseSchedule.setCourseType("2");
+		courseSchedule.setStartDate(DateFormat.stringToDate("2015-06-01"));
+		courseSchedule.setStartTime(900);
+		courseSchedule.setEndTime(1000);
+		courseSchedule.setTotalCourseHour(2);
+		courseSchedule.setTeacherId(19);
+		courseSchedule.setWeekDays("2");
+		Date endDate = courseScheduleService.computeScheduleEndDate(
+				courseSchedule, filterDateList);
+		System.out.println(endDate);
+	}
+
+	// @Test
 	public void testAddScheduleDetail() throws Exception {
+		List<Date> filterDateList = new ArrayList<Date>();
 		CourseSchedule courseSchedule = new CourseSchedule();
 		courseSchedule.setCourseType("2");
 		courseSchedule.setStartDate(DateFormat.stringToDate("2015-04-20"));
@@ -57,7 +79,7 @@ public class CourseScheduleServiceTest extends BaseTest {
 		courseSchedule.setStudentId(1);
 		courseSchedule.setTeacherId(19);
 		courseSchedule.setWeekDays("2,3");
-		courseScheduleService.addScheduleDetail(courseSchedule); 
+		courseScheduleService.addScheduleDetail(courseSchedule, filterDateList);
 	}
 
 }

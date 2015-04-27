@@ -52,7 +52,7 @@ Order.transitionChoice = function(orderId,isReadOnly, selectFn) {
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var name =data.result[i].name;
 		 			var needArrange =data.result[i].needArrange;

@@ -13,10 +13,10 @@
 
 		<link rel="stylesheet" type="text/css"
 			href="${_contextPath}/resources/css/ext-all.css"></link>
-		<!--灰色样式-->
+		<!--灰色样式
 		<link rel="stylesheet" type="text/css" title="gray"
 			href="${_contextPath}/resources/css/xtheme-gray.css" /> 
-		
+		-->
 		<link rel="stylesheet" type="text/css"
 			href="${_contextPath}/resources/css/debug.css"></link>
 		<link rel="stylesheet" type="text/css"
@@ -64,6 +64,8 @@
 		<script type="text/javascript" src="${_contextPath}/js/Constant.js"></script>   
 		<script type="text/javascript"
 			src="${_contextPath}/js/ireport/jasperreports.js"></script>
+		<script type="text/javascript"
+			src="${_contextPath}/js/core/ext/ext-lang-zh_CN.js"></script>
 		<script type="text/javascript"> 
 	var _contextPath = '${_contextPath}';//js中使用的当前路径
 	var outsession = jQuery.url.param("outsession");

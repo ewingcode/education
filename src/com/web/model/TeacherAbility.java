@@ -15,8 +15,16 @@ public class TeacherAbility implements java.io.Serializable {
 	private String courseType;
 	private Timestamp createTime;
 	private String gradeType;
-
+	private String teacherType;
 	// Constructors
+
+	public String getTeacherType() {
+		return teacherType;
+	}
+
+	public void setTeacherType(String teacherType) {
+		this.teacherType = teacherType;
+	}
 
 	/** default constructor */
 	public TeacherAbility() {

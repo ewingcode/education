@@ -147,6 +147,14 @@ var toolbar = new Ext.Toolbar( {
 				 loadGirdStore(); 
 			}
 		},{
+			iconCls : "btn_add",
+			text : "新建",
+			xtype : "button",
+			scale : 'medium',
+			handler : function() {
+				 new studentEditWindow(null,function(){loadGirdStore()},true);
+			}
+		},{
 			iconCls : "btn_detail", 
 			text : "学生详细信息",
 			xtype : "button",

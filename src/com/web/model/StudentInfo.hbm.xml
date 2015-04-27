@@ -43,6 +43,16 @@
                 <comment>性别</comment>
             </column>
         </property>
+         <property name="email" type="java.lang.String">
+            <column name="email" length="100">
+                <comment>email</comment>
+            </column>
+        </property>
+        <property name="qq" type="java.lang.String">
+            <column name="qq" length="50">
+                <comment>qq</comment>
+            </column>
+        </property>
         <property name="homephone" type="java.lang.String">
             <column name="homephone" length="20">
                 <comment>家庭电话</comment>

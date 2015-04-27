@@ -4,6 +4,7 @@ var sexTypeStore = new SysParam.store("SEXTYPE");
 var iseffStore = new SysParam.store("ISEFF");
 var courseStore = new SysParam.store("ORDER_COURSE");
 var gradeStore = new SysParam.store("GRADE");
+var teacherTypeStore = new SysParam.store("TEACHER_TYPE");
 var sm = new Ext.grid.CheckboxSelectionModel();
 var cm = new Ext.grid.ColumnModel( {
 	columns : [
@@ -25,6 +26,14 @@ var cm = new Ext.grid.ColumnModel( {
 				header : "教师名称",
 				dataIndex : "userName"
 			},
+			{
+				header : "类型",
+				dataIndex : "teacherType" , 
+				renderer: function(value) {  
+					return  SysParam.translate(teacherTypeStore, value);  
+				} 
+			}, 
+			
 			{
 				header : "科目",
 				dataIndex : "courseType",
@@ -198,7 +207,7 @@ var store = new Ext.data.Store( {
 		} , {
 			name : "areaId",
 			mapping : 'areaId'
-		}]
+		},"teacherType"]
 	})
 });
 
@@ -262,7 +271,7 @@ function loadGirdStore() {
 	store.setBaseParam('start',0); 
 	store.setBaseParam('limit',20); 
 	store.setBaseParam('_QUERY_s_rlike_user_name',Ext.getCmp('QUERY_user_name').getValue());  
-	//store.setBaseParam('_QUERY_m_eq_grade_type',Ext.getCmp('QUERY_grade_type').getValue());  
+	store.setBaseParam('_QUERY_s_eq_teacher_type',Ext.getCmp('QUERY_teacher_type').getValue());  
 	store.setBaseParam('_QUERY_n_eq_area_id',Ext.getCmp('QUERY_areaId').getValue());  
 	store.reload();
 };
@@ -290,8 +299,8 @@ var formpanel = new Ext.FormPanel( {
 			items : [ {
 				id : "QUERY_user_name",
 				fieldLabel : "教师名称"
-			}/*, 
-			new SysParam.ComboBox('教学年级','QUERY_grade_type', 'GRADE')*/]
+			} , 
+			new SysParam.ComboBox('教师类型','QUERY_teacher_type', 'TEACHER_TYPE') ]
 		}, {
 			xtype : "container",
 			columnWidth : 0.33,
@@ -312,6 +321,6 @@ gridPanel.addListener("rowdblclick", function(g, f, h) {
 	});
 });
 Ext.onReady(function() { 
-	
+	loadGirdStore();
 	Frame.busiPage(formpanel, gridPanel);
 });

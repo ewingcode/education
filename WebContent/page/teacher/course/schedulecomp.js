@@ -8,6 +8,7 @@ Ext.ns("Schedule");
 Schedule.showScheduleDetailList = function(scheduleId) {
 	var scheduleDetailStatusStore = new SysParam.store("SCHEDULE_DETAIL_STATUS");
 	var orderCourseStore = new SysParam.store("ORDER_COURSE"); 
+	var deleteScheduleDates = '';
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
 			url : 'Busi_CourseSchedule_showScheduleDetailList.action'
@@ -139,7 +140,7 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 
 				items : [ {
 					id : "totalCostScheduleHour",
-					fieldLabel : "已消耗课时",
+					fieldLabel : "已用课时",
 					readOnly:true
 				} ]
 			} ]
@@ -177,7 +178,8 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 														coursePeriod : coursePeriod,
 														weekDays : scheduleWeekday,
 														startDate : startDate,
-														endDate : endDate
+														endDate : endDate,
+														deleteScheduleDates:deleteScheduleDates
 													},
 													method : "post",
 													waitMsg : "正在提交数据...",
@@ -209,9 +211,10 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 /**
  * 弹出计算排课列表
  */
-Schedule.computeScheduleResult = function(teacherId, studentId, courseType,coursePeriod,scheduleWeekday,startDate,endDate) {
-	var scheduleDetailStatusStore = new SysParam.store("SCHEDULE_DETAIL_STATUS");
+Schedule.computeScheduleResult = function(teacherId, studentId, courseType,coursePeriod,scheduleWeekday,startDate,endDate) { 
+ 
 	var orderCourseStore = new SysParam.store("ORDER_COURSE"); 
+	var deleteScheduleDates = '';
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
 			url : 'Busi_CourseSchedule_computeScheduleList.action'
@@ -240,9 +243,7 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 				startDate : startDate,
 				endDate : endDate
 			},
-			 callback: function(r, options, success){  
-				
-				  
+			 callback: function(r, options, success){   
 			        if(success){     
 			        	 Ext.getCmp("totalScheduleHour").setValue(r[0].get('totalScheduleHour'));  
 			        }  
@@ -299,13 +300,26 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 								return value+"-"+record.get("endTime");
 							}
 
-						} /*, {
-							header : "状态",
-							dataIndex : "isFinish",
-							renderer : function(value) { 
-								return SysParam.translate(scheduleDetailStatusStore, value);
-							}
-						}*/ ],
+						}, {
+							header : "操作",
+							xtype : 'actioncolumn',
+							defaults : {
+								width : 230
+							},// 默认每个子item大小
+							width : 50,
+							items : [ {
+								getClass : function(v, meta, rec) {
+									return "btn_remove";
+								},
+								tooltip : '删除',
+								handler : function(grid, rowIndex, colIndex) {
+									var rec = store.getAt(rowIndex);  
+									var dt = new Date(rec.get('date')); 
+									deleteScheduleDates += dt.format('Y-m-d')+"";
+									store.removeAt(rowIndex);
+								}
+							} ]
+						} ],
 				defaults : {
 					width : 160,
 					align : "center"
@@ -317,8 +331,9 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 		region : "center",
 		autoScroll : true,
 		cm : cm,
-		height : 600,
+		height : 330,
 		clicksToEdit : 1,
+		loadMask : true,
 		viewConfig : {
 			forceFit : true,// 填满width.
 			enableRowBody : true,
@@ -383,7 +398,8 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 														coursePeriod : coursePeriod,
 														weekDays : scheduleWeekday,
 														startDate : startDate,
-														endDate : endDate
+														endDate : endDate,
+														deleteScheduleDates:deleteScheduleDates
 													},
 													method : "post",
 													waitMsg : "正在提交数据...",
@@ -694,6 +710,14 @@ Schedule.addSchedulePanel = function(teacherId) {
 							id : "scheduleHour",
 							fieldLabel : "排课课时",
 							readOnly : true
+						}, 
+						new CoursePeriod.ComboBox("coursePeriod", false),
+						new SysParam.ComboBox('科目', 'courseType',
+								'ORDER_COURSE', false),
+						new SysParam.checkbox('排课日', 'scheduleWeekday', 'WEEK') ,
+						{
+							id : "totalCourseHour",
+							fieldLabel : "预计课时"
 						},
 						{
 							fieldLabel : "开始日期",
@@ -701,18 +725,46 @@ Schedule.addSchedulePanel = function(teacherId) {
 							id : "startDate",
 							xtype : "datefield",
 							format : "Y-m-d"
-						}, 
+						},  
 						{
-							fieldLabel : "结束日期",
-							allowBlank : false,
-							id : "endDate",
-							xtype : "datefield",
-							format : "Y-m-d"
-						},
-						new CoursePeriod.ComboBox("coursePeriod", false),
-						new SysParam.ComboBox('科目', 'courseType',
-								'ORDER_COURSE', false),
-						new SysParam.checkbox('排课日', 'scheduleWeekday', 'WEEK') 
+							xtype : 'compositefield',
+							id : "computeEndDate",
+							fieldLabel : '结束时间',
+							width : "200",
+							items : [ 
+									{ 
+										allowBlank : false,
+										id : "endDate",
+										xtype : "datefield",
+										format : "Y-m-d"
+									},
+									{
+										xtype : "button",
+										id : "computeEndDateBtn",
+										text : "计算时间",
+										width : "50",
+										listeners : {
+											"click" : function(d, i, n, e) {
+												Ext.Ajax.request( {
+													url : "Busi_CourseSchedule_computeScheduleEndDate.action",
+													params : { 
+														 coursePeriod : Ext.getCmp("coursePeriod").getValue(), 
+														 weekDays : Public.getCheckList("scheduleWeekday"), 
+														 startDate : Ext.getCmp("startDate").getValue().format("Y-m-d"),  
+														 courseType : Ext.getCmp("courseType").getValue(),
+														 studentId : Ext.getCmp("studentId").getValue(),
+														 totalCourseHour:Ext.getCmp("totalCourseHour").getValue(),
+													},
+													method : "post",
+													success : function(response, opts) {
+														var rec = Ext.util.JSON.decode(response.responseText); 
+														Ext.getCmp("endDate").setValue(rec.result);
+													} 
+												});
+											}
+										}
+									} ]
+						} 
 					    ],
 				buttons : [ {
 					text : "计算课时",

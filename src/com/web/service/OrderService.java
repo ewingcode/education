@@ -53,6 +53,8 @@ public class OrderService {
 	private NoticeService noticeService;
 	@Resource
 	private SysUserService sysUserService;
+	@Resource
+	private CourseScheduleDetailService courseScheduleDetailService;
 	public final static String PROCESS_NAME = OrderProcess.APPLY_PROCESSNAME;
 
 	public OrderInfo findOne(int id) {
@@ -100,7 +102,8 @@ public class OrderService {
 				&& totalSchedulehour.intValue() > orderInfo
 						.getTotalCourseHour())
 			throw new OrderException("计划时间不能大于签单总课时");
-		orderInfo.setScheduleHour(totalSchedulehour == null ? 0
+		orderInfo.setScheduleHour(totalSchedulehour == null
+				? 0
 				: totalSchedulehour.intValue());
 		baseDao.update(orderInfo);
 	}
@@ -120,12 +123,15 @@ public class OrderService {
 	 * 
 	 * @param orderId
 	 * @return
+	 * @throws OrderException
 	 */
-	public boolean deleteOrderInfo(Integer orderId) {
+	@Transactional(rollbackFor = Exception.class)
+	public boolean deleteOrderInfo(Integer orderId) throws OrderException {
 		OrderInfo orderInfo = findOne(orderId);
 		if (orderInfo != null) {
 			orderInfo.setIseff(IsEff.INEFFECTIVE);
 			baseDao.update(orderInfo);
+			courseScheduleDetailService.deleteScheduleByOrderId(orderId);
 			return true;
 		}
 		return false;

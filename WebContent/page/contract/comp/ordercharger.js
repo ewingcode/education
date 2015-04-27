@@ -30,9 +30,7 @@ OrderCharger.EditWindow = function(orderId) {
 									msg : '编辑成功',
 									buttons : Ext.MessageBox.OK,
 									icon : Ext.Msg.INFO
-								}); 
-								 
-							    store.reload();
+								});  
 								win.close();
 							},
 							failure : function(i, j) {
@@ -41,8 +39,7 @@ OrderCharger.EditWindow = function(orderId) {
 									msg : "信息保存出错，请联系管理员！",
 									buttons : Ext.MessageBox.OK,
 									icon : "ext-mb-error"
-								}); 
-								 
+								});  
 								win.close();
 								 
 							}
@@ -185,9 +182,9 @@ OrderCharger.roleManage = function(orderId, needChoose) {
 		 						handler : function(button,event) { 
 									var _i_type = button.getId().split("_")[1]; 
 									var roleId = button.getId().split("_")[2]; 
-									
-		 				      		var _setFrame="setFrame"+_i_type; 
-		 				      		new SysRoleTree.viewWin('true','operator'+_i_type,'operatorStr'+_i_type,roleId,_setFrame);
+									new SysRole.selectWin('operator'+_i_type,'operatorStr'+_i_type,roleId);
+		 				      	/*	var _setFrame="setFrame"+_i_type; 
+		 				      		new SysRoleTree.viewWin('true','operator'+_i_type,'operatorStr'+_i_type,roleId,_setFrame);*/
 		 				       
 		 						   	} 
 		 					} ]

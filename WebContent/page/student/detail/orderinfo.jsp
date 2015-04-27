@@ -15,7 +15,7 @@
 	});
 	var studentId = jQuery.url.param("studentId");
 	var sm = new Ext.grid.CheckboxSelectionModel();
-	var cm = OrderList.ColumnModel(sm);
+	var cm = OrderList.ColumnModel(sm,true);
 	var formpanel = new OrderList.formpanel(studentId);
 	var toolbar = new OrderList.Toolbar(formpanel, false, false,true);
 	var store = new OrderList.store('Busi_OrderInfo_pageQuery.action');

@@ -5,15 +5,19 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.type.YesNoType;
 
 import com.core.app.action.base.ActionException;
 import com.core.app.action.base.BaseAction;
 import com.core.app.action.base.ResponseData;
 import com.core.app.action.base.ResponseUtils;
 import com.core.app.bean.UserInfo;
+import com.core.app.constant.YesOrNo;
 import com.core.app.control.SessionControl;
 import com.core.jdbc.util.PageBean;
+import com.util.SqlUtil;
 import com.web.model.OrderInfo;
 import com.web.service.OrderQueryService;
 import com.web.service.StudentService;
@@ -46,7 +50,8 @@ public class OrderInfoAction extends BaseAction {
 					OrderInfo.class);
 			orderInfo.setStudentName(studentService.getStudentName(orderInfo
 					.getStudentId()));
-			orderInfo.setFeeFloat(Float.valueOf(orderInfo.getFee() / 100f).toString());
+			orderInfo.setFeeFloat(Float.valueOf(orderInfo.getFee() / 100f)
+					.toString());
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(orderInfo);
 		} catch (Exception e) {
@@ -151,4 +156,42 @@ public class OrderInfoAction extends BaseAction {
 		outResult(responseData);
 	}
 
+	/**
+	 * dao查询
+	 * 
+	 * @throws ActionException
+	 */
+	public void pageQuery() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			if (entityBean == null)
+				throw new ActionException(
+						"entityClass must be defined in Action");
+			String start = request.getParameter("start");
+			String limit = request.getParameter("limit");
+			String isSchedule = request.getParameter("QUERY_isSchedule");
+			String conditionSql = bulidConditionSql();
+			if (!StringUtils.isEmpty(isSchedule)) {
+				String sql2 = "";
+				if (isSchedule.equals(YesOrNo.YES.getValue())) {
+					sql2 = " (course_hour - adjust_hour ) <= schedule_hour";
+				} else if (isSchedule.equals(YesOrNo.NO.getValue())) {
+					sql2 = " (course_hour - adjust_hour ) > schedule_hour";
+				}
+				conditionSql = SqlUtil.combine(conditionSql, sql2);
+			}
+			PageBean pageBean = baseModelService.pageQuery(conditionSql,
+					bulidOrderBySql(),
+					limit == null ? 20 : Integer.valueOf(limit), start == null
+							? 0
+							: Integer.valueOf(start), entityClass);
+			responseData = ResponseUtils.success("查询成功！");
+			responseData.setTotalProperty(pageBean.getTotalCount());
+			responseData.setResult(pageBean.getResult());
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("查询失败！");
+		}
+		this.outResult(responseData);
+	}
 }

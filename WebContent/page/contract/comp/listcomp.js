@@ -13,6 +13,9 @@ OrderList.loadGirdStore = function(dataStore) {
 			'QUERY_create_endTime').getValue());
 	dataStore.setBaseParam('_QUERY_s_eq_run_status', Ext.getCmp(
 			'QUERY_runStatus').getValue());
+	dataStore.setBaseParam('QUERY_isSchedule', Ext.getCmp(
+	'QUERY_isSchedule').getValue());
+	
 	dataStore.setBaseParam('_ORDERBY', "order by id desc");
 	dataStore.reload();
 };
@@ -330,7 +333,9 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
 						} ]
 			});
 };
-OrderList.ColumnModel = function(selectModel) {
+OrderList.ColumnModel = function(selectModel, isShort) {
+	var _isShort = isShort ==null || !isShort ? false:true;
+	alert(_isShort)
 	return new Ext.grid.ColumnModel({
 		columns : [
 				selectModel,
@@ -349,6 +354,7 @@ OrderList.ColumnModel = function(selectModel) {
 				{
 					header : "学生",
 					dataIndex : "studentId",
+					hidden:_isShort,
 					renderer : function(value) {
 						return Student.translate(value);
 					}
@@ -356,6 +362,7 @@ OrderList.ColumnModel = function(selectModel) {
 				{
 					header : "年级",
 					dataIndex : "grade",
+					hidden:_isShort,
 					width : 100,
 					renderer : function(value) {
 						return SysParam.translate(gradeStore, value);
@@ -393,15 +400,25 @@ OrderList.ColumnModel = function(selectModel) {
 						}
 						return value;
 					}
-				}, {
-					header : "审批状态",
-					dataIndex : "status"
-				}, {
+				},  {
 					header : "授课状态",
 					dataIndex : "runStatus",
 					renderer : function(value) {
 						return SysParam.translate(runStatusStore, value);
 					}
+				},{
+					header : "排课状态",
+					dataIndex : "scheduleHour",
+					renderer : function(value, metaData, record, rowIndex,
+							colIndex, store) {
+						if(record.get("courseHour") - record.get("adjustHour") > record.get("scheduleHour")) 
+							return "<span style='color:red'>未排课</span>";
+						else
+							return "已排课";
+					}
+				},{
+					header : "审批状态",
+					dataIndex : "status"
 				}, {
 					header : "当前负责人",
 					dataIndex : "curOperator",
@@ -541,7 +558,10 @@ OrderList.formpanel = function(studentId) {
 								},
 								new SysParam.ComboBox('授课状态',
 										'QUERY_runStatus',
-										'ORDER_RUN_STATUS') ]
+										'ORDER_RUN_STATUS'),
+								new SysParam.ComboBox('是否已排课',
+												'QUERY_isSchedule',
+												'YESORNO')]
 							},
 							{
 								xtype : "container",

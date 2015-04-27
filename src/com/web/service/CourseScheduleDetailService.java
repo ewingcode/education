@@ -102,7 +102,8 @@ public class CourseScheduleDetailService {
 			// 挑选出合适的签单课程信息
 			for (OrderCourse orderCourse : orderCourseList) {
 				Integer coursehour = orderCourse.getHour();
-				Integer costcourseHour = orderCourse.getCostHour() == null ? 0
+				Integer costcourseHour = orderCourse.getCostHour() == null
+						? 0
 						: orderCourse.getCostHour();
 				Integer leaveHour = coursehour - costcourseHour;
 				// 如果有剩余的课时，则是合适的签单课程
@@ -195,6 +196,21 @@ public class CourseScheduleDetailService {
 		}
 	}
 
+	public void deleteScheduleByOrderId(Integer orderId) throws OrderException {
+		List<CourseScheduleDetail> scheduleDetailList = baseDao.find(
+				"order_id=" + orderId + " and is_finish="
+						+ CourseScheduleDetailIsFinish.NOTFINISH.getValue(),
+				CourseScheduleDetail.class);
+		for (CourseScheduleDetail scheduleDetail : scheduleDetailList) {
+			baseDao.delete(scheduleDetail);
+			// 更新签单科目的排课时间
+			orderCourseService.updateCourseScheduleHour(scheduleDetail
+					.getOrderCourseId());
+			// 更新签单的已经排课的课时
+			orderService.updateOrderScheduleHour(scheduleDetail.getOrderId());
+		}
+	}
+
 	/**
 	 * 查找到目前为止没有结束的排课信息
 	 * 
@@ -267,9 +283,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[] { scheduleVo.getStartTime(),
-							scheduleVo.getEndTime() }, new Integer[] {
-							startTime, endTime });
+					new Integer[]{scheduleVo.getStartTime(),
+							scheduleVo.getEndTime()}, new Integer[]{startTime,
+							endTime});
 			if (!isLegalTime)
 				return true;
 		}
@@ -285,9 +301,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[] { scheduleVo.getStartTime(),
-							scheduleVo.getEndTime() }, new Integer[] {
-							startTime, endTime });
+					new Integer[]{scheduleVo.getStartTime(),
+							scheduleVo.getEndTime()}, new Integer[]{startTime,
+							endTime});
 			if (!isLegalTime)
 				return true;
 		}
@@ -320,20 +336,20 @@ public class CourseScheduleDetailService {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 1000, 1100 }));
-		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 930, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 2200, 2300 }));
-		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{1000, 1100}));
+		System.out.println(isLegalNewTime(new Integer[]{1000, 1100},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{930, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{2200, 2300}));
+		System.out.println(isLegalNewTime(new Integer[]{2200, 2300},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{800, 2300},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{900, 1000}));
 
 		System.out.println(930 % 831);
 	}

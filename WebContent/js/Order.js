@@ -14,7 +14,7 @@ OrderPublic.relOrderCompBox = function(userId,studentId) {
 	 var arrayObj;
 	 Ajax.syncRequest(url,  
 			 function(data) {  
-		         arrayObj = new Array(data.result.length);　
+		         arrayObj = new Array(data.result.length);
 		 		 for(var i=0;i<data.result.length;i++){
 		 			var paramValue =data.result[i].paramValue;
 		 			var paramName =data.result[i].paramName;

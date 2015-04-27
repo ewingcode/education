@@ -172,13 +172,13 @@ var toolbar = new Ext.Toolbar({
 				Common.ErrMegBox('请选择一项进行操作');
 				return;
 			}
-			gridPanel.getSelectionModel().each(function(e) { 
+			gridPanel.getSelectionModel().each(function(e) {
 				Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
 					if (c == "yes") {
 						Ext.Ajax.request({
 							url : "Busi_SysUser_resetPwd.action",
 							params : {
-								userId: e.data.id
+								userId : e.data.id
 							},
 							method : "post",
 							success : function() {

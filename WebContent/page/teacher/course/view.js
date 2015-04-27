@@ -169,7 +169,7 @@ Ext.onReady(function() {
 		trackMouseOver : true,
 		autoExpandColumn : true,
 		// disableSelection: false,
-		loadMask : true,
+		loadMask : false,
 		region : "center",
 		cm : cm,
 		sm : sm,

@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/common/include/head.jsp"%> 
+<%@ include file="/common/include/head.jsp"%>
 <c:set var="_jsFiles" value="${_cp}/page/teacher/course/schedulecomp.js" />
-<%@ include file="/common/include/html_head.jsp"%> 
+<%@ include file="/common/include/html_head.jsp"%>
 <script>
 	Ext.onReady(function() {
 		var orderCourseStore = new SysParam.store("ORDER_COURSE");
@@ -46,6 +46,10 @@
 				header : "总课时",
 				dataIndex : "totalCourseHour"
 			}, {
+				header : "已用课时",
+				dataIndex : "totalCostHour"
+				
+			},{
 				header : "排课日",
 				dataIndex : "weekDays",
 				renderer : function(value) {
@@ -119,17 +123,73 @@
 			})
 		});
 
-		function loadGirdStore() {
-			store.setBaseParam('start', 0);
-			store.setBaseParam('limit', 20);
-			store.setBaseParam('_QUERY_n_eq_student_id', studentId);
-			store.setBaseParam('_QUERY_s_eq_iseff', 0); 
-			store.setBaseParam('_ORDERBY', 'order by create_time desc');
-			store.reload();
+		var formpanel = new Ext.FormPanel({
+			labelAlign : 'left',// 字样显示在顶部
+			bodyStyle : 'padding:5px',
+			plain : true,
+			items : [  {
+				xtype : 'fieldset',
+				layout : "column",  
+				autoHeight : true,
+				items : [ {
+					xtype : "container",
+					columnWidth : 0.5,
+					defaultType : "textfield",
+					layout : "form",
+					defaults : {
+						anchor : "96%,96%",
+						labelStyle : 'text-align:right;'
+					},
+
+					items : [ {
+						id : "totalScheduleHour",
+						fieldLabel : "总课时",
+						readOnly:true
+					} ]
+				} ,{
+					xtype : "container",
+					columnWidth : 0.5,
+					defaultType : "textfield",
+					layout : "form",
+					defaults : {
+						anchor : "96%,96%",
+						labelStyle : 'text-align:right;'
+					},
+
+					items : [ {
+						id : "totalCostScheduleHour",
+						fieldLabel : "已用课时" 
+					} ]
+				} ]
+			} ]
+		});
+		function loadGirdStore() { 
+			store.load({
+				params : {
+					start : 0,
+					limit : 20,
+					_QUERY_n_eq_student_id:studentId,
+					_QUERY_s_eq_iseff:0,
+					_ORDERBY : 'order by create_time desc'
+				},
+			    callback: function(r, options, success){ 
+			    	var totalScheduleHour=0;
+			    	var totalCostScheduleHour=0;
+			        if(success){
+			        	for(var i=0;i<r.length;i++){
+				    		var record = r[i];
+				    		totalScheduleHour += record.data.totalCourseHour;
+				    		totalCostScheduleHour += record.data.totalCostHour; 
+				    		}    
+			        	 Ext.getCmp("totalScheduleHour").setValue(totalScheduleHour);  
+			        	 Ext.getCmp("totalCostScheduleHour").setValue(totalCostScheduleHour);  
+			        }  
+			    }    
+			});
 		}
  
-		loadGirdStore();
-		Frame.editPage(gridPanel);
+		 loadGirdStore();
+		 Frame.busiPage2(formpanel, gridPanel);
 
 	});
 </script>

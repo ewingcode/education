@@ -18,7 +18,7 @@ var studentInfoForm = function(studentId){
 		    'fatherPosition','motherName','motherUnit', 'motherPhone','motherPosition',
 		    {name:"lastExamDate" , type : "date", mapping : 'lastExamDate',dateFormat : 'Y-m-d H:i:s'},'scoreYuwen',
 		    'scoreHuaxue','scoreShuxue','scoreZhengzhi', 'scoreYingwen','scoreLishi','scoreWuli','scoreShengwu',
-		    'interest','livehabit','selfevaluation', 'liketeacherstyle','likecoursestyle' ]),
+		    'interest','livehabit','selfevaluation', 'liketeacherstyle','likecoursestyle','qq','email' ]),
 	items : [ { 
 		id : "id",
 		xtype : "hidden",
@@ -54,7 +54,12 @@ var studentInfoForm = function(studentId){
 							}
 						}
 				}, 
-				new SysParam.ComboBox('年级','grade', 'GRADE' ,false)]
+				new SysParam.ComboBox('年级','grade', 'GRADE' ,false),
+				{
+					fieldLabel : "email",
+					name : 'email',
+					vtype : 'email'  
+				}]
 		},{
 			xtype : "container",
 			columnWidth : 0.33,
@@ -76,6 +81,11 @@ var studentInfoForm = function(studentId){
 					id : "phone",
 				    xtype:"numberfield", 
 					maxLength :20
+				}, {
+					fieldLabel : "qq", 
+					id : "qq",
+				    xtype:"numberfield", 
+					maxLength :50
 				}]
 		} ,{
 			xtype : "container",

@@ -30,6 +30,9 @@
 		<property name="phone" type="java.lang.String">
 			<column name="phone" length="100" />
 		</property>
+		<property name="qq" type="java.lang.String">
+			<column name="qq" length="100" />
+		</property>
 		<property name="addr" type="java.lang.String">
 			<column name="addr" length="200" />
 		</property>

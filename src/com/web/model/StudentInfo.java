@@ -46,8 +46,26 @@ public class StudentInfo implements java.io.Serializable {
 	private String likecoursestyle;
 	private String livehabit;
 	private Integer areaId;
+	private String email;
+	private String qq;
 
 	// Constructors
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getQq() {
+		return qq;
+	}
+
+	public void setQq(String qq) {
+		this.qq = qq;
+	}
 
 	public Integer getAreaId() {
 		return areaId;

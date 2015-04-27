@@ -31,36 +31,14 @@ public class CourseScheduleService {
 	private CourseScheduleDetailService courseScheduleDetailService;
 
 	/**
-	 * 计算出排课的总课时
-	 * 
-	 * @param scheduleTempldate
-	 * @throws CourseScheduleException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	public CourseSchedule computeScheduleCourseHour(
-			CourseSchedule scheduleTempldate) throws Exception {
-		// 总课时
-		Integer totalCourseHour = 0;
-		List<CourseScheduleDetail> scheduleList = computeScheduleDetailList(
-				scheduleTempldate, false);
-		for (CourseScheduleDetail schedule : scheduleList) {
-			totalCourseHour += courseScheduleDetailService.computeScheduleHour(
-					schedule.getEndTime(), schedule.getStartTime());
-		}
-		scheduleTempldate.setTotalCourseHour(totalCourseHour);
-		return scheduleTempldate;
-	}
-
-	/**
 	 * 计算出排课列表
 	 * 
 	 * @param scheduleTempldate
 	 * @throws CourseScheduleException
 	 */
 	public List<CourseScheduleDetail> computeScheduleDetailList(
-			CourseSchedule scheduleTempldate, Boolean throwErr)
-			throws CourseScheduleException {
+			CourseSchedule scheduleTempldate, List<Date> filterDateList,
+			Boolean throwErr) throws CourseScheduleException {
 		List<CourseScheduleDetail> scheduleList = new ArrayList<CourseScheduleDetail>();
 		Integer teacherId = scheduleTempldate.getTeacherId();
 		Integer studentId = scheduleTempldate.getStudentId();
@@ -82,6 +60,8 @@ public class CourseScheduleService {
 				.find(sql, OrderCourse.class);
 		Calendar cal = Calendar.getInstance();
 		for (Date d : scheduleDateList) {
+			if (filterDateList != null && filterDateList.contains(d))
+				continue;
 			cal.setTime(d);
 			int week = cal.get(Calendar.DAY_OF_WEEK);
 			for (String weekday : weekDays) {
@@ -109,10 +89,12 @@ public class CourseScheduleService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public List<CourseScheduleDetail> addScheduleDetail(
-			CourseSchedule scheduleTempldate) throws Exception {
+			CourseSchedule scheduleTempldate, List<Date> filterDateList)
+			throws Exception {
 		List<CourseScheduleDetail> scheduleList;
 
-		scheduleList = computeScheduleDetailList(scheduleTempldate, true);
+		scheduleList = computeScheduleDetailList(scheduleTempldate,
+				filterDateList, true);
 		Integer totalCourseHour = 0;
 		for (CourseScheduleDetail schedule : scheduleList) {
 			totalCourseHour += courseScheduleDetailService.computeScheduleHour(
@@ -127,7 +109,7 @@ public class CourseScheduleService {
 			schedule.setScheduleId(scheduleTempldate.getId());
 			courseScheduleDetailService.addSchedule(schedule);
 		}
-		return scheduleList; 
+		return scheduleList;
 	}
 
 	public CourseSchedule findOne(Integer templateId) {
@@ -159,5 +141,43 @@ public class CourseScheduleService {
 			scheduleTemplate
 					.setStatus(CourseScheduleStatus.NOTBEGIN.getValue());
 		baseDao.update(scheduleTemplate);
+	}
+
+	/**
+	 * 计算计划结束日期
+	 * 
+	 * @param courseSchedule
+	 * @param filterDateList
+	 * @return
+	 */
+	public Date computeScheduleEndDate(CourseSchedule courseSchedule,
+			List<Date> filterDateList) {
+		Integer endTime = courseSchedule.getEndTime();
+		Integer startTime = courseSchedule.getStartTime();
+		Date startDate = courseSchedule.getStartDate();
+		int costHour = courseScheduleDetailService.computeScheduleHour(endTime,
+				startTime);
+		String weekDayStr = courseSchedule.getWeekDays();
+		String[] weekDays = weekDayStr.split(",");
+		Integer totalHour = courseSchedule.getTotalCourseHour();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		while (true) {
+			if (filterDateList != null
+					&& filterDateList.contains(cal.getTime())) {
+				cal.add(Calendar.DATE, 1);
+				continue;
+			}
+			int week = cal.get(Calendar.DAY_OF_WEEK);
+			for (String weekday : weekDays) {
+				if (week == Integer.valueOf(weekday)) {
+					totalHour -= costHour;
+				}
+			}
+			if (totalHour == 0)
+				break;
+			cal.add(Calendar.DATE, 1);
+		}
+		return cal.getTime();
 	}
 }
