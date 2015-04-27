@@ -7,6 +7,8 @@
 		var orderCourseStore = new SysParam.store("ORDER_COURSE");
 		var scheduleStatusStore = new SysParam.store("SCHEDULE_STATUS");
 		var teacherId = jQuery.url.param("teacherId");
+		var isReadOnly = jQuery.url.param("isReadOnly"); 
+		isReadOnly = isReadOnly=='true'?true:false;
 		var weekStore = new SysParam.store("WEEK"); 
 		var sm = new Ext.grid.CheckboxSelectionModel();
 		var cm = new Ext.grid.ColumnModel({
@@ -52,6 +54,9 @@
 				header : "总课时",
 				dataIndex : "totalCourseHour"
 			}, {
+				header : "已用课时",
+				dataIndex : "totalCostHour"
+			}, {
 				header : "排课日",
 				dataIndex : "weekDays",
 				renderer : function(value) {
@@ -77,6 +82,7 @@
 					}
 				}, {
 					getClass : function(v, meta, rec) {  
+						if(!isReadOnly)
 						  return "btn_remove";
 					},
 					tooltip : '删除',

@@ -26,7 +26,6 @@ import com.web.model.StudentInfo;
 
 @Repository("baseDao")
 public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
-	private static Connection conn = null;
 
 	@Override
 	public void delete(Object entity) {
@@ -239,9 +238,11 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 
 	@Override
 	public void executeSql(String sql) {
+		Session session = null;
 		Connection conn = null;
 		Statement stmt = null;
 		try {
+			session = this.getSession();
 			conn = this.getSession().connection();
 			stmt = conn.createStatement();
 			boolean ret = stmt.execute(sql);
@@ -250,26 +251,22 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 		} catch (Exception e) {
 			logger.error("fail to execute sql:" + sql, e);
 		} finally {
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			if (session != null)
+				session.close();
 		}
-
 	}
 
 	@Override
 	public List executeQuery(String sql) {
+		Session session = null;
 		try {
+			session = this.getSession();
 			return this.getSession().createQuery(sql).setCacheable(true).list();
 		} catch (Exception e) {
 			logger.error("fail to execute sql:" + sql, e);
+		} finally {
+			if (session != null)
+				session.close();
 		}
 		return null;
 
@@ -279,9 +276,14 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 	public List noMappedObjectQuery(String sql) {
 		List list;
 		Connection connection = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		Session session = null;
 		try {
-			connection = getConnection();
-			ResultSet rs = connection.createStatement().executeQuery(sql);
+			session = this.getSession();
+			connection = session.connection();
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery(sql);
 			list = new ArrayList();
 			ResultSetMetaData md = rs.getMetaData();
 			int columnCount = md.getColumnCount(); // Map rowData;
@@ -295,25 +297,15 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
-			try {
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-			}
+			session.close();
 		}
 		return list;
 
 	}
 
 	@Override
-	public Connection getConnection() {
-		try {
-			if (conn != null && !conn.isClosed())
-				return conn;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return this.getSession().connection();
+	public Session getConnectionSession() {
+		return this.getSession();
 	}
 
 	@Override

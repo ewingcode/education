@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 
 import org.apache.axis.utils.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.type.YesNoType;
 
 import com.core.app.action.base.ActionException;
 import com.core.app.action.base.BaseAction;
@@ -16,9 +15,13 @@ import com.core.app.action.base.ResponseUtils;
 import com.core.app.bean.UserInfo;
 import com.core.app.constant.YesOrNo;
 import com.core.app.control.SessionControl;
+import com.core.app.control.SessionException;
+import com.core.app.service.SysRightRelService;
 import com.core.jdbc.util.PageBean;
 import com.util.SqlUtil;
-import com.web.model.OrderInfo;
+import com.util.StringUtil;
+import com.web.model.OrderInfoView;
+import com.web.model.StudentInfo;
 import com.web.service.OrderQueryService;
 import com.web.service.StudentService;
 
@@ -28,15 +31,27 @@ public class OrderInfoAction extends BaseAction {
 	private OrderQueryService orderQueryService;
 	@Resource
 	private StudentService studentService;
+	@Resource
+	private SysRightRelService sysRightRelService;
 
 	public OrderInfoAction() {
-		super(OrderInfo.class);
+		super(OrderInfoView.class);
 	}
 
-	public static void main(String[] args) {
-		Float s = Float.valueOf(2563l / 100f);
-		System.out.println(s);
+	@Override
+	public String getCondition() {
+		if (StringUtil.isEmpty(condition))
+			condition = "";
+		try {
+			String relAreaSql = sysRightRelService.getAreaRightSql(request);
+			if (!StringUtil.isEmpty(relAreaSql))
+				return SqlUtil.combine(condition, relAreaSql);
+		} catch (SessionException e) {
+			e.printStackTrace();
+		}
+		return condition;
 	}
+
 	/**
 	 * dao查询
 	 * 
@@ -46,8 +61,8 @@ public class OrderInfoAction extends BaseAction {
 		ResponseData responseData = null;
 		try {
 			Integer orderId = Integer.valueOf(request.getParameter("orderId"));
-			OrderInfo orderInfo = baseModelService.findOne(orderId,
-					OrderInfo.class);
+			OrderInfoView orderInfo = baseModelService.findOne(orderId,
+					OrderInfoView.class);
 			orderInfo.setStudentName(studentService.getStudentName(orderInfo
 					.getStudentId()));
 			orderInfo.setFeeFloat(Float.valueOf(orderInfo.getFee() / 100f)
@@ -119,7 +134,7 @@ public class OrderInfoAction extends BaseAction {
 		try {
 			UserInfo userInfo = SessionControl.getUserInfo(request);
 			String studentId = request.getParameter("studentId");
-			List<OrderInfo> orderList = orderQueryService.queryRelOrder(
+			List<OrderInfoView> orderList = orderQueryService.queryRelOrder(
 					userInfo.getId(), Integer.valueOf(studentId));
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(orderList);
@@ -140,7 +155,7 @@ public class OrderInfoAction extends BaseAction {
 		try {
 			String userId = request.getParameter("userId");
 			String studentId = request.getParameter("studentId");
-			OrderInfo orderInfo = orderQueryService.queryLastestOrder(
+			OrderInfoView orderInfo = orderQueryService.queryLastestOrder(
 					Integer.valueOf(userId), Integer.valueOf(studentId));
 			List list = new ArrayList();
 			if (orderInfo != null) {
@@ -182,9 +197,8 @@ public class OrderInfoAction extends BaseAction {
 			}
 			PageBean pageBean = baseModelService.pageQuery(conditionSql,
 					bulidOrderBySql(),
-					limit == null ? 20 : Integer.valueOf(limit), start == null
-							? 0
-							: Integer.valueOf(start), entityClass);
+					limit == null ? 20 : Integer.valueOf(limit),
+					start == null ? 0 : Integer.valueOf(start), entityClass);
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setTotalProperty(pageBean.getTotalCount());
 			responseData.setResult(pageBean.getResult());

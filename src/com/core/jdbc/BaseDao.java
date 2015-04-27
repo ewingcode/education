@@ -1,7 +1,8 @@
 package com.core.jdbc;
 
-import java.sql.Connection;
 import java.util.List;
+
+import org.hibernate.Session;
 
 import com.core.jdbc.util.PageBean;
 
@@ -16,8 +17,8 @@ public interface BaseDao {
 
 	public <T> T findOne(String condition, Class<T> entityClass);
 
-	public <T> PageBean pageQuery(String condition, String orderBy, int pageSize,
-			int startIndex, Class<T> entityClass);
+	public <T> PageBean pageQuery(String condition, String orderBy,
+			int pageSize, int startIndex, Class<T> entityClass);
 
 	public <T> PageBean pageQuery(String sql, String condition, String orderBy,
 			int pageSize, int startIndex, Class<T> entityClass);
@@ -33,7 +34,7 @@ public interface BaseDao {
 
 	public <T> List<T> executeQuery(String sql);
 
-	public Connection getConnection();
+	public Session getConnectionSession();
 
 	public <T> List<T> noMappedObjectQuery(String sql);
 

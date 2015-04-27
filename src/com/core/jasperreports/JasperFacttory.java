@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import net.sf.jasperreports.engine.JRAlignment;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRReport;
@@ -31,7 +29,9 @@ import net.sf.jasperreports.engine.design.JRDesignStyle;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
-import com.core.app.action.base.BaseAction;
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+
 import com.core.factory.SpringCtx;
 import com.core.jdbc.BaseDao;
 import com.util.StringUtil;
@@ -64,207 +64,215 @@ public class JasperFacttory {
 	public JasperPrint dynamicGenerate(String sql, String title,
 			String[] headers, String[] alias, Map paramMap) throws Exception {
 
-		Connection connection = getConnection();
+		Session session = getSession();
 
-		JasperDesign jasperDesign = new JasperDesign();
-		JRDesignStyle normalStyle = setReportSytle(jasperDesign);
-		JRDesignQuery query = new JRDesignQuery();
-		query.setText(sql);
-		jasperDesign.setQuery(query);
-		// addReportFiled(jasperDesign);
+		try {
+			JasperDesign jasperDesign = new JasperDesign();
+			JRDesignStyle normalStyle = setReportSytle(jasperDesign);
+			JRDesignQuery query = new JRDesignQuery();
+			query.setText(sql);
+			jasperDesign.setQuery(query);
+			// addReportFiled(jasperDesign);
 
-		// Title
-		JRDesignBand band = new JRDesignBand();
-		band.setHeight(100);
-		JRDesignStaticText staticText = new JRDesignStaticText();
+			// Title
+			JRDesignBand band = new JRDesignBand();
+			band.setHeight(100);
+			JRDesignStaticText staticText = new JRDesignStaticText();
 
-		staticText.setX(280);
-		staticText.setY(0);
-		staticText.setWidth(300);
-		staticText.setHeight(40);
-		staticText.setBold(true);
-		staticText.setFontSize(24);
-		staticText.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER); // 设置文本的对齐方式
-		staticText.setStyle(normalStyle);
-		staticText.setText(title);
-		JRDesignStaticText staticText2 = new JRDesignStaticText();
+			staticText.setX(280);
+			staticText.setY(0);
+			staticText.setWidth(300);
+			staticText.setHeight(40);
+			staticText.setBold(true);
+			staticText.setFontSize(24);
+			staticText
+					.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER); // 设置文本的对齐方式
+			staticText.setStyle(normalStyle);
+			staticText.setText(title);
+			JRDesignStaticText staticText2 = new JRDesignStaticText();
 
-		staticText2.setX(0);
-		staticText2.setY(50);
-		staticText2.setWidth(350);
-		staticText2.setHeight(30);
-		staticText2.setFontSize(18);
-		// staticText2.setItalic(true);
-		staticText2.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_LEFT); // 设置文本的对齐方式
-		staticText2.setStyle(normalStyle);
-		if (getValueFromParam(paramMap, JasperParam.STATISTIC_TIME_FIELD) != null) {
-			staticText2.setText("统计时间： "
-					+ getValueFromParam(paramMap,
-							JasperParam.STATISTIC_TIME_FIELD));
-		}
-		band.addElement(staticText);
-		band.addElement(staticText2);
-		/*
-		 * JRDesignLine line = new JRDesignLine(); line.setX(0); line.setY(19);
-		 * line.setWidth(500); line.setHeight(1);
-		 * line.setForecolor(Color.BLACK); band.addElement(line);
-		 */
-		jasperDesign.setTitle(band);
-
-		// Page header
-		band = new JRDesignBand();
-		// band.setHeight(20);
-		band.setHeight(0);
-		jasperDesign.setPageHeader(band);
-		jasperDesign.setPageWidth(800);
-		// Column header
-		band = new JRDesignBand();
-		band.setHeight(30);
-
-		// 开始添加列字段
-		int X = 80;
-		int columnHeaderfontSize = 15;
-		int fontSize = 15;
-		int textHeight = 30;
-		int textWidth = 80;
-		int detailHeight = 30;
-		JRDesignBand detail = new JRDesignBand();
-		detail.setHeight(detailHeight);
-		for (int i = 0; i < headers.length; i++) {
-			JRDesignStaticText jrstaticText = new JRDesignStaticText();
-			jrstaticText.setText(headers[i]);
-			jrstaticText
-					.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
-			jrstaticText
-					.setVerticalAlignment(JRAlignment.VERTICAL_ALIGN_MIDDLE);
-			jrstaticText.setFontSize(columnHeaderfontSize);
-			jrstaticText.setHeight(textHeight);
-			jrstaticText.setWidth(textWidth);
-			jrstaticText.setBorderColor(Color.BLACK);
-			jrstaticText.setBold(false);
-			if (i == 0) {
-				X = 0;
-			} else {
-				X = 80;
+			staticText2.setX(0);
+			staticText2.setY(50);
+			staticText2.setWidth(350);
+			staticText2.setHeight(30);
+			staticText2.setFontSize(18);
+			// staticText2.setItalic(true);
+			staticText2
+					.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_LEFT); // 设置文本的对齐方式
+			staticText2.setStyle(normalStyle);
+			if (getValueFromParam(paramMap, JasperParam.STATISTIC_TIME_FIELD) != null) {
+				staticText2.setText("统计时间： "
+						+ getValueFromParam(paramMap,
+								JasperParam.STATISTIC_TIME_FIELD));
 			}
-			jrstaticText.setX(X * i);
-			jrstaticText.setPdfFontName("STSong-Light");
-			jrstaticText.setPdfEmbedded(true);
-			jrstaticText.setPdfEncoding("UniGB-UCS2-H");
-			jrstaticText
-					.setTextAlignment(JRBasePrintText.HORIZONTAL_ALIGN_CENTER);
-			jrstaticText.setLeftBorder(JRBaseLine.PEN_1_POINT);
-			jrstaticText.setTopBorder(JRBaseLine.PEN_1_POINT);
-			jrstaticText.setRightBorder(JRBaseLine.PEN_1_POINT);
-			jrstaticText.setBottomBorder(JRBaseLine.PEN_1_POINT);
-			jrstaticText.setForecolor(Color.black);
-			// jrstaticText.setStretchType((byte)0);
-			band.addElement(jrstaticText);
+			band.addElement(staticText);
+			band.addElement(staticText2);
+			/*
+			 * JRDesignLine line = new JRDesignLine(); line.setX(0);
+			 * line.setY(19); line.setWidth(500); line.setHeight(1);
+			 * line.setForecolor(Color.BLACK); band.addElement(line);
+			 */
+			jasperDesign.setTitle(band);
 
-			// 定义字段，注册字段
-			JRDesignField field = new JRDesignField();
-			field.setName(alias[i]);
-			field.setValueClass(String.class);
-			jasperDesign.addField(field);
+			// Page header
+			band = new JRDesignBand();
+			// band.setHeight(20);
+			band.setHeight(0);
+			jasperDesign.setPageHeader(band);
+			jasperDesign.setPageWidth(800);
+			// Column header
+			band = new JRDesignBand();
+			band.setHeight(30);
 
-			// add text fields for displaying fields
+			// 开始添加列字段
+			int X = 80;
+			int columnHeaderfontSize = 15;
+			int fontSize = 15;
+			int textHeight = 30;
+			int textWidth = 80;
+			int detailHeight = 30;
+			JRDesignBand detail = new JRDesignBand();
+			detail.setHeight(detailHeight);
+			for (int i = 0; i < headers.length; i++) {
+				JRDesignStaticText jrstaticText = new JRDesignStaticText();
+				jrstaticText.setText(headers[i]);
+				jrstaticText
+						.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
+				jrstaticText
+						.setVerticalAlignment(JRAlignment.VERTICAL_ALIGN_MIDDLE);
+				jrstaticText.setFontSize(columnHeaderfontSize);
+				jrstaticText.setHeight(textHeight);
+				jrstaticText.setWidth(textWidth);
+				jrstaticText.setBorderColor(Color.BLACK);
+				jrstaticText.setBold(false);
+				if (i == 0) {
+					X = 0;
+				} else {
+					X = 80;
+				}
+				jrstaticText.setX(X * i);
+				jrstaticText.setPdfFontName("STSong-Light");
+				jrstaticText.setPdfEmbedded(true);
+				jrstaticText.setPdfEncoding("UniGB-UCS2-H");
+				jrstaticText
+						.setTextAlignment(JRBasePrintText.HORIZONTAL_ALIGN_CENTER);
+				jrstaticText.setLeftBorder(JRBaseLine.PEN_1_POINT);
+				jrstaticText.setTopBorder(JRBaseLine.PEN_1_POINT);
+				jrstaticText.setRightBorder(JRBaseLine.PEN_1_POINT);
+				jrstaticText.setBottomBorder(JRBaseLine.PEN_1_POINT);
+				jrstaticText.setForecolor(Color.black);
+				// jrstaticText.setStretchType((byte)0);
+				band.addElement(jrstaticText);
+
+				// 定义字段，注册字段
+				JRDesignField field = new JRDesignField();
+				field.setName(alias[i]);
+				field.setValueClass(String.class);
+				jasperDesign.addField(field);
+
+				// add text fields for displaying fields
+				JRDesignTextField textField = new JRDesignTextField();
+				JRDesignExpression expression = new JRDesignExpression();
+				expression.setText("$F{" + alias[i] + "}");
+				expression.setValueClass(String.class);
+				textField.setExpression(expression);
+				textField.setFontSize(fontSize);
+				textField.setHeight(textHeight);
+				textField.setWidth(textWidth);
+				textField.setX(X * i);
+				textField.setPdfFontName("STSong-Light");
+				textField.setPdfEmbedded(true);
+				textField.setPdfEncoding("UniGB-UCS2-H");
+				textField
+						.setTextAlignment(JRBasePrintText.HORIZONTAL_ALIGN_CENTER);
+				textField.setLeftBorder(JRBaseLine.PEN_1_POINT);
+				textField.setTopBorder(JRBaseLine.PEN_1_POINT);
+				textField.setRightBorder(JRBaseLine.PEN_1_POINT);
+				textField.setBottomBorder(JRBaseLine.PEN_1_POINT);
+				textField
+						.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
+				textField
+						.setVerticalAlignment(JRAlignment.VERTICAL_ALIGN_BOTTOM);
+				textField.setBorderColor(Color.BLACK);
+				// textField.setForecolor(new Color(0x99,0xFF,0xFF));
+				textField.setStretchWithOverflow(true);
+				detail.addElement(textField);
+			}
+
+			jasperDesign.setColumnHeader(band);
+
+			// detail
+			jasperDesign.setDetail(detail);
+
+			// Column footer
+			band = new JRDesignBand();
+			band.setHeight(10);
+			jasperDesign.setColumnFooter(band);
+			// Page footer
+			band = new JRDesignBand();
+			band.setHeight(80);
+
+			staticText = new JRDesignStaticText();
+			staticText.setX(0);
+			staticText.setY(0);
+			staticText.setWidth(300);
+			staticText.setHeight(30);
+			staticText.setPdfFontName("STSong-Light");
+			staticText.setPdfEmbedded(true);
+			staticText.setPdfEncoding("UniGB-UCS2-H");
+			// staticText.setItalic(true);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			String tt = "制表日期：" + sdf.format(new Date());
+			staticText.setText(tt);
+			// band.addElement(staticText);
+
 			JRDesignTextField textField = new JRDesignTextField();
-			JRDesignExpression expression = new JRDesignExpression();
-			expression.setText("$F{" + alias[i] + "}");
-			expression.setValueClass(String.class);
-			textField.setExpression(expression);
-			textField.setFontSize(fontSize);
-			textField.setHeight(textHeight);
-			textField.setWidth(textWidth);
-			textField.setX(X * i);
+			textField.setX(450);
+			textField.setY(0);
+			textField.setWidth(100);
+			textField.setHeight(30);
 			textField.setPdfFontName("STSong-Light");
 			textField.setPdfEmbedded(true);
 			textField.setPdfEncoding("UniGB-UCS2-H");
-			textField.setTextAlignment(JRBasePrintText.HORIZONTAL_ALIGN_CENTER);
-			textField.setLeftBorder(JRBaseLine.PEN_1_POINT);
-			textField.setTopBorder(JRBaseLine.PEN_1_POINT);
-			textField.setRightBorder(JRBaseLine.PEN_1_POINT);
-			textField.setBottomBorder(JRBaseLine.PEN_1_POINT);
-			textField
-					.setHorizontalAlignment(JRAlignment.HORIZONTAL_ALIGN_CENTER);
-			textField.setVerticalAlignment(JRAlignment.VERTICAL_ALIGN_BOTTOM);
-			textField.setBorderColor(Color.BLACK);
-			// textField.setForecolor(new Color(0x99,0xFF,0xFF));
-			textField.setStretchWithOverflow(true);
-			detail.addElement(textField);
+
+			JRDesignExpression expression = new JRDesignExpression();
+			expression = new JRDesignExpression();
+			expression.setValueClass(java.lang.Integer.class);
+			expression.setText("$V{PAGE_NUMBER}");
+
+			textField.setExpression(expression);
+			// band.addElement(textField);
+			jasperDesign.setPageFooter(band);
+
+			System.out.println(expression.getText());
+			// Summary
+			band = new JRDesignBand();
+			band.setHeight(0);
+
+			/* **************************************************************** */
+			/* Here My doubt */
+			/*
+			 * JRDesignChart chart1 = new
+			 * JRDesignChart(null,JRChart.CHART_TYPE_LINE);
+			 * chart1.setHeight(100); chart1.setBorderColor(Color.red);
+			 * chart1.setForecolor(Color.BLACK); chart1.setWidth(200);
+			 */
+
+			// band.addElement(chart1);
+			jasperDesign.setSummary(band);
+
+			JasperReport jasperReport = JasperCompileManager
+					.compileReport(jasperDesign);
+			Map parameters = new HashMap();
+			JasperPrint jasperPrint = JasperFillManager.fillReport(
+					jasperReport, parameters, session.connection());
+			JasperExportManager.exportReportToHtmlFile(jasperPrint,
+					"D://test2.html");
+			return jasperPrint;
+		} finally {
+			if (session != null)
+				session.close();
 		}
-
-		jasperDesign.setColumnHeader(band);
-
-		// detail
-		jasperDesign.setDetail(detail);
-
-		// Column footer
-		band = new JRDesignBand();
-		band.setHeight(10);
-		jasperDesign.setColumnFooter(band);
-		// Page footer
-		band = new JRDesignBand();
-		band.setHeight(80);
-
-		staticText = new JRDesignStaticText();
-		staticText.setX(0);
-		staticText.setY(0);
-		staticText.setWidth(300);
-		staticText.setHeight(30);
-		staticText.setPdfFontName("STSong-Light");
-		staticText.setPdfEmbedded(true);
-		staticText.setPdfEncoding("UniGB-UCS2-H");
-		// staticText.setItalic(true);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-		String tt = "制表日期：" + sdf.format(new Date()); 
-		staticText.setText(tt);
-		// band.addElement(staticText);
-
-		JRDesignTextField textField = new JRDesignTextField();
-		textField.setX(450);
-		textField.setY(0);
-		textField.setWidth(100);
-		textField.setHeight(30);
-		textField.setPdfFontName("STSong-Light");
-		textField.setPdfEmbedded(true);
-		textField.setPdfEncoding("UniGB-UCS2-H");
-
-		JRDesignExpression expression = new JRDesignExpression();
-		expression = new JRDesignExpression();
-		expression.setValueClass(java.lang.Integer.class);
-		expression.setText("$V{PAGE_NUMBER}");
-
-		textField.setExpression(expression);
-		// band.addElement(textField);
-		jasperDesign.setPageFooter(band);
-
-		System.out.println(expression.getText());
-		// Summary
-		band = new JRDesignBand();
-		band.setHeight(0);
-
-		/* **************************************************************** */
-		/* Here My doubt */
-		/*
-		 * JRDesignChart chart1 = new
-		 * JRDesignChart(null,JRChart.CHART_TYPE_LINE); chart1.setHeight(100);
-		 * chart1.setBorderColor(Color.red); chart1.setForecolor(Color.BLACK);
-		 * chart1.setWidth(200);
-		 */
-
-		// band.addElement(chart1);
-		jasperDesign.setSummary(band);
- 
-
-		JasperReport jasperReport = JasperCompileManager
-				.compileReport(jasperDesign);
-		Map parameters = new HashMap(); 
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
-				parameters, connection); 
-		JasperExportManager.exportReportToHtmlFile(jasperPrint,
-				"D://test2.html"); 
-		return jasperPrint;
 
 	}
 
@@ -321,10 +329,9 @@ public class JasperFacttory {
 		return normalStyle;
 	}
 
-	private Connection getConnection() throws SQLException {
+	private Session getSession() throws SQLException {
 		BaseDao baseDao = (BaseDao) SpringCtx.getByBeanName("baseDao");
-		Connection connection = baseDao.getConnection();
-		return connection;
+		return baseDao.getConnectionSession();
 	}
 
 	public static void main(String args[]) throws Exception {

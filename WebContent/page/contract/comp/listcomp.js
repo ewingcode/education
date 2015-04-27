@@ -334,8 +334,7 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
 			});
 };
 OrderList.ColumnModel = function(selectModel, isShort) {
-	var _isShort = isShort ==null || !isShort ? false:true;
-	alert(_isShort)
+	var _isShort = isShort ==null || !isShort ? false:true; 
 	return new Ext.grid.ColumnModel({
 		columns : [
 				selectModel,

@@ -109,7 +109,7 @@ public class BasDaoTest {
 	//@Test
 	public void noObjectSql() throws SQLException, DaoException {
 		BaseDao baseDao = (BaseDao) SpringCtx.getByBeanName("baseDao");
-		Connection connection = baseDao.getConnection();
+		Connection connection = baseDao.getConnectionSession().connection();
 		String sql = "select * from order_info_daily";
 		ResultSet rs = connection.createStatement().executeQuery(sql);
 		while(rs.next()){

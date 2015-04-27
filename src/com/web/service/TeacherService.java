@@ -17,18 +17,16 @@ public class TeacherService {
 	@Resource
 	private BaseDao baseDao;
 
-	@Transactional
-	public void addNewTeacher(SysUser sysUser, TeacherAbility teacherAbility)
-			  {
+	@Transactional(rollbackFor = Exception.class)
+	public void addNewTeacher(SysUser sysUser, TeacherAbility teacherAbility) {
 		baseDao.save(sysUser);
 		int userId = sysUser.getId();
 		teacherAbility.setUserId(userId);
 		baseDao.save(teacherAbility);
 	}
 
-	@Transactional
-	public void editTeacher(SysUser sysUser, TeacherAbility teacherAbility)
-			  {
+	@Transactional(rollbackFor = Exception.class)
+	public void editTeacher(SysUser sysUser, TeacherAbility teacherAbility) {
 		baseDao.update(sysUser);
 		int userId = sysUser.getId();
 		List<TeacherAbility> list = baseDao.find("user_id=" + userId,
@@ -37,6 +35,7 @@ public class TeacherService {
 			TeacherAbility old = list.get(0);
 			old.setCourseType(teacherAbility.getCourseType());
 			old.setGradeType(teacherAbility.getGradeType());
+			old.setTeacherType(teacherAbility.getTeacherType());
 			baseDao.update(old);
 		}
 	}

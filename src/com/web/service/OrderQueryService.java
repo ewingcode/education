@@ -7,11 +7,11 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 import com.core.jdbc.util.PageBean;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.OrderException;
 import com.web.model.OrderInfo;
+import com.web.model.OrderInfoView;
 import com.web.model.OrderRelHis;
 import com.web.model.OrderTrace;
 
@@ -85,9 +85,9 @@ public class OrderQueryService {
 	 * @return
 	 * @ 
 	 */
-	public List<OrderInfo> queryRelOrder(int userId, int studentId)
+	public List<OrderInfoView> queryRelOrder(int userId, int studentId)
 			  {
-		String sql = " from  " + OrderInfo.class.getName()
+		String sql = " from  " + OrderInfoView.class.getName()
 				+ " where student_id=" + studentId;
 		if (userId != 0) {
 			sql += " and id in (SELECT orderId FROM ";
@@ -96,7 +96,7 @@ public class OrderQueryService {
 		}
 		sql += "order by id desc";
 
-		return baseDao.find(sql, OrderInfo.class);
+		return baseDao.find(sql, OrderInfoView.class);
 	}
 
 	/**
@@ -107,11 +107,11 @@ public class OrderQueryService {
 	 * @return
 	 * @ 
 	 */
-	public OrderInfo queryLastestOrder(int userId, int studentId)
+	public OrderInfoView queryLastestOrder(int userId, int studentId)
 			  {
-		List<OrderInfo> orderlist = queryRelOrder(userId, studentId);
-		OrderInfo lastestOrder = null;
-		for (OrderInfo orderInfo : orderlist) {
+		List<OrderInfoView> orderlist = queryRelOrder(userId, studentId);
+		OrderInfoView lastestOrder = null;
+		for (OrderInfoView orderInfo : orderlist) {
 			if (orderInfo.getRunStatus().equals(OrderRunStatus.RUNNING))
 				lastestOrder = orderInfo;
 		}

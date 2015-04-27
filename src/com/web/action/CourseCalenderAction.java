@@ -55,8 +55,9 @@ public class CourseCalenderAction extends BaseAction {
 			Integer teacherId = Integer.valueOf(request
 					.getParameter("teacherId"));
 			String month = request.getParameter("month");
+			Boolean isReadOnly = Boolean.valueOf(request.getParameter("isReadOnly"));
 			List<CourseScheduleListDto> scheudleList = getCourseSchduleList(
-					teacherId, month);
+					teacherId, month , isReadOnly);
 			PageBean pageBean = new PageBean();
 			pageBean.setResult(scheudleList);
 			responseData = ResponseUtils.success("查询成功！");
@@ -77,7 +78,7 @@ public class CourseCalenderAction extends BaseAction {
 	 * @return
 	 */
 	private List<CourseScheduleListDto> getCourseSchduleList(Integer teacherId,
-			String month) {
+			String month,Boolean isReadOnly) {
 		String[] startAndEndDate = DateFormat.monToStartEndDate(month);
 		String startTime = startAndEndDate[0];
 		String endTime = startAndEndDate[1];
@@ -96,7 +97,7 @@ public class CourseCalenderAction extends BaseAction {
 		for (List<Date> t : calendarList) {
 			CourseScheduleListDto dto = new CourseScheduleListDto();
 			dto.setContents(mergeScheduleContent(teacherId, month, scheduleHis,
-					t));
+					t,isReadOnly));
 			scheudleList.add(dto);
 		}
 
@@ -113,7 +114,7 @@ public class CourseCalenderAction extends BaseAction {
 	 * @return
 	 */
 	private List<String> mergeScheduleContent(Integer teacherId, String month,
-			List<CourseScheduleView> scheduleHis, List<Date> scheduleDateList) {
+			List<CourseScheduleView> scheduleHis, List<Date> scheduleDateList,Boolean isReadOnly) {
 		List<String> scheduleContents = new ArrayList<String>();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(DateFormat
@@ -134,11 +135,12 @@ public class CourseCalenderAction extends BaseAction {
 				if (schedule.getDate().compareTo(d) == 0) {
 					String courseName = schedule.getCourseName();
 					String studentName = schedule.getStudentName();
+					periodSb.append("<p align='left' >");
 					periodSb.append(cutTime(schedule.getStartTime()))
 							.append("-").append(cutTime(schedule.getEndTime()));
-					periodSb.append(" ").append(courseName).append(" ")
-							.append(studentName);
-					periodSb.append("<br>");
+					periodSb.append(" ").append(studentName).append(" ")
+							.append(courseName);
+					periodSb.append("</p><br>");
 					hasRel = true;
 				}
 			}
@@ -148,7 +150,7 @@ public class CourseCalenderAction extends BaseAction {
 						+ teacherId
 						+ "','"
 						+ DateFormat.DateToString(cal.getTime(),
-								DateFormat.DATE_FORMAT) + "')\" >");
+								DateFormat.DATE_FORMAT) + "','"+isReadOnly.toString()+"')\" >");
 
 			if (periodSb.length() > 0) {
 				periodSb.insert(0, jsSb.toString() + "<p align='center' >"

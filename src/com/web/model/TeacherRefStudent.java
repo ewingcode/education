@@ -15,8 +15,17 @@ public class TeacherRefStudent implements java.io.Serializable {
 	private String sex;
 	private String age;
 	private String runStatus;
+	private Integer areaId;
 
 	// Constructors
+
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
+	}
 
 	/** default constructor */
 	public TeacherRefStudent() {

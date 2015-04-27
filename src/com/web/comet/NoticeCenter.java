@@ -28,10 +28,11 @@ public class NoticeCenter {
 		}
 
 		@Override
-		protected Event pullEvent() {
+		protected Event pullEvent() { 
 			Event event = Event.createDataEvent("/notice");
+			System.out.println("pullEvent");
 			// 公告通知
-			try {
+		 try {
 				List notReadList = noticeService.getUserNoReadNoticesTotal();
 				for (int i = 0; i < notReadList.size(); i++) {
 					Map map = (Map) notReadList.get(i);
@@ -43,7 +44,7 @@ public class NoticeCenter {
 				}
 			} catch (Exception e) {
 				logger.error(e, e);
-			}
+			} 
 
 			return event;
 		}

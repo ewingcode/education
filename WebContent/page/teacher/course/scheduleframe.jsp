@@ -6,8 +6,8 @@
 <script>
 	Ext.onReady(function() {
 		var teacherId = jQuery.url.param("teacherId");
-		  var scheduledailyUrl = _contextPath + "/page/teacher/course/scheduledaily.jsp?teacherId="+ teacherId;
-		  var scheduleSettingUrl = _contextPath + "/page/teacher/course/schedulesetting.jsp?teacherId="+ teacherId;
+		  var scheduledailyUrl = _contextPath + "/page/teacher/course/scheduledaily.jsp?teacherId="+ teacherId+"&isReadOnly=false";
+		  var scheduleSettingUrl = _contextPath + "/page/teacher/course/schedulesetting.jsp?teacherId="+ teacherId+"&isReadOnly=false";
 		  var tabs = new Ext.TabPanel({  
 			    activeTab: 0,  
 		        border : false,

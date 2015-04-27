@@ -159,44 +159,7 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 		bodyStyle : 'padding:5px;',
 		buttonAlign : 'center', 
 		items : [ formpanel,gridPanel ],
-		buttons : [ {
-			text : "保存",
-			iconCls : "btn_save",
-			handler : function() { 
-				Ext.Msg.confirm(
-								"信息确认",
-								"您确认新建改排课计划吗？",
-								function(c) {
-									if (c == "yes") {
-										Ext.Ajax
-												.request({
-													url : "Busi_CourseSchedule_saveSchedule.action",
-													params : {
-														teacherId : teacherId,
-														studentId : studentId,
-														courseType : courseType,
-														coursePeriod : coursePeriod,
-														weekDays : scheduleWeekday,
-														startDate : startDate,
-														endDate : endDate,
-														deleteScheduleDates:deleteScheduleDates
-													},
-													method : "post",
-													waitMsg : "正在提交数据...",
-													success : function(response, opts) {
-														var rec = Ext.util.JSON.decode(response.responseText); 
-														Common.SucMegBox(rec.retinfo); 
-													},
-													failure : function(response, opts) {
-														var rec = Ext.util.JSON.decode(response.responseText); 
-														Common.ErrMegBox(rec.retinfo); 
-													}
-												});
-									}
-								});
-			
-			}
-		} , {
+		buttons : [  {
 			text : "关闭",
 			iconCls : "btn_cancel",
 			handler : function() {
@@ -425,13 +388,14 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 		} ]
 	});
 	win.show();
-}
+};
 
 
 /**
  * 弹出单日排课列表
  */
-Schedule.showDailySchedule = function(teacherId, date) {
+Schedule.showDailySchedule = function(teacherId, date , isReadOnly) {
+	isReadOnly = isReadOnly=='true'?true:false;
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
 			url : 'Busi_CourseScheduleManage_listDailySchedule.action'
@@ -518,9 +482,9 @@ Schedule.showDailySchedule = function(teacherId, date) {
 						}, 
 						{
 							header : "状态",
-							dataIndex : "isFinsh",
+							dataIndex : "isFinish",
 							 renderer: function(value) {  
-									return  value == 0 ?"未执行":"结束";    
+									return  value == '0' ?"未执行":"结束";    
 								}
 						},
 						{
@@ -529,7 +493,7 @@ Schedule.showDailySchedule = function(teacherId, date) {
 							items : [ {
 								getClass : function(v, meta, rec) { 
 									//只对没有结束的计划提供删除的按钮
-									if(rec.get("isFinish") ==0)
+									if(rec.get("isFinish") ==0 && !isReadOnly )
 									  return "btn_remove";
 								},
 								tooltip : '删除',
@@ -814,13 +778,13 @@ Schedule.addSchedulePanel = function(teacherId) {
 /**
  * 显示月排课信息
  */
-Schedule.showCalender = function(teacherId, month) {
+Schedule.showCalender = function(teacherId, isReadOnly) {
+	isReadOnly = isReadOnly=='true'?true:false;
 	var curDay = new Date();
 	var curMonth = curDay.format("Y-m");
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
-			url : 'Busi_CourseCalender_showMonthSchedule.action'
-
+			url : 'Busi_CourseCalender_showMonthSchedule.action' 
 		}),
 		reader : new Ext.data.JsonReader({
 			root : 'result',
@@ -866,7 +830,8 @@ Schedule.showCalender = function(teacherId, month) {
 		store.reload({
 			params : {
 				month : month,
-				teacherId : teacherId
+				teacherId : teacherId,
+				isReadOnly : isReadOnly
 			}
 		});
 	}

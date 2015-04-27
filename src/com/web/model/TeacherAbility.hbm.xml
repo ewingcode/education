@@ -26,5 +26,11 @@
                 <comment>可教学的年级</comment>
             </column>
         </property>
+         <property name="teacherType" type="java.lang.String">
+            <column name="teacher_type" length="1" not-null="true">
+                <comment>教师类型</comment>
+            </column>
+        </property>
+        
     </class>
 </hibernate-mapping>
