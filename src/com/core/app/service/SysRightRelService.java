@@ -191,4 +191,23 @@ public class SysRightRelService {
 							.toArray(new Integer[relArea.size()])) + ")";
 		return sql;
 	}
+	
+	/**
+	 * 获取区域权限查询的sql查询条件
+	 * 
+	 * @param request
+	 * @return
+	 * @throws SessionException
+	 */
+	public String getAreaRightSql2(HttpServletRequest request)
+			throws SessionException {
+		UserInfo userInfo = SessionControl.getUserInfo(request);
+		String sql = null;
+		Set<Integer> relArea = userInfo.getRelAreas();
+		if (userInfo.getAreaId() != null)
+			sql = " areaId in ("
+					+ SqlUtil.array2InCondition(relArea
+							.toArray(new Integer[relArea.size()])) + ")";
+		return sql;
+	}
 }

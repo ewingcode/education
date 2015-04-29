@@ -2,6 +2,8 @@ package com.util;
 
 import java.util.List;
 
+import antlr.StringUtils;
+
 /**
  * Sql工具类
  */
@@ -59,11 +61,16 @@ public class SqlUtil {
 	 */
 	public static String combine(String sql1, String sql2) {
 		StringBuffer sql = new StringBuffer();
+		if(StringUtil.isEmpty(sql1))
+			return sql2;
+		if(StringUtil.isEmpty(sql2))
+			return sql1;
 		if (!(sql1.trim().endsWith("and") || sql1.trim().endsWith("AND"))
 				&& !(sql2.trim().startsWith("and") || sql2.trim().startsWith(
 						"AND"))) {
 			sql.append(sql1).append(" AND ").append(sql2);
 		}
+
 		return sql.toString();
 	}
 }

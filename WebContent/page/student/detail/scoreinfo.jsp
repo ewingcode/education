@@ -17,10 +17,7 @@
 				renderer : function(value) {
 					return Student.translate(value);
 				}
-			}, {
-				header : "签单编号",
-				dataIndex : "orderId"
-			}, {
+			}  , {
 				header : "授课老师",
 				dataIndex : "chargerId",
 				renderer : function(value) {

@@ -346,8 +346,9 @@ public class BaseAction extends ActionSupport implements ServletRequestAware,
 			}
 		}
 		String queryMapSql = baseModelService.buildSQLWhere(queryMap);
-		if (!StringUtil.isEmpty(getCondition())) {
-			sql.append(getCondition());
+		String getCon = getCondition();
+		if (!StringUtil.isEmpty(getCon)) {
+			sql.append(getCon);
 		}
 		if (!StringUtil.isEmpty(queryMapSql)) {
 			sql.append(queryMapSql);

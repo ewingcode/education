@@ -66,26 +66,7 @@ EditWindow.prototype.editform = function() {
 	} else {
 		this.url = "Busi_OrderCourseEvaluation_saveExchange.action";
 	}
-	var parentStore = new Ext.data.Store({
-		proxy : new Ext.data.HttpProxy({
-			url : 'Busi_Student_query.action'
-		}),
-		reader : new Ext.data.JsonReader({
-			successProperty : 'success',
-			root : 'result'
-		}, [ {
-			name : 'id',
-			mapping : 'id'
-		}, {
-			name : 'name',
-			mapping : 'name'
-		} ])
-	});
-	parentStore.load();
-	var childStore = new Ext.data.Store({
-		proxy : new Ext.data.HttpProxy({
-			url : 'Busi_OrderCourse_query.action?condition=order_id=' + orderId
-		}),
+	var courseStore = new Ext.data.Store({
 		reader : new Ext.data.JsonReader({
 			successProperty : 'success',
 			root : 'result'
@@ -98,7 +79,19 @@ EditWindow.prototype.editform = function() {
 			convert : covCourseName
 		} ])
 	});
-	childStore.load();
+
+	var chargerStore = new Ext.data.Store({
+		reader : new Ext.data.JsonReader({
+			successProperty : 'success',
+			root : 'result'
+		}, [ {
+			name : 'id',
+			mapping : 'chargerId'
+		}, {
+			name : 'name',
+			mapping : 'chargerName'
+		} ])
+	});
 	var editForm = new Ext.FormPanel(
 			{
 				url : this.url,
@@ -119,43 +112,43 @@ EditWindow.prototype.editform = function() {
 				}, [ {
 					name : "id",
 					type : "int"
-				}, "courseType", "chargerId", "studentId", "content",
-						"operator", {
-							name : "operatorName",
-							type : "string",
-							mapping : 'operator',
-							convert : converOperator
-						}, {
-							name : "chargerName",
-							type : "string",
-							mapping : 'chargerId',
-							convert : converCharger
-						}, {
-							name : "createTime",
-							type : "date",
-							mapping : 'createTime.time',
-							dateFormat : 'time'
-						}, {
-							name : "lastUpdate",
-							type : "date",
-							mapping : 'lastUpdate.time',
-							dateFormat : 'time'
-						}, {
-							name : "courseTime",
-							type : "date",
-							mapping : 'courseTime.time',
-							dateFormat : 'time'
-						} ]),
+				}, "courseType", "chargerId", "studentId", "content", {
+					name : "studentName",
+					type : "string",
+					mapping : 'studentId',
+					convert : converStudent
+				}, "operator", {
+					name : "operatorName",
+					type : "string",
+					mapping : 'operator',
+					convert : converOperator
+				}, {
+					name : "chargerName",
+					type : "string",
+					mapping : 'chargerId',
+					convert : converCharger
+				}, {
+					name : "createTime",
+					type : "date",
+					mapping : 'createTime.time',
+					dateFormat : 'time'
+				}, {
+					name : "lastUpdate",
+					type : "date",
+					mapping : 'lastUpdate.time',
+					dateFormat : 'time'
+				}, {
+					name : "courseTime",
+					type : "date",
+					mapping : 'courseTime.time',
+					dateFormat : 'time'
+				} ]),
 				items : [
 						{
 							id : "id",
 							xtype : "hidden",
 							value : this.primaryId == null ? ""
 									: this.primaryId
-						},
-						{
-							hidden : true,
-							id : "orderId"
 						},
 						{
 							hidden : true,
@@ -167,118 +160,96 @@ EditWindow.prototype.editform = function() {
 							fieldLabel : "编辑者",
 							id : "operatorName",
 							hidden : this.primaryId == null ? true : false
-						},
-						new Ext.form.ComboBox(
-								{
-									id : "studentId",
-									hiddenName : "studentId",
-									triggerAction : "all",
-									fieldLabel : "学生",
-									readOnly : isModify ? true : false,
-									editable : false,
-									emptyText : '请选择',
-									mode : 'remote',
-									region : "center",
-									valueField : "id",
-									displayField : "name",
-									store : parentStore,
-									listeners : {
-										"select" : function(combo, record,
-												index) {
-											Ajax
-													.syncRequest(
-															'Busi_OrderInfo_queryStudentRelOrder.action?userId='
-																	+ session_userId
-																	+ '&studentId='
-																	+ combo.value,
-															function(data) {
-																if (!data.result
-																		|| data.result.length == 0) {
-																	var studentName = Student
-																			.translate(combo.value);
-																	Common
-																			.ErrMegBox('该'
-																					+ studentName
-																					+ '没有签约课程信息');
-																	editForm.form
-																			.reset();
-																	return;
-																}
-																if (data.result
-																		&& data.result.length == 1) {
-																	orderId = data.result[0].id;
-																	$(
-																			"#orderId")
-																			.val(
-																					orderId);
-																}
-															});
-											Ext.getCmp("courseType")
-													.clearValue();
-											childStore.removeAll();
-											childStore.proxy = new Ext.data.HttpProxy(
-													{
-														url : 'Busi_OrderCourse_query.action?condition=order_id='
-																+ orderId
-													});
-											childStore.load();
+						},{
+							xtype : 'compositefield',
+							id : "assignerComp",
+							fieldLabel : '学生',
+							width : "200",
+							items : [
+									{
+										xtype : "textfield",
+										id : 'studentId',
+										hidden : true
+									},
+									{
+										xtype : "textfield",
+										id : "studentName",
+										width : "70",
+										allowBlank : false,
+										readOnly : true
+									},
+									{
+										xtype : "button",
+										id : "choseAssigerBtn",
+										text : "选择",
+										width : "50",
+										listeners : {
+											"click" : function(d, i, n, e) {
+												new Student.selectWin(function(studentId, studentName) {
+													Ext.getCmp('studentId').setValue(studentId);
+													Ext.getCmp('studentName').setValue(studentName);
+													
+												    Ext.getCmp("courseType").clearValue(); 
+												    Ext.getCmp("chargerId").clearValue();
+													courseStore.removeAll();
+													 if(studentId == null || studentId=='')
+														 return; 
+													 courseStore.proxy = new Ext.data.HttpProxy({   
+													    	url: 'Busi_OrderCourse_findCourseByStudent.action?studentId='+$("#studentId").val()  
+													    }),  
+								                    courseStore.load();   
+								                      
+												});
+											}
 										}
-									}
-								}),
-						new Ext.form.ComboBox(
-								{
-									id : "courseType",
-									hiddenName : "courseType",
-									triggerAction : "all",
-									fieldLabel : "课程",
-									readOnly : false,
-									editable : false,
-									emptyText : '请选择',
-									mode : 'remote',
-									region : "center",
-									valueField : "id",
-									displayField : "name",
-									store : childStore,
-									listeners : {
-										"select" : function(combo, record,
-												index) {
-											$("#chargerName").val("");
-											$("#chargerId").val("");
-											Ajax
-													.syncRequest(
-															'Busi_OrderCourse_query.action?condition=orderId='
-																	+ $(
-																			"#orderId")
-																			.val()
-																	+ ' and courseType='
-																	+ combo.value,
-															function(data) {
-																if (data.result
-																		&& data.result.length == 1) {
-																	var chargerId = data.result[0].chargerId;
-																	var chargerName = SysUser
-																			.translate(chargerId);
-																	$(
-																			"#chargerId")
-																			.val(
-																					chargerId);
-																	$(
-																			"#chargerName")
-																			.val(
-																					chargerName);
-																}
-															});
-										}
-									}
-								}), {
-							hidden : true,
-							id : "chargerId"
-						}, {
-							fieldLabel : "授课老师",
-							allowBlank : false,
-							readOnly : true,
-							id : "chargerName"
+									} ]
 						},
+						 new Ext.form.ComboBox(
+									{
+										id : "courseType",
+										hiddenName : "courseType",
+										triggerAction : "all",
+										fieldLabel : "课程",
+										readOnly : false,
+										editable : false,
+										emptyText : '请选择',  
+										mode: 'remote',
+										region : "center",
+										valueField : "id",
+										allowBlank : false,
+										displayField : "name", 
+										store:courseStore, 
+									    listeners:{ 
+										   "select": function(combo,  record, index){ 
+											   var courseType = combo.value; 
+											   var studentId = $("#studentId").val(); 
+											   if(courseType != null && courseType!='' && studentId!=null && studentId!='')
+											   {   
+												   Ext.getCmp("chargerId").clearValue(); 
+												   chargerStore.proxy= new Ext.data.HttpProxy({   
+												    	url: 'Busi_OrderCourse_findChargerForCourse.action?studentId='+$("#studentId").val()+'&courseType='+Ext.getCmp("courseType").getValue()  
+												    });  
+												   chargerStore.load();
+										       }
+											}
+										}
+									}), 
+							 new Ext.form.ComboBox(
+												{
+													id : "chargerId",
+													hiddenName : "chargerId",
+													triggerAction : "all",
+													fieldLabel : "教师",
+													readOnly : false,
+													editable : false,
+													emptyText : '请选择',  
+													mode: 'remote',
+													allowBlank : false,
+													region : "center",
+													valueField : "id",
+													displayField : "name", 
+													store:chargerStore
+							}),
 
 						{
 							fieldLabel : "上课时间",
@@ -304,7 +275,24 @@ EditWindow.prototype.editform = function() {
 									+ this.primaryId,
 							waitMsg : "正在载入数据...",
 							success : function(d, e) {
-
+								 courseStore.proxy = new Ext.data.HttpProxy({   
+								    	url: 'Busi_OrderCourse_findCourseByStudent.action?studentId='+$("#studentId").val()  
+								    }),  
+								    courseStore.load({
+								    		 callback: function(r, options, success){   
+								 		        if(success){     
+								 		        	Ext.getCmp("courseType").setValue( Ext.getCmp("courseType").getValue()); 
+								 		        }  
+								 		    }}  );   
+								   chargerStore.proxy= new Ext.data.HttpProxy({   
+								    	url: 'Busi_OrderCourse_findChargerForCourse.action?studentId='+$("#studentId").val()+'&courseType='+Ext.getCmp("courseType").getValue()  
+								    });  
+								   chargerStore.load({
+							    		 callback: function(r, options, success){   
+								 		        if(success){     
+								 		        	Ext.getCmp("chargerId").setValue( Ext.getCmp("chargerId").getValue()); 
+								 		        }  
+								 		    }}  );   
 							},
 							failure : function(b, c) {
 								Ext.MessageBox.show({
@@ -331,4 +319,7 @@ function converCharger(v, record) {
 }
 function converOperator(v, record) {
 	return SysUser.translate(record.operator);
+}
+function converStudent(v, record) {
+	return Student.translate(record.studentId);
 }

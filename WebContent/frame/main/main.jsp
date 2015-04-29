@@ -175,7 +175,7 @@
 		      if(notReadCount == 'undefined' || notReadCount == undefined){
 		    	  notReadCount=0;
 		      } 
-		      console.log('notReadCount:'+notReadCount);
+		      //console.log('notReadCount:'+notReadCount);
 		      if(notReadCount>0 ){
 		              Ext.getCmp("messageId").setText("("+notReadCount+")"); 
 			          if(isShaking)

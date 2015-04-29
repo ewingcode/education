@@ -1,5 +1,6 @@
 
 Ext.onReady(function() {  
+	loadGirdStore();
 	Frame.busiPage(formpanel,gridPanel); 
 	 
 });
@@ -23,13 +24,6 @@ var cm = new Ext.grid.ColumnModel(
 							}
 						}, 
 						{
-							header : "编辑者",
-							dataIndex : "operator",
-							renderer : function(value){
-								return SysUser.translate(value);
-							}
-						} ,
-						{
 							header : "授课老师",
 							dataIndex : "chargerId" ,
 							renderer : function(value) { 
@@ -46,12 +40,19 @@ var cm = new Ext.grid.ColumnModel(
 						{
 							header : "考试时间",
 							dataIndex : "examTime",
-							renderer : Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+							renderer : Ext.util.Format.dateRenderer('Y-m-d')
 						} , 
 						{
 							header : "考试分数",
 							dataIndex : "score"
-						},
+						}, 
+						{
+							header : "编辑者",
+							dataIndex : "operator",
+							renderer : function(value){
+								return SysUser.translate(value);
+							}
+						} ,
 						{
 							header : "创建时间",
 							dataIndex : "createTime" ,
@@ -200,8 +201,8 @@ var gridPanel =  new Ext.grid.GridPanel( {
 
 function loadGirdStore(){ 
 	store.setBaseParam('start',0); 
-	store.setBaseParam('limit',20); 
-	var studentIds = Student.mutipleId($("#QUERY_name").val());
+	store.setBaseParam('limit',20);  
+	var studentIds = Student.mutipleId($("#QUERY_name").val()); 
 	var operators = SysUser.mutipleId($("#QUERY_operator").val());
 	store.setBaseParam('_QUERY_n_in_student_id',studentIds) ; 
 	store.setBaseParam('_QUERY_n_in_operator',operators) ; 

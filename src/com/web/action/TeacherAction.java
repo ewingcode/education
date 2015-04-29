@@ -29,6 +29,7 @@ public class TeacherAction extends BaseAction {
 
 	@Override
 	public String getCondition() {
+		condition = super.getCondition();
 		if (StringUtil.isEmpty(condition))
 			condition = "";
 		try {

@@ -50,39 +50,14 @@ var EditWindow = function(b) {
 				text : "取消",
 				iconCls : "btn_cancel",
 				handler : function() {
-					win.close();
+				    win.close();
 				}
 			} ]
 	}); 
 	win.show();
 }; 
 EditWindow.prototype.editform = function() {
-	var isModify=false;
-	if (this.primaryId != null && this.primaryId != "undefined") {
-		this.url="Busi_OrderCourseScore_update.action";
-		isModify =true;
-	}else{
-		this.url="Busi_OrderCourseScore_save.action";
-	}
-  
-	
-	var parentStore = new Ext.data.Store({   
-	    proxy: new Ext.data.HttpProxy({   
-	        url: 'Busi_Student_query.action'   
-	    }),   
-	    reader: new Ext.data.JsonReader({  
-    	 successProperty : 'success',
-		 root : 'result' 
-	    }, [   
-	        {name: 'id', mapping: 'id'},   
-	        {name: 'name', mapping: 'name'}   
-	    ])  
-	});   
-	parentStore.load();  
-	var courseStore = new Ext.data.Store({   
-	    proxy: new Ext.data.HttpProxy({   
-	    	url: 'Busi_OrderCourse_findCourseByStudent.action?studentId='+$("#studentId").val()  
-	    }),   
+	var courseStore = new Ext.data.Store({    
 	    reader: new Ext.data.JsonReader({   
 	    	 successProperty : 'success',
 			 root : 'result'   
@@ -94,10 +69,7 @@ EditWindow.prototype.editform = function() {
 	    ])   
 	});   
 	 
-	var chargerStore = new Ext.data.Store({   
-	    proxy: new Ext.data.HttpProxy({   
-	    	url: 'Busi_OrderCourse_findChargerForCourse.action?studentId='+$("#studentId").val()+'&courseType='+Ext.getCmp("courseType").getValue()  
-	    }),   
+	var chargerStore = new Ext.data.Store({    
 	    reader: new Ext.data.JsonReader({   
 	    	 successProperty : 'success',
 			 root : 'result'   
@@ -106,6 +78,16 @@ EditWindow.prototype.editform = function() {
 	        {name: 'name', mapping: 'chargerName' }   
 	    ])   
 	});
+	var isModify=false;
+	if (this.primaryId != null && this.primaryId != "undefined") {
+		this.url="Busi_OrderCourseScore_update.action";
+		isModify =true;
+	}else{
+		this.url="Busi_OrderCourseScore_save.action";
+	}
+  
+	 
+	
 	var editForm = new Ext.FormPanel( {
 		url :   this.url,
 		layout : "form",
@@ -122,8 +104,9 @@ EditWindow.prototype.editform = function() {
 			  successProperty : 'success',
 				root : 'result'
 			}, [   { name : "id", type : "int" }, 
-					  "courseType", "chargerId","studentId","score",
+					  "courseType", "chargerId","studentId","score", 
 					"operator",
+				    {name:"studentName" , type : "string", mapping : 'studentId',convert : converStudent}, 
 					{name:"operatorName" , type : "string", mapping : 'operator',convert : converOperator},
 					{name:"chargerName" , type : "string", mapping : 'chargerId',convert : converCharger},
 					{name:"createTime" , type : "date", mapping : 'createTime.time',dateFormat : 'time'},
@@ -159,6 +142,7 @@ EditWindow.prototype.editform = function() {
 						xtype : "textfield",
 						id : "studentName",
 						width : "70",
+						allowBlank : false,
 						readOnly : true
 					},
 					{
@@ -172,10 +156,14 @@ EditWindow.prototype.editform = function() {
 									Ext.getCmp('studentId').setValue(studentId);
 									Ext.getCmp('studentName').setValue(studentName);
 									
-								    Ext.getCmp("courseType").clearValue();  
+								    Ext.getCmp("courseType").clearValue(); 
+								    Ext.getCmp("chargerId").clearValue();
 									courseStore.removeAll();
 									 if(studentId == null || studentId=='')
 										 return; 
+									 courseStore.proxy = new Ext.data.HttpProxy({   
+									    	url: 'Busi_OrderCourse_findCourseByStudent.action?studentId='+$("#studentId").val()  
+									    }),  
 				                    courseStore.load();   
 				                      
 								});
@@ -195,15 +183,19 @@ EditWindow.prototype.editform = function() {
 						mode: 'remote',
 						region : "center",
 						valueField : "id",
+						allowBlank : false,
 						displayField : "name", 
 						store:courseStore, 
 					    listeners:{ 
-						   "select": function(combo,  record, index){
-							   var courseType = combo.value;
-							   var studentId = $("#studentId").val();
-							   if(courseType == null && courseType!='' && studentId!=null && studentId!='')
-							   {  
+						   "select": function(combo,  record, index){ 
+							   var courseType = combo.value; 
+							   var studentId = $("#studentId").val(); 
+							   if(courseType != null && courseType!='' && studentId!=null && studentId!='')
+							   {   
 								   Ext.getCmp("chargerId").clearValue(); 
+								   chargerStore.proxy= new Ext.data.HttpProxy({   
+								    	url: 'Busi_OrderCourse_findChargerForCourse.action?studentId='+$("#studentId").val()+'&courseType='+Ext.getCmp("courseType").getValue()  
+								    });  
 								   chargerStore.load();
 						       }
 							}
@@ -219,6 +211,7 @@ EditWindow.prototype.editform = function() {
 									editable : false,
 									emptyText : '请选择',  
 									mode: 'remote',
+									allowBlank : false,
 									region : "center",
 									valueField : "id",
 									displayField : "name", 
@@ -228,12 +221,14 @@ EditWindow.prototype.editform = function() {
 				fieldLabel : "分数",
 				allowBlank : false,
 				maxLength:3,
+				allowBlank : false,
 				id : "score"
 			},
 			{
 				fieldLabel : "考试时间", 
 				xtype:"datefield",  
-				maxValue:new Date(),  
+				maxValue:new Date(), 
+				allowBlank : false,
 				format:"Y-m-d", 
 				name : "examTime" 
 			}
@@ -248,6 +243,25 @@ EditWindow.prototype.editform = function() {
 					url :  "Busi_OrderCourseScore_query.action?condition=id="+this.primaryId,
 					waitMsg : "正在载入数据...",
 					success : function(d, e) { 
+						 courseStore.proxy = new Ext.data.HttpProxy({   
+						    	url: 'Busi_OrderCourse_findCourseByStudent.action?studentId='+$("#studentId").val()  
+						    }),  
+						    courseStore.load({
+						    		 callback: function(r, options, success){   
+						 		        if(success){     
+						 		        	Ext.getCmp("courseType").setValue( Ext.getCmp("courseType").getValue()); 
+						 		        }  
+						 		    }}  );   
+						   chargerStore.proxy= new Ext.data.HttpProxy({   
+						    	url: 'Busi_OrderCourse_findChargerForCourse.action?studentId='+$("#studentId").val()+'&courseType='+Ext.getCmp("courseType").getValue()  
+						    });  
+						   chargerStore.load({
+					    		 callback: function(r, options, success){   
+						 		        if(success){     
+						 		        	Ext.getCmp("chargerId").setValue( Ext.getCmp("chargerId").getValue()); 
+						 		        }  
+						 		    }}  );   
+						  
 					},
 					failure : function(b, c) { 
 						Ext.MessageBox.show( {
@@ -258,6 +272,8 @@ EditWindow.prototype.editform = function() {
 						});
 					}
 				});
+			
+		  
 	}
 	return editForm;
 	}; 
@@ -277,4 +293,7 @@ EditWindow.prototype.editform = function() {
 	function converOperator(v, record){
 		return SysUser.translate(record.operator);
 	}
+	function converStudent(v, record){ 
+		return Student.translate(record.studentId);
+	} 
 	
