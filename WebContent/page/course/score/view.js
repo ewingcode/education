@@ -21,11 +21,7 @@ var cm = new Ext.grid.ColumnModel(
 							 renderer: function(value) { 
 								return  Student.translate(value);    
 							}
-						},
-						{
-							header : "签单编号",
-							dataIndex : "orderId"
-						},
+						}, 
 						{
 							header : "编辑者",
 							dataIndex : "operator",
@@ -80,7 +76,7 @@ var cm = new Ext.grid.ColumnModel(
 			                    tooltip: '编辑',
 			                    handler: function(grid, rowIndex, colIndex) {
 			                        var rec = store.getAt(rowIndex); 
-			                        new EditWindow(rec.get('id'),rec.get('orderId'));
+			                        new EditWindow(rec.get('id'));
 			                    }
 			                }, { 
 			                	getClass :function(v, meta, rec) {         
@@ -89,7 +85,7 @@ var cm = new Ext.grid.ColumnModel(
 			                    tooltip: '删除',
 			                    handler: function(grid, rowIndex, colIndex) {
 			                        var rec = store.getAt(rowIndex); 
-			                        removeData(rec.get('id')) 
+			                        removeData(rec.get('id'));
 			                    }
 			                }]
 			            } ],
@@ -141,7 +137,7 @@ var store = new Ext.data.Store( {
 		remoteSort : true,
 		fields : [ 
 		   { name : "id", type : "int" }, 
-		"orderId", "courseType", "chargerId","studentId","score","operator",
+		  "courseType", "chargerId","studentId","score","operator",
 		{name:"createTime" , type : "date", mapping : 'createTime.time',dateFormat : 'time'},
 		{name:"lastUpdate" , type : "date",mapping : 'lastUpdate.time',dateFormat : 'time'},
 		{name:"examTime" , type : "date",mapping : 'examTime.time',dateFormat : 'time'}]

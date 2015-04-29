@@ -37,15 +37,18 @@
 					text : "查询",
 					iconCls : "btn_query",
 					handler : function() {   
-					      var sql ="select date_format(create_time,'%Y-%m-%d') as create_date,count(*) as total from order_info where 1=1 ";
+					      var sql ="select date_format(create_time,'%Y-%m-%d') as create_date,count(*) as total,"+
+						    "sum(course_hour) as course_hour,sum(cost_course_hour) as cost_course_hour,"+
+						    "sum(schedule_hour) as schedule_hour from order_info where 1=1 ";
 					          if($("#beginDate").val()!='')
  								   sql += " and date_format(create_time,'%Y-%m-%d') >='"+$("#beginDate").val()+"'";
 					           if($("#endDate").val()!='')
 					        	   sql += " and date_format(create_time,'%Y-%m-%d') <='"+$("#endDate").val()+"'";
 						      sql +=" group by date_format(create_time,'%Y-%m-%d')";
 					      var title="签单日统计报表";
-					      var headers="签单日期,签单总数";
-					      var alias="create_date,total";
+					      var headers = "月份,总数,课时,已用课时,已排课时";
+						  var alias = "create_date,total,course_hour,cost_course_hour,schedule_hour";
+					      
 					      var paramMap = {
 					              "STATISTIC_TIME" : $("#beginDate").val()+"到"+ $("#endDate").val()
 					         }; 

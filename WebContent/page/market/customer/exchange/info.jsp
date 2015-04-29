@@ -10,8 +10,11 @@
 	var ds;
 	var customerId;
 	var isOnlyQuery;
+	var isSingleCustomer = false;
 	Ext.onReady(function() {
 		customerId = jQuery.url.param("customerId");
+		if(customerId!=null)
+			isSingleCustomer = true;
 		isOnlyQuery =  jQuery.url.param("isOnlyQuery");
 		var sexTypeStore = new SysParam.store("SEXTYPE");
 		var iseffStore = new SysParam.store("ISEFF");
@@ -204,8 +207,11 @@
 		});
 
 		function loadGirdStore() {
-			var customerIds = Customer.mutipleId($("#QUERY_name").val()); 
-
+			var customerIds ; 
+			if(isSingleCustomer)
+				customerIds = customerId;
+			else
+				customerIds = Customer.mutipleId($("#QUERY_name").val());
 			store.setBaseParam('start',0); 
 			store.setBaseParam('limit',20);  
 			store.setBaseParam('_QUERY_n_in_customer_id',customerIds) ;  
@@ -249,7 +255,8 @@
 						items : [
 						 {  
 							id:"QUERY_name", 
-							fieldLabel : "客户名称" 
+							fieldLabel : "客户名称" ,
+							hidden:isSingleCustomer
 						}, { 
 							id:"QUERY_phone", 
 							fieldLabel : "电话"  
@@ -274,6 +281,8 @@
 				} ]
 		    }]
 		}); 
+		
+		loadGirdStore();
 		Frame.busiPage(formpanel, gridPanel);
 	});
 	

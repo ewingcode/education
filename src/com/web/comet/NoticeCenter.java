@@ -30,7 +30,7 @@ public class NoticeCenter {
 		@Override
 		protected Event pullEvent() { 
 			Event event = Event.createDataEvent("/notice");
-			System.out.println("pullEvent");
+			//System.out.println("pullEvent");
 			// 公告通知
 		 try {
 				List notReadList = noticeService.getUserNoReadNoticesTotal();

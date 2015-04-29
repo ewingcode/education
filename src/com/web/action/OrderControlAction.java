@@ -268,6 +268,8 @@ public class OrderControlAction extends BaseAction {
 	public void createNewOrder() throws ActionException {
 		ResponseData responseData = null;
 		try {
+			Integer reqAssignerId = Integer.valueOf(request.getParameter("assignerId")); 
+			String reqTransitionName = request.getParameter("transitionName");
 			String studentId = request.getParameter("studentId");
 			String courseList = request.getParameter("courseList");
 			String fee = request.getParameter("fee");
@@ -292,7 +294,7 @@ public class OrderControlAction extends BaseAction {
 			BigDecimal feeBD = new BigDecimal(fee);
 			orderInfo.setFee(feeBD.multiply(new BigDecimal(100)).longValue());
 			orderService.createNewOrder(orderInfo, userInfo.getId(), attachMap,
-					courseArray);
+					courseArray,reqAssignerId,reqTransitionName);
 
 			responseData = ResponseUtils.success("创建签单成功！");
 		} catch (Exception e) {
@@ -341,12 +343,8 @@ public class OrderControlAction extends BaseAction {
 			int assignerId = StringUtils.isEmpty(req_assignerId) ? 0 : Integer
 					.valueOf(req_assignerId);
 			orderService.orderEdit(orderInfo, courseArray, operator, orderId,
-					courseListStatus, attachMap);
-			if (!isOnlyEdit) {
-				orderService.orderTransfer(userInfo.getId(), assignerId,
-						orderId, req_transitionName);
-			}
-
+					courseListStatus, attachMap,  isOnlyEdit,
+					  assignerId,   req_transitionName); 
 			responseData = ResponseUtils.success("处理成功！");
 		} catch (Exception e) {
 			logger.error(e, e);

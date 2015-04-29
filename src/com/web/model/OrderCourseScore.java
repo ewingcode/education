@@ -11,7 +11,6 @@ public class OrderCourseScore implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private Integer orderId;
 	private String courseType;
 	private Integer chargerId;
 	private Timestamp createTime;
@@ -27,32 +26,6 @@ public class OrderCourseScore implements java.io.Serializable {
 	public OrderCourseScore() {
 	}
 
-	/** minimal constructor */
-	public OrderCourseScore(Integer orderId, String courseType,
-			Timestamp createTime, Timestamp examTime, Timestamp lastUpdate) {
-		this.orderId = orderId;
-		this.courseType = courseType;
-		this.createTime = createTime;
-		this.examTime = examTime;
-		this.lastUpdate = lastUpdate;
-	}
-
-	/** full constructor */
-	public OrderCourseScore(Integer orderId, String courseType,
-			Integer chargerId, Timestamp createTime, Integer studentId,
-			Integer score, Timestamp examTime, Timestamp lastUpdate,
-			Integer operator) {
-		this.orderId = orderId;
-		this.courseType = courseType;
-		this.chargerId = chargerId;
-		this.createTime = createTime;
-		this.studentId = studentId;
-		this.score = score;
-		this.examTime = examTime;
-		this.lastUpdate = lastUpdate;
-		this.operator = operator;
-	}
-
 	// Property accessors
 
 	public Integer getId() {
@@ -61,14 +34,6 @@ public class OrderCourseScore implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getOrderId() {
-		return this.orderId;
-	}
-
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
 	}
 
 	public String getCourseType() {

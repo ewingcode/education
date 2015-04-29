@@ -169,12 +169,15 @@
 		// Event Callback: display all events
 		function onEvent(event) {    
 		      var notReadCount = event.get("notice_"+session_userId+"_notreadcount");
+		    
 		      var shapeCls = "notice_red"; 
 		      var shapeTarget= $("#messageId") ; 
-		      if(notReadCount==undefined)
-		         return;
+		      if(notReadCount == 'undefined' || notReadCount == undefined){
+		    	  notReadCount=0;
+		      } 
+		      console.log('notReadCount:'+notReadCount);
 		      if(notReadCount>0 ){
-		              Ext.getCmp("messageId").setText("("+event.get("notice_"+session_userId+"_notreadcount")+")"); 
+		              Ext.getCmp("messageId").setText("("+notReadCount+")"); 
 			          if(isShaking)
 			             return;  
 					  shake(shapeTarget);
@@ -182,7 +185,7 @@
 			         clearInterval(timeInterval);
 					 shapeTarget.removeClass(shapeCls);
 					 isShaking =false;
-					 Ext.getCmp("messageId").setText("("+event.get("notice_"+session_userId+"_notreadcount")+")");
+					 Ext.getCmp("messageId").setText("("+notReadCount+")");
 					 
 			  }
 		}

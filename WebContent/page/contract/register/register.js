@@ -1,5 +1,5 @@
 Ext.onReady(function() {
-
+	 Order.initData(); 
 	var orderCourseGrid = new OrderCourse.courseEditGrid(null, false);
 	var registerForm = new Ext.FormPanel({
 		fileUpload : true,
@@ -166,7 +166,10 @@ Ext.onReady(function() {
 					url : "Busi_OrderControl_createNewOrder.action",
 					method : "post",
 					params : {
-						courseList : checkCourse
+						courseList : checkCourse,
+						transitionName : $("#transitionName").val(), 
+						assignerId : $("#assignerId").val() 
+						 
 					},
 					waitMsg : "正在提交数据...",
 					success : function(i, j) {
@@ -191,5 +194,7 @@ Ext.onReady(function() {
 			}
 		} ]
 	});
+	registerForm.add(new Order.transitionChoice());
+	registerForm.add(new Assigner.assingerFiled());
 	Frame.editPage(registerForm);
 });

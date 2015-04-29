@@ -639,3 +639,183 @@ Order.courseTypeEdit = function(orderId, courseMangeFiled, editform) {
 	});
 	return contractSet;
 };
+
+
+
+Order.selectOrderCourse = function(studentId) {
+	var sexTypeStore = new SysParam.store("SEXTYPE"); 
+	var gradeStore = new SysParam.store("GRADE");
+	var sm = new Ext.grid.CheckboxSelectionModel();
+	var cm = new Ext.grid.ColumnModel({
+		columns : [ new Ext.grid.RowNumberer(), {
+			header : "学生名称",
+			dataIndex : "name",
+		}, {
+			header : "年龄",
+			dataIndex : "age",
+		}, {
+			header : "学生年级",
+			dataIndex : "grade",
+			renderer : function(value) {
+				return SysParam.translate(gradeStore, value);
+			}
+		}, {
+			header : "学生性别",
+			dataIndex : "sex",
+			renderer : function(value) {
+				return SysParam.translate(sexTypeStore, value);
+			} 
+		} ],
+		defaults : {
+			sortable : true,
+			menuDisabled : false,
+			width : 100
+		}
+	});
+
+	var store = new Ext.data.Store({
+		// autoLoad : true,//是否自动加载
+		proxy : new Ext.data.HttpProxy({
+			url : 'Busi_OrderCourse_findCourseByStudent.action?studentId='+studentId
+		}),
+		reader : new Ext.data.JsonReader({
+			root : 'result',
+			totalProperty : 'totalProperty',
+			remoteSort : true,
+			fields : [ {
+				name : "id",
+				type : "int"
+			}, "name", "age", "grade", "addr", "sex", "school", "phone",
+					"homephone", {
+						name : "createTime",
+						type : "date",
+						mapping : 'createTime.time',
+						dateFormat : 'time'
+					}, {
+						name : "lastUpdate",
+						type : "date",
+						mapping : 'createTime.time',
+						dateFormat : 'time'
+					} ]
+		})
+	});
+
+	var toolbar = new Ext.Toolbar({
+		id : "userTopBar",
+		items : [ {
+			iconCls : "btn_query",
+			text : "查询",
+			xtype : "button",
+			scale : 'medium',
+			handler : function() {
+				loadGirdStore();
+			}
+		}, {
+			iconCls : "btn_reset",
+			text : "重置",
+			xtype : "button",
+			scale : 'medium',
+			handler : function() {
+				formpanel.form.reset();
+			}
+		} ]
+	});
+	var gridPanel = new Ext.grid.GridPanel({
+		id : "userGrid",
+		tbar : toolbar,
+		store : store,
+		trackMouseOver : true,
+		autoExpandColumn : true,
+		loadMask : true,
+		cm : cm,
+		sm : sm,
+		height : 550,
+		viewConfig : {
+			forceFit : true,// 填满width.
+			enableRowBody : true,
+			showPreview : false
+		},
+		// paging bar on the bottom
+		bbar : new Ext.PagingToolbar({
+			pageSize : 20,
+			store : store,
+			displayInfo : true,
+			displayMsg : ' 合共  {2} 条记录，正在显示第 {0} 到 {1} 的记录 ',
+			emptyMsg : "没有记录"
+		})
+	});
+
+	function loadGirdStore() {
+		store.setBaseParam('start', 0);
+		store.setBaseParam('limit', 20);
+		store.setBaseParam('_QUERY_s_like_name', Ext.getCmp(
+				"QUERY_student_name").getValue());
+		store.reload();
+	}
+
+	var formpanel = new Ext.FormPanel({
+		labelAlign : 'left',// 字样显示在顶部
+		bodyStyle : 'padding:5px',
+		plain : true,
+		height : 100,
+		items : [ {
+			xtype : 'fieldset',
+			layout : "column",
+			title : '查询条件',
+			collapsible : true,
+			autoHeight : true,
+			items : [ {
+				xtype : "container",
+				columnWidth : 0.33,
+				defaultType : "textfield",
+				layout : "form",
+				defaults : {
+					anchor : "96%,96%",
+					labelStyle : 'text-align:right;'
+				},
+
+				items : [ {
+					id : "QUERY_student_name",
+					fieldLabel : "学生名称"
+				} ]
+			} ]
+		} ]
+	});
+
+	var win = new Ext.Window({
+		id : "selectStudentWin",
+		title : '学生信息',
+		width : 650,
+		height : 500,
+		minWidth : 500,
+		minHeight : 300,
+		plain : true,
+		bodyStyle : 'padding:5px;',
+		buttonAlign : 'center',
+		items : [ formpanel, gridPanel ],
+		buttons : [ {
+			text : "选择学生",
+			iconCls : "btn_accept",
+			handler : function() {
+				if (gridPanel.getSelectionModel().getCount() != 1) {
+					Common.ErrMegBox('请选择一项进行操作');
+					return;
+				}
+				gridPanel.getSelectionModel().each(function(e) {
+					var studentId = e.data.id;
+					var studentName = e.data.name;
+					callbackFn(studentId, studentName);
+					win.close();
+				});
+			}
+		}, {
+			text : "关闭",
+			iconCls : "btn_cancel",
+			handler : function() {
+				win.close();
+			}
+		} ]
+	});
+	loadGirdStore();
+	win.show();
+};

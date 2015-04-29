@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.MapUtils;
 import org.springframework.stereotype.Repository;
 
 import com.core.app.model.SysParam;
@@ -20,6 +19,7 @@ import com.web.exception.OrderException;
 import com.web.model.CourseScheduleDetail;
 import com.web.model.OrderCourse;
 import com.web.model.OrderCourseHourLog;
+import com.web.model.OrderCourseView;
 import com.web.model.OrderInfo;
 
 /**
@@ -98,7 +98,7 @@ public class OrderCourseService {
 			throws OrderException {
 		if (courseTypes == null || courseTypes.length == 0)
 			return;
-		 
+
 		List<OrderCourse> orderCourseList = findByOrderId(orderId);
 		Set<Integer> existCourseIds = new HashSet<Integer>();
 		for (String coursestr : courseTypes) {
@@ -249,4 +249,30 @@ public class OrderCourseService {
 		totalOrderCourse.setScheduleHour(scheduleHour);
 		return totalOrderCourse;
 	}
+
+	/**
+	 * 获取学生所有的签单科目信息
+	 * 
+	 * @param studentId
+	 * @return
+	 */
+	public List<OrderCourseView> findCourseByStudent(Integer studentId) {
+		String sql = "student_id=" + studentId + "  order by id desc";
+		return baseDao.find(sql, OrderCourseView.class);
+	}
+
+	/**
+	 * 获取学生所有的签单科目信息
+	 * 
+	 * @param studentId
+	 * @param courseType
+	 * @return
+	 */
+	public List<OrderCourseView> findChargerForCourse(Integer studentId,
+			Integer courseType) {
+		String sql = "student_id=" + studentId + " and course_type='"
+				+ courseType + "'  order by id desc";
+		return baseDao.find(sql, OrderCourseView.class);
+	}
+
 }

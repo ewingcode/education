@@ -102,8 +102,7 @@ public class OrderService {
 				&& totalSchedulehour.intValue() > orderInfo
 						.getTotalCourseHour())
 			throw new OrderException("计划时间不能大于签单总课时");
-		orderInfo.setScheduleHour(totalSchedulehour == null
-				? 0
+		orderInfo.setScheduleHour(totalSchedulehour == null ? 0
 				: totalSchedulehour.intValue());
 		baseDao.update(orderInfo);
 	}
@@ -143,8 +142,8 @@ public class OrderService {
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public boolean createNewOrder(OrderInfo orderInfo, int operator,
-			Map<OrderAttach, File> attachMap, String[] courses)
-			throws Exception {
+			Map<OrderAttach, File> attachMap, String[] courses,
+			Integer assignerId, String transitionName) throws Exception {
 		orderInfo.setRunStatus(OrderRunStatus.INAPPLY);
 		orderInfo.setOrderType(OrderType.APPLY);
 		orderInfo.setIsLast(OrderIsLast.NOTLAST);
@@ -160,21 +159,21 @@ public class OrderService {
 		logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
 				TransitionArrangeType.UNARRANGE, null, startFlowTask,
 				orderInfo, operator, operator, null);
+
+		orderTransfer(operator, assignerId, orderInfo.getId(), transitionName);
 		// 直接提交到销售部主管
-		List<FlowTaskTransition> actionList = orderViewService
-				.getPageActions(orderInfo);
-		if (actionList != null && !actionList.isEmpty()) {
-			FlowTaskTransition transition = actionList.get(0);
-			if (TransitionArrangeType.UNARRANGE.getType().equals(
-					transition.getNeedArrange())) {
-				orderTransfer(operator, 0, orderInfo.getId(),
-						transition.getName());
-			}
-		}
+		/*
+		 * List<FlowTaskTransition> actionList = orderViewService
+		 * .getPageActions(orderInfo); if (actionList != null &&
+		 * !actionList.isEmpty()) { FlowTaskTransition transition =
+		 * actionList.get(0); if
+		 * (TransitionArrangeType.UNARRANGE.getType().equals(
+		 * transition.getNeedArrange())) { orderTransfer(operator, 0,
+		 * orderInfo.getId(), transition.getName()); } }
+		 */
 		return true;
 	}
 
-	@Transactional
 	public boolean orderTransfer(int operator, int assignerId, int orderId,
 			String transitionName) throws Exception {
 		OrderInfo order = findOne(orderId);
@@ -198,13 +197,17 @@ public class OrderService {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean orderEdit(OrderInfo orderInfo, String[] courses,
 			int operator, int orderId, List<OrderCourse> courseList,
-			Map<OrderAttach, File> attachMap) throws Exception {
+			Map<OrderAttach, File> attachMap, boolean isOnlyEdit,
+			int assignerId, String transitionName) throws Exception {
 		if (orderInfo != null) {
 			baseDao.update(orderInfo);
 		}
 		if (courses != null)
 			orderCourseService.saveOrderCourse(orderInfo.getId(), courses);
 		this.processOrderInfo(orderInfo, courseList, attachMap);
+		if (!isOnlyEdit) {
+			orderTransfer(operator, assignerId, orderId, transitionName);
+		}
 		return true;
 	}
 

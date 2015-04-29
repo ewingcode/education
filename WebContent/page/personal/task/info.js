@@ -1,5 +1,6 @@
 Ext.onReady(function() {
 	Order.initData();
+	OrderList.loadGirdStore(store);
 	mainFrame = Frame.busiPage2(formpanel, gridPanel);
 });
 function closeTabPanel(orderId) {
@@ -10,7 +11,7 @@ var sm = new Ext.grid.CheckboxSelectionModel();
 var sm = new Ext.grid.CheckboxSelectionModel();
 var cm = OrderList.ColumnModel(sm);
 var formpanel = new OrderList.formpanel();
-var toolbar = new OrderList.Toolbar(formpanel, false, false,true);
+var toolbar = new OrderList.Toolbar(formpanel, true, false,true);
 var store = new OrderList.store('Busi_OrderInfo_findPersonalTasks.action');
 var gridPanel = new OrderList.gridPanel(toolbar, cm, sm, store);
 

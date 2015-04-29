@@ -198,7 +198,7 @@ Student.choose = function(allowBlank, studentIdField, studentNameField) {
 			allowBlank : _allowBlank
 		}, {
 			xtype : "button",
-			id : "choseAssigerBtn",
+			id : "choseStudentBtn",
 			text : "选择",
 			width : "150",
 			listeners : {

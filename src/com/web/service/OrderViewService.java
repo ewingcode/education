@@ -49,14 +49,13 @@ public class OrderViewService {
 	 * @param pageSize
 	 * @param startIndex
 	 * 
-	 * @return
-	 * @ 
+	 * @return @
 	 * @throws OrderException
 	 * @throws NumberFormatException
 	 */
 	public PageBean getTaskAssignerList(int orderId, int pageSize,
-			int startIndex, String transitionName) throws
-			NumberFormatException, OrderException {
+			int startIndex, String transitionName)
+			throws NumberFormatException, OrderException {
 		List<OrderInfo> orderList = baseDao.find("id=" + orderId,
 				OrderInfo.class);
 		OrderInfo order = orderList.get(0);
@@ -84,18 +83,24 @@ public class OrderViewService {
 	 * @param pageSize
 	 * @param startIndex
 	 * 
-	 * @return
-	 * @ 
+	 * @return @
 	 * @throws OrderException
 	 * @throws NumberFormatException
 	 */
-	public String getTaskAssigner(int orderId, String transitionName)
+	public String getTaskAssigner(Integer orderId, String transitionName)
 			throws NumberFormatException, OrderException {
-		List<OrderInfo> orderList = baseDao.find("id=" + orderId,
-				OrderInfo.class);
-		OrderInfo order = orderList.get(0);
+		String taskName = null;
+		if (orderId != null) {
+			List<OrderInfo> orderList = baseDao.find("id=" + orderId,
+					OrderInfo.class);
+			OrderInfo order = orderList.get(0);
+			taskName = order.getStatus();
+		} else {
+			taskName = flowTaskService.getStartTask(OrderService.PROCESS_NAME)
+					.getTaskName();
+		}
 		FlowTask task = flowTaskService.getTask(OrderService.PROCESS_NAME,
-				order.getStatus(), transitionName);
+				taskName, transitionName);
 		return task.getAssigner();
 	}
 
@@ -103,8 +108,7 @@ public class OrderViewService {
 	 * 获取页面可执行的动作列表
 	 * 
 	 * @param order
-	 * @return
-	 * @ 
+	 * @return @
 	 */
 	public List<FlowTaskTransition> getPageActions(OrderInfo order)
 			throws Exception {
@@ -118,7 +122,7 @@ public class OrderViewService {
 	 * @param order
 	 * @return
 	 * @throws OrderException
-	 * @ 
+	 *             @
 	 */
 	public String getTaskPage(OrderInfo order) throws Exception {
 		String taskName = order.getStatus();
@@ -131,7 +135,7 @@ public class OrderViewService {
 	 * @param order
 	 * @return
 	 * @throws OrderException
-	 * @ 
+	 *             @
 	 */
 	public String showUserEditedTaskPage(int userId, int orderId)
 			throws Exception {
@@ -139,8 +143,8 @@ public class OrderViewService {
 				+ OrderRelHis.class.getName() + " where operator=" + userId
 				+ " and order_id=" + orderId + ")", OrderRelHis.class);
 		String processName = getProceeName(orderId);
-		FlowTask flowTask = flowTaskService.getTask(processName, orderRelHis
-				.getTaskName());
+		FlowTask flowTask = flowTaskService.getTask(processName,
+				orderRelHis.getTaskName());
 		if (flowTask != null && !StringUtil.isEmpty(flowTask.getBusiPageName()))
 			return flowTask.getBusiPageName();
 		return "";
@@ -177,11 +181,15 @@ public class OrderViewService {
 	 */
 	private List<FlowTaskTransition> getTaskTransitionList(OrderInfo order)
 			throws Exception {
-		String taskName = order.getStatus();
+		String taskName = null;
+		if (order != null)
+			taskName = order.getStatus();
+		else
+			taskName = flowTaskService.getStartTask(PROCESSNAME).getTaskName();
 		return flowTaskService.getTaskTransition(PROCESSNAME, taskName);
 	}
 
-	public String getProceeName(int orderId)   {
+	public String getProceeName(int orderId) {
 		OrderInfo orderInfo = baseDao.findOne(orderId, OrderInfo.class);
 		if (orderInfo.getOrderType().equals(OrderType.APPLY))
 			return OrderProcess.APPLY_PROCESSNAME;

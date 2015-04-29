@@ -10,7 +10,6 @@ import com.core.jdbc.BaseDao;
 import com.core.jdbc.util.PageBean;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.OrderException;
-import com.web.model.OrderInfo;
 import com.web.model.OrderInfoView;
 import com.web.model.OrderRelHis;
 import com.web.model.OrderTrace;
@@ -36,11 +35,11 @@ public class OrderQueryService {
 	public PageBean findPersonalTasks(int userId, int roleId, int pageSize,
 			int startIndex) throws OrderException {
 		int chargerType = orderRoleService.getChargerType(roleId);
-		String sql = " from " + OrderInfo.class.getName()
+		String sql = " from " + OrderInfoView.class.getName()
 				+ " where id in ( select orderId from "
 				+ OrderTrace.class.getName() + " a2 where (user_id=" + userId
 				+ " or role_id=" + chargerType + " ) and a2.operator is null) ";
-		return baseDao.pageQuery(sql, pageSize, startIndex, OrderInfo.class);
+		return baseDao.pageQuery(sql, pageSize, startIndex, OrderInfoView.class);
 	}
 
 	/**
@@ -50,10 +49,10 @@ public class OrderQueryService {
 	 * @return
 	 * @ 
 	 */
-	public OrderInfo findLearnOrder(int studentId)   {
-		List<OrderInfo> orderList = baseDao.find("student_id=" + studentId
+	public OrderInfoView findLearnOrder(int studentId)   {
+		List<OrderInfoView> orderList = baseDao.find("student_id=" + studentId
 				+ " and run_status='" + OrderRunStatus.RUNNING + "'",
-				OrderInfo.class);
+				OrderInfoView.class);
 		if (orderList == null || orderList.isEmpty()) {
 			return null;
 		}
@@ -69,12 +68,12 @@ public class OrderQueryService {
 	 */
 	public PageBean findPersonalTaskHis(String conditon, String orderBy,
 			int userId, int pageSize, int startIndex)   {
-		String sql = " from " + OrderInfo.class.getName()
+		String sql = " from " + OrderInfoView.class.getName()
 				+ " where id in ( select orderId from "
 				+ OrderTrace.class.getName() + " a2 where a2.operator ="
 				+ userId + ") " + conditon;
 		return baseDao.pageQuery(sql, orderBy, pageSize, startIndex,
-				OrderInfo.class);
+				OrderInfoView.class);
 	}
 
 	/**

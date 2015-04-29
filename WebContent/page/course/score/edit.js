@@ -1,7 +1,6 @@
-var orderId=''
-var EditWindow = function(b,_orderId) {
-   this.primaryId = b;
-   orderId=_orderId;
+ 
+var EditWindow = function(b) {
+   this.primaryId = b; 
 	var editform = this.editform();
 	var win =   new Ext.Window( {
 		id : "depEditForm",
@@ -41,10 +40,8 @@ var EditWindow = function(b,_orderId) {
 									msg : "信息保存出错，请联系管理员！",
 									buttons : Ext.MessageBox.OK,
 									icon : "ext-mb-error"
-								}); 
-								 
-								win.close();
-								 
+								});  
+								win.close(); 
 							}
 						});
 					}
@@ -82,9 +79,9 @@ EditWindow.prototype.editform = function() {
 	    ])  
 	});   
 	parentStore.load();  
-	var childStore = new Ext.data.Store({   
+	var courseStore = new Ext.data.Store({   
 	    proxy: new Ext.data.HttpProxy({   
-	        url: 'Busi_OrderCourse_query.action?condition=order_id='+orderId   
+	    	url: 'Busi_OrderCourse_findCourseByStudent.action?studentId='+$("#studentId").val()  
 	    }),   
 	    reader: new Ext.data.JsonReader({   
 	    	 successProperty : 'success',
@@ -96,7 +93,19 @@ EditWindow.prototype.editform = function() {
 	        	}   
 	    ])   
 	});   
-	childStore.load();
+	 
+	var chargerStore = new Ext.data.Store({   
+	    proxy: new Ext.data.HttpProxy({   
+	    	url: 'Busi_OrderCourse_findChargerForCourse.action?studentId='+$("#studentId").val()+'&courseType='+Ext.getCmp("courseType").getValue()  
+	    }),   
+	    reader: new Ext.data.JsonReader({   
+	    	 successProperty : 'success',
+			 root : 'result'   
+	    }, [    
+	        {name: 'id', mapping: 'chargerId'},   
+	        {name: 'name', mapping: 'chargerName' }   
+	    ])   
+	});
 	var editForm = new Ext.FormPanel( {
 		url :   this.url,
 		layout : "form",
@@ -113,7 +122,7 @@ EditWindow.prototype.editform = function() {
 			  successProperty : 'success',
 				root : 'result'
 			}, [   { name : "id", type : "int" }, 
-					"orderId", "courseType", "chargerId","studentId","score",
+					  "courseType", "chargerId","studentId","score",
 					"operator",
 					{name:"operatorName" , type : "string", mapping : 'operator',convert : converOperator},
 					{name:"chargerName" , type : "string", mapping : 'chargerId',convert : converCharger},
@@ -124,10 +133,7 @@ EditWindow.prototype.editform = function() {
 			id : "id",
 			xtype : "hidden",
 			value :  this.primaryId == null ? "" :  this.primaryId
-		} , { 
-			hidden : true, 
-			id : "orderId"
-		}, 
+		} , 
 		{ 
 			  hidden : true,  
 			id : "operator",
@@ -138,48 +144,46 @@ EditWindow.prototype.editform = function() {
 			id : "operatorName",
 			hidden:this.primaryId == null ? true :  false
 		},
-		new Ext.form.ComboBox(
-				{
-					id : "studentId",
-					hiddenName : "studentId",
-					triggerAction : "all",
-					fieldLabel : "学生",
-					readOnly : isModify?true:false,
-					editable : false,
-					emptyText : '请选择',   
-					mode: 'remote', 
-					region : "center",
-					valueField : "id",
-					displayField : "name", 
-					store:parentStore, 
-				    listeners:{ 
-					   "select": function(combo,  record, index){  
-					 Ajax.syncRequest('Busi_OrderInfo_queryStudentRelOrder.action?userId='+session_userId+'&studentId='+combo.value,  
-							 function(data) { 
-						        if(!data.result || data.result.length==0){
-						        	var studentName= Student.translate(combo.value);
-						        	Common.ErrMegBox('该'+studentName+'没有签约课程信息');
-						        	editForm.form.reset();
-						        	return;
-						        }
-						 		if(data.result && data.result.length==1){ 
-						 			orderId =data.result[0].id;
-						 			$("#orderId").val(orderId);
-						 		}
-					 	}
-					  );  
-					 Ext.getCmp("courseType").clearValue(); 
-					 childStore.removeAll();
-					 if(orderId==null || orderId=='')
-						 return;
-						childStore.proxy= new Ext.data.HttpProxy({
-							url: 'Busi_OrderCourse_query.action?condition=order_id='+orderId 
-							});   
-	                    childStore.load();   
-                     }
-					}
-				}),
-			new Ext.form.ComboBox(
+		{
+			xtype : 'compositefield',
+			id : "assignerComp",
+			fieldLabel : '学生',
+			width : "200",
+			items : [
+					{
+						xtype : "textfield",
+						id : 'studentId',
+						hidden : true
+					},
+					{
+						xtype : "textfield",
+						id : "studentName",
+						width : "70",
+						readOnly : true
+					},
+					{
+						xtype : "button",
+						id : "choseAssigerBtn",
+						text : "选择",
+						width : "50",
+						listeners : {
+							"click" : function(d, i, n, e) {
+								new Student.selectWin(function(studentId, studentName) {
+									Ext.getCmp('studentId').setValue(studentId);
+									Ext.getCmp('studentName').setValue(studentName);
+									
+								    Ext.getCmp("courseType").clearValue();  
+									courseStore.removeAll();
+									 if(studentId == null || studentId=='')
+										 return; 
+				                    courseStore.load();   
+				                      
+								});
+							}
+						}
+					} ]
+		},
+		 new Ext.form.ComboBox(
 					{
 						id : "courseType",
 						hiddenName : "courseType",
@@ -192,34 +196,34 @@ EditWindow.prototype.editform = function() {
 						region : "center",
 						valueField : "id",
 						displayField : "name", 
-						store:childStore, 
+						store:courseStore, 
 					    listeners:{ 
 						   "select": function(combo,  record, index){
-						     $("#chargerName").val("");
-						     $("#chargerId").val(""); 
-							 Ajax.syncRequest('Busi_OrderCourse_query.action?condition=orderId='+$("#orderId").val()+' and courseType='+combo.value,  
-									 function(data) { 
-								 		if(data.result && data.result.length==1){ 
-								 			var chargerId =data.result[0].chargerId;
-								 			var chargerName = SysUser.translate(chargerId);
-								 			$("#chargerId").val(chargerId);
-								 			$("#chargerName").val(chargerName);
-								 		}
-							 	}
-							  );  
+							   var courseType = combo.value;
+							   var studentId = $("#studentId").val();
+							   if(courseType == null && courseType!='' && studentId!=null && studentId!='')
+							   {  
+								   Ext.getCmp("chargerId").clearValue(); 
+								   chargerStore.load();
+						       }
 							}
 						}
 					}), 
-			{ 
-				hidden : true,  
-				id : "chargerId"
-			},
-			{
-				fieldLabel : "授课老师",
-				allowBlank : false, 
-				readOnly:true,
-				id : "chargerName"
-			},
+			 new Ext.form.ComboBox(
+								{
+									id : "chargerId",
+									hiddenName : "chargerId",
+									triggerAction : "all",
+									fieldLabel : "教师",
+									readOnly : false,
+									editable : false,
+									emptyText : '请选择',  
+									mode: 'remote',
+									region : "center",
+									valueField : "id",
+									displayField : "name", 
+									store:chargerStore
+			}), 
 			{
 				fieldLabel : "分数",
 				allowBlank : false,

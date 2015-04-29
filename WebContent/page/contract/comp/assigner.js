@@ -36,7 +36,7 @@ Assigner.assingerFiled = function(orderId) {
 					text : "选择指派人",
 					width : "150",
 					listeners : {
-						"click" : function(d, i, n, e) {
+						"click" : function(d, i, n, e) { 
 							var assigner = '';
 							var roleId =''; 
 							var url = "Busi_OrderView_getAssigner.action?orderId="
@@ -45,8 +45,7 @@ Assigner.assingerFiled = function(orderId) {
 									+ $("#transitionName").val();
 
 							Ajax.syncRequest(url, function(data) {
-								assigner = data.result;
-								
+								assigner = data.result; 
 							    for(var i=0;i<orderRoleStore.getTotalCount();i++){
 							    	var rec = orderRoleStore.getAt(i);
 							    	if(rec.get("charger")==assigner){

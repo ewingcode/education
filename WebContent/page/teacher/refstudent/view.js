@@ -5,6 +5,7 @@ Ext.onReady(function() {
 	if(isLoginOper) { 
 		store.setBaseParam('_QUERY_n_eq_teacher_id',session_userId) ; 
 	} 
+	loadGirdStore();
 	Frame.busiPage(formpanel, gridPanel);
 });
  

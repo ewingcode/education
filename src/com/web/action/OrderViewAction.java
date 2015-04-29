@@ -96,8 +96,7 @@ public class OrderViewAction extends BaseAction {
 		}
 		outResult(responseData);
 	}
-	
-	 
+
 	/**
 	 * 显示签单信息
 	 * 
@@ -108,7 +107,7 @@ public class OrderViewAction extends BaseAction {
 		try {
 			String orderId_str = request.getParameter("orderId");
 			OrderInfo orderInfo = orderService.findOne(Integer
-					.valueOf(orderId_str)); 
+					.valueOf(orderId_str));
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(orderInfo);
 		} catch (Exception e) {
@@ -146,9 +145,13 @@ public class OrderViewAction extends BaseAction {
 	public void showPageAction() throws ActionException {
 		ResponseData responseData = null;
 		try {
-			String orderId = request.getParameter("orderId");
-			OrderInfo orderInfo = orderService
-					.findOne(Integer.valueOf(orderId));
+			String orderIdStr = request.getParameter("orderId");
+			Integer orderId = orderIdStr == null
+					|| orderIdStr.equals("undefined") ? null : Integer
+					.valueOf(orderIdStr);
+			OrderInfo orderInfo = null;
+			if (orderId != null)
+				orderInfo = orderService.findOne(orderId);
 			List<FlowTaskTransition> transList = orderViewService
 					.getPageActions(orderInfo);
 			responseData = ResponseUtils.success("查询成功！");
@@ -196,12 +199,15 @@ public class OrderViewAction extends BaseAction {
 	public void getAssigner() throws ActionException {
 		ResponseData responseData = null;
 		try {
-			String orderId = request.getParameter("orderId");
+			String orderIdStr = request.getParameter("orderId");
+			Integer orderId = orderIdStr == null
+					|| orderIdStr.equals("undefined") ? null : Integer
+					.valueOf(orderIdStr);
 			String transitionName = request.getParameter("transitionName");
 			transitionName = new String(transitionName.getBytes("ISO8859-1"),
 					"UTF-8");
-			String assigner = orderViewService.getTaskAssigner(
-					Integer.valueOf(orderId), transitionName);
+			String assigner = orderViewService.getTaskAssigner(orderId,
+					transitionName);
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(assigner);
 		} catch (Exception e) {

@@ -23,11 +23,7 @@ var cm = new Ext.grid.ColumnModel(
 							 renderer: function(value) { 
 								return  Student.translate(value);    
 							}
-						},
-						{
-							header : "签单编号",
-							dataIndex : "orderId"
-						},  
+						}, 
 						{
 							header : "编辑者",
 							dataIndex : "operator",
@@ -52,17 +48,7 @@ var cm = new Ext.grid.ColumnModel(
 						{
 							header : "评价内容",
 							dataIndex : "content"
-						} , 
-						{
-							header : "附件",
-							dataIndex : "orderAttachId",
-							 renderer: function(value) {
-				                   var attachData =  Order.getAttachData(value);
-				                    if(attachData!=null)
-				                 	return  '<a href=# onclick="Order.filePreview(\'' + attachData.path
-										+ '\')">'+attachData.name+'</a>';
-		                 	}
-						} , 
+						} ,   
 						{
 							header : "上课时间",
 							dataIndex : "courseTime" ,
@@ -92,7 +78,7 @@ var cm = new Ext.grid.ColumnModel(
 			                    tooltip: '编辑',
 			                    handler: function(grid, rowIndex, colIndex) {
 			                        var rec = store.getAt(rowIndex); 
-			                        new EditWindow(rec.get('id'),rec.get('orderAttachId'),rec.get('orderId'));
+			                        new EditWindow(rec.get('id'));
 			                    }
 			                }, { 
 			                	getClass :function(v, meta, rec) {         
@@ -101,7 +87,7 @@ var cm = new Ext.grid.ColumnModel(
 			                    tooltip: '删除',
 			                    handler: function(grid, rowIndex, colIndex) {
 			                        var rec = store.getAt(rowIndex); 
-			                        removeData(rec.get('id')) 
+			                        removeData(rec.get('id'));
 			                    }
 			                }]
 			            } ],
@@ -153,7 +139,7 @@ var store = new Ext.data.Store( {
 		remoteSort : true,
 		fields : [ 
 		   { name : "id", type : "int" }, 
-		"orderId", "courseType", "chargerId","studentId","content","orderAttachId","operator",
+		  "courseType", "chargerId","studentId","content", "operator",
 		,
 		{name:"courseTime" , type : "date",mapping : 'courseTime.time',dateFormat : 'time'},
 		{name:"createTime" , type : "date", mapping : 'createTime.time',dateFormat : 'time'},
