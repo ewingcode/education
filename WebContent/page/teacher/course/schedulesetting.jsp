@@ -207,7 +207,7 @@
 						xtype : 'compositefield',
 						id : "assignerComp",
 						fieldLabel : '学生',
-						width : "200",
+						width : "400",
 						items : [
 								{
 									xtype : "textfield",
@@ -217,12 +217,12 @@
 								{
 									xtype : "textfield",
 									id : "studentName",
-									width : "150",
+									width : "80",
 									readOnly : true
 								},
 								{
 									xtype : "button",
-									id : "choseAssigerBtn",
+									id : "choseStudentBtn",
 									text : "选择",
 									width : "50",
 									listeners : {

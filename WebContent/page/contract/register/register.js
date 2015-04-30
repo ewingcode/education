@@ -19,7 +19,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {
@@ -34,7 +34,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ new Student.choose(false,
@@ -46,7 +46,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {
@@ -61,7 +61,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ new SysParam.ComboBox('年级', 'grade',
@@ -72,7 +72,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {
@@ -87,7 +87,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {
@@ -102,7 +102,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {
@@ -121,7 +121,7 @@ Ext.onReady(function() {
 								layout : "form",
 								defaultType : "textfield",
 								defaults : {
-									width : 300,
+									width : 350,
 									labelStyle : 'text-align:right;'
 								},
 								items : [ {

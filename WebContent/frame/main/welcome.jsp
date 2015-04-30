@@ -128,13 +128,13 @@ Ext.onReady(function(){
     	       html: '<p  class="tip-target" style="width: 320px;">未处理任务：'+taskCount+'</p><br />'
     	             +'<p class="tip-target" style="width: 320px;">已处理任务：'+taskHisCount+'</p><br />'
     	             +'<p class="tip-target" style="width: 320px;">未读公告：'+noReadNoticeCount+'</p><br />'
-    	    },{
+    	    }/* ,{
     	        title: '近15日签单统计',
     	        width:760,
     	        height:250,
     	        html: '<div id="container"></div>',
     	        colspan:2
-    	    } ]
+    	    } */ ]
     	};
 
     new Frame.editPage(table);
