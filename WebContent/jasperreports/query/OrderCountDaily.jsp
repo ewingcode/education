@@ -44,7 +44,7 @@
  								   sql += " and date_format(create_time,'%Y-%m-%d') >='"+$("#beginDate").val()+"'";
 					           if($("#endDate").val()!='')
 					        	   sql += " and date_format(create_time,'%Y-%m-%d') <='"+$("#endDate").val()+"'";
-						      sql +=" group by date_format(create_time,'%Y-%m-%d')";
+						      sql +=" group by date_format(create_time,'%Y-%m-%d') desc limit 30";
 					      var title="签单日统计报表";
 					      var headers = "月份,总数,课时,已用课时,已排课时";
 						  var alias = "create_date,total,course_hour,cost_course_hour,schedule_hour";

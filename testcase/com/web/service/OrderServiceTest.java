@@ -17,7 +17,7 @@ public class OrderServiceTest extends BaseTest {
 			orderInfo.setStudentId(22);
 			orderInfo.setOrderNo("212121");
 			orderInfo.setOrderType("0");
-			orderService.createNewOrder(orderInfo, 11,null,null);
+			//orderService.createNewOrder(orderInfo, 11,null,null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

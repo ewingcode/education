@@ -146,9 +146,10 @@ Order.contractStatus = function(orderId) {
 		var runStatus=data.result.runStatus;
 		var status=data.result.status;
 		var fee= parseFloat(data.result.fee)/100;
-		 
+		var orderNo = data.result.orderNo; 
 		var startTime =  new Date(data.result.startTime.time).format('Y-m-d H:i:s') ; 
 		var endTime =  new Date(data.result.endTime.time).format('Y-m-d H:i:s') ; 
+		var createTime =  new Date(data.result.createTime.time).format('Y-m-d H:i:s') ; 
 		contractSet = new Ext.form.FieldSet( {
 			xtype : 'fieldset',
 			title : '签单信息',
@@ -177,7 +178,12 @@ Order.contractStatus = function(orderId) {
 					fieldLabel : "审批状态",
 					readOnly : true,
 					value : status
-				} 
+				} , {
+					id : "createTime",
+					fieldLabel : "签单创建时间",
+					readOnly : true,
+					value:createTime
+			  }  
 				]
 			},{
 				xtype : "container",
@@ -189,6 +195,12 @@ Order.contractStatus = function(orderId) {
 					labelStyle : 'text-align:right;'
 				},
 				items : [
+				{
+					id : "orderNo",
+					fieldLabel : "签单合同",
+					readOnly : true,
+					value:orderNo
+				},
 					{
 					id : "gradeName",
 					fieldLabel : "报读年级",
@@ -238,13 +250,13 @@ Order.contractStatus = function(orderId) {
 					},
 				  {
 						id : "startTime",
-						fieldLabel : "开始时间",
+						fieldLabel : "授课开始时间",
 						readOnly : true,
 						value:startTime
 				  } ,
 				  {
 						id : "endTime",
-						fieldLabel : "结束时间",
+						fieldLabel : "授课结束时间",
 						readOnly : true,
 						value:endTime
 				 } 
@@ -330,7 +342,7 @@ Order.courseTimeEdit = function(orderId) {
 					id : "startTime",
 					xtype : "datefield",
 					format : "Y-m-d",
-					fieldLabel : "开始时间", 
+					fieldLabel : "授课开始时间", 
 					maxLength : 10,
 					value:startTime,
 					vtype : 'daterange',
@@ -349,7 +361,7 @@ Order.courseTimeEdit = function(orderId) {
 					id : "endTime",
 					xtype : "datefield",
 					format : "Y-m-d",
-					fieldLabel : "结束时间", 
+					fieldLabel : "授课结束时间", 
 					maxLength : 10,
 					vtype : 'daterange',
 					value:endTime,

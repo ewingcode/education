@@ -1,4 +1,5 @@
 var studentInfoForm = function(studentId){
+	var isEdit = studentId!=null ? true : false;
 	var _url="";
 	if (studentId != null && studentId != "undefined") {
 		_url="Busi_Student_update.action";
@@ -40,9 +41,12 @@ var studentInfoForm = function(studentId){
 				items : [new SysArea.ComboBox('areaId',true), { 
 					id : "name",
 					fieldLabel : "学生姓名", 
+					readOnly: isEdit,
 					maxLength :10,
 					listeners:{ 
 						   "blur": function(field){  
+							 if(isEdit)
+								 return;
 							 Ajax.syncRequest("Busi_Student_validateStudent.action?studentName="+field.getValue(),  
 									 function(data) {   
 								      if(data.result){

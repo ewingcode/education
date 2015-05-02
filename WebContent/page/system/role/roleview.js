@@ -1,5 +1,6 @@
 
 Ext.onReady(function() {   
+	loadGirdStore();
 	Frame.busiPage(formpanel,gridPanel);
 	 
 });

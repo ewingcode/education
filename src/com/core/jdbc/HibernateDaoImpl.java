@@ -194,9 +194,11 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 		try {
 			Field createtime = entity.getClass().getDeclaredField("createTime");
 			createtime.setAccessible(true);
+
 			if (isNew) {
-				createtime.set(entity, new java.sql.Timestamp(
-						(new java.util.Date()).getTime()));
+				if (createtime.get(entity) == null)
+					createtime.set(entity, new java.sql.Timestamp(
+							(new java.util.Date()).getTime()));
 			} else {
 				if (oldentity != null) {
 					createtime = oldentity.getClass().getDeclaredField(
@@ -243,34 +245,19 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 		Statement stmt = null;
 		try {
 			session = this.getSession();
-			conn = this.getSession().connection();
+			conn = session.connection();
 			stmt = conn.createStatement();
 			boolean ret = stmt.execute(sql);
 			logger.info("executeSql sql:" + sql + "");
 			logger.info("executeSql result:" + ret + "");
 		} catch (Exception e) {
 			logger.error("fail to execute sql:" + sql, e);
-		} finally {
-			if (session != null)
-				session.close();
+		}finally{
+			this.releaseSession(session);
 		}
 	}
 
-	@Override
-	public List executeQuery(String sql) {
-		Session session = null;
-		try {
-			session = this.getSession();
-			return this.getSession().createQuery(sql).setCacheable(true).list();
-		} catch (Exception e) {
-			logger.error("fail to execute sql:" + sql, e);
-		} finally {
-			if (session != null)
-				session.close();
-		}
-		return null;
-
-	}
+ 
 
 	@Override
 	public List noMappedObjectQuery(String sql) {
@@ -296,8 +283,8 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			session.close();
+		}finally{
+			this.releaseSession(session);
 		}
 		return list;
 
@@ -308,6 +295,10 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 		return this.getSession();
 	}
 
+	@Override
+	public void releaseConnectionSession(Session session){
+		this.releaseSession(session);
+	}
 	@Override
 	public <T> PageBean pageQuery(String sql, String condition, String orderBy,
 			int pageSize, int startIndex, Class<T> entityClass) {

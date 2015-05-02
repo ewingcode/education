@@ -3,13 +3,12 @@
 <%@ include file="/common/include/html_head.jsp"%>
 <%@ include file="/page/contract/comp/ordercompinc.jsp"%>
 <script>
+var mainFrame;
 	Ext.onReady(function() {
 		Order.initData(); 
-		store.setBaseParam('start', 0);
-		store.setBaseParam('limit', 20);
+		var studentId = jQuery.url.param("studentId");
 		store.setBaseParam('_QUERY_n_eq_student_id', studentId);
-		store.setBaseParam('_ORDERBY', 'order by create_time desc');
-		store.reload();
+		OrderList.loadGirdStore(store);
 		mainFrame = Frame.busiPage2(formpanel, gridPanel);
 	 
 	});

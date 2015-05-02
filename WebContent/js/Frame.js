@@ -89,7 +89,35 @@ Frame.editWindow = function(editPanel, height, width, title) {
 		items : [ editPanel ]
 	});
 	win.show();
-}
+};
+
+Frame.editPageWindow = function(showPage, height, width, title) {
+	var _title = title != null ? title : "编辑";
+	var _height = height != null ? height : 600;
+	var _width = width != null ? width : 500;
+	var win = new Ext.Window( {
+		id : "editForm",
+		title : _title,
+		width : _width,
+		height : _height,
+		minWidth : 500,
+		minHeight : 300,
+		layout : 'fit',
+		frame : true,
+		border : false,
+		// plain:true,
+		bodyStyle : 'padding:5px;',
+		buttonAlign : 'center',
+		items : [ { 
+			autoWidth : true,
+			iconCls : 'tabs',
+			closable : true,
+			html : '<iframe  src="' + showPage + '" frameborder="0"   scrolling="yes" id="setframe"  name="setframe" width="100%" height="100%"/>'
+		} ]
+	});
+	win.show();
+};
+
 
 Frame.addTab = function(mainFrame,tabTitle,tab_id,showPage) {
 

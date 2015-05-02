@@ -270,8 +270,7 @@ public class JasperFacttory {
 					"D://test2.html");
 			return jasperPrint;
 		} finally {
-			if (session != null)
-				session.close();
+			releaseSession(session);
 		}
 
 	}
@@ -334,14 +333,19 @@ public class JasperFacttory {
 		return baseDao.getConnectionSession();
 	}
 
+	private void releaseSession(Session session) throws SQLException {
+		BaseDao baseDao = (BaseDao) SpringCtx.getByBeanName("baseDao");
+		baseDao.releaseConnectionSession(session);;
+	}
+
 	public static void main(String args[]) throws Exception {
 		JasperFacttory obj = new JasperFacttory();
 		Map map = new HashMap();
 		map.put(JasperParam.STATISTIC_TIME_FIELD, "2012-10-10 到 2012-11-01");
 		obj.dynamicGenerate(
 				"select date_format(create_time,'%Y-%m-%d') as create_date,count(*) as total from order_info where 1=1 group by date_format(create_time,'%Y-%m-%d')",
-				"签单日统计报表", new String[] { "签单日期", "签单总数" }, new String[] {
-						"create_date", "total" }, map);
+				"签单日统计报表", new String[]{"签单日期", "签单总数"}, new String[]{
+						"create_date", "total"}, map);
 	}
 
 }

@@ -119,12 +119,11 @@ SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
 				return Department.translate(value);
 			}
 
-		}, {
-			header : "职位",
-			dataIndex : "position",
-			hidden : true,
+		},{
+			header : "区域",
+			dataIndex : "areaId",
 			renderer : function(value) {
-				return SysParam.translate(positionStore, value);
+				return SysArea.translate(value);
 			}
 		} ],
 		defaults : {
@@ -151,7 +150,7 @@ SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
 				name : "id",
 				type : "int"
 			}, "userName", "addr", "sex", "position", "depId", "phone",
-					"zipcode", "iseff", 'roleId' ]
+					"zipcode", "iseff", 'roleId',"areaId" ]
 		})
 	});
 

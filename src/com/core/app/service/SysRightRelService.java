@@ -135,7 +135,7 @@ public class SysRightRelService {
 	 * @param menuIds
 	 * @ 
 	 */
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public void rightRelSetting(String type, String relId, Integer right,
 			Integer[] menuIds)   {
 		baseDao.executeSql("delete from sys_right_rel where rel_right=" + right
@@ -158,8 +158,7 @@ public class SysRightRelService {
 	 * @param relId
 	 * @param menuIds
 	 * @ 
-	 */
-	@Transactional
+	 */ 
 	public Set<Integer> queryRelMenu(String type, Integer right, Integer relId)
 			  {
 		Set<Integer> targetList = new HashSet<Integer>();

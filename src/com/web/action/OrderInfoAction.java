@@ -88,7 +88,7 @@ public class OrderInfoAction extends BaseAction {
 			UserInfo userInfo = SessionControl.getUserInfo(request);
 			String start = request.getParameter("start");
 			String limit = request.getParameter("limit");
-			PageBean pageBean = orderQueryService.findPersonalTasks(
+			PageBean pageBean = orderQueryService.findPersonalTasks(bulidConditionSql(),
 					userInfo.getId(), userInfo.getRoleId(),
 					Integer.valueOf(limit), Integer.valueOf(start));
 			responseData = ResponseUtils.success("查询成功！");

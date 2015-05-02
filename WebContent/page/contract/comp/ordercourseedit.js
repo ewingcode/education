@@ -132,6 +132,7 @@ OrderCourse.courseEditGrid = function(orderId, needChooseCharger) {
 					items : [
 							{
 								getClass : function(v, meta, rec) {
+									if(isEdit)
 									return "btn_edit";
 								},
 								tooltip : '编辑',

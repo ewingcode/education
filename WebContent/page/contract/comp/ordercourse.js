@@ -8,8 +8,9 @@ var COURSEOPER_APPLY = "1";
  * 
  * @return
  */
-Order.courseList = function(orderId, showCharger) {
+Order.courseList = function(orderId, showCharger,showSchedule) {
 	var _showCharger = (showCharger != null && showCharger) ? true : false;
+	var _showSchedule = (showSchedule != null && showSchedule) ? true : false;
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
 			url : 'Busi_OrderCourse_query.action'
@@ -22,7 +23,7 @@ Order.courseList = function(orderId, showCharger) {
 			fields : [ {
 				name : "id",
 				type : "int"
-			}, "hour", "orderId", "courseType", "chargerId", {
+			}, "hour", "orderId", "courseType", "chargerId","studentId", {
 				name : "createTime",
 				type : "date",
 				mapping : 'createTime.time',
@@ -72,6 +73,33 @@ Order.courseList = function(orderId, showCharger) {
 			renderer : function(value) {
 				return Teacher.translate(value);
 			}
+		}, {
+			header : "排课",
+			xtype : 'actioncolumn',
+			hidden : !_showSchedule, 
+			defaults : {
+				width : 230
+			},// 默认每个子item大小
+			width : 50,
+			items : [
+					{
+						getClass : function(v, meta, rec) {
+							return "btn_edit";
+						},
+						tooltip : '排课',
+						handler : function(grid, rowIndex, colIndex) {
+							var rec = store.getAt(rowIndex);
+							 var teacherId = rec.get("chargerId");
+							 var studentId = rec.get("studentId");
+							 var teacherName = SysUser.translate(teacherId);  
+							 var showPage = _contextPath
+								+ "/page/teacher/course/scheduleframe.jsp?teacherId="+teacherId+"&studentId="+studentId ; 
+						     var tab_id = "busi_tab_schedule_"
+								+ teacherId;  
+						     Frame.editPageWindow(showPage, 700, 1200, '排课['+teacherName+']');
+						    
+						}
+					} ]
 		} ],
 		defaults : {
 			sortable : true,

@@ -18,6 +18,12 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 				{
 					header : "教师名称",
 					dataIndex : "userName"
+				},{
+					header : "区域",
+					dataIndex : "areaId",
+					renderer : function(value) {
+						return SysArea.translate(value);
+					}
 				},
 				{
 					header : "科目",
@@ -117,7 +123,7 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 			}, {
 				name : "gradeType",
 				mapping : 'gradeType'
-			} ]
+			},"areaId" ]
 		})
 	});
 	var toolbar = new Ext.Toolbar({
@@ -449,7 +455,7 @@ Teacher.mutipleId = function(teacherName) {
 /**
  * 选择教师关联的学生
  */
-Teacher.selectRefStudent = function(teacherId, callbackFn) {
+Teacher.selectRefStudent = function(teacherId,studentId, callbackFn) {
 	var queryUrl = 'Busi_TeacherRefStudent_pageQuery.action';
 	var sexTypeStore = new SysParam.store("SEXTYPE");
 	var courseStore = new SysParam.store("ORDER_COURSE");
@@ -562,6 +568,8 @@ Teacher.selectRefStudent = function(teacherId, callbackFn) {
 	});
 
 	function loadGirdStore() {
+		if(studentId)
+			store.setBaseParam('_QUERY_n_eq_student_id', studentId);
 		store.setBaseParam('_QUERY_n_eq_teacher_id', teacherId);
 		store.setBaseParam('_QUERY_s_like_name', Ext.getCmp(
 				"QUERY_student_name").getValue());

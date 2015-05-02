@@ -156,9 +156,9 @@ public class OrderService {
 		baseDao.update(orderInfo);
 		orderAttachService.batchSaveOrderAttach(orderInfo, attachMap);
 		orderCourseService.saveOrderCourse(orderInfo.getId(), courses);
-		logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
+	 	logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
 				TransitionArrangeType.UNARRANGE, null, startFlowTask,
-				orderInfo, operator, operator, null);
+				orderInfo, operator, operator, null); 
 
 		orderTransfer(operator, assignerId, orderInfo.getId(), transitionName);
 		// 直接提交到销售部主管
@@ -403,8 +403,7 @@ public class OrderService {
 	public boolean editOrder(int operator, OrderInfo orderInfo,
 			Map<OrderAttach, File> attachMap, String[] courseArray,
 			boolean isOnlyEdit) throws Exception {
-		orderInfo.setIsLast(OrderIsLast.NOTLAST);
-		orderInfo.setRunStatus(OrderRunStatus.INAPPLY);
+		orderInfo.setIsLast(OrderIsLast.NOTLAST); 
 		orderInfo.setOrderType(OrderType.LAST);
 		if (isOnlyEdit) {
 			baseDao.update(orderInfo);

@@ -432,7 +432,7 @@ public class CourseScheduleDetailService {
 	 */
 	public List<CourseScheduleDetail> getCourseScheduleDetailList(
 			Integer scheduleId) {
-		String sql = "schedule_id = " + scheduleId + " order by is_finish";
+		String sql = "schedule_id = " + scheduleId + " order by is_finish asc,id asc";
 		return baseDao.find(sql, CourseScheduleDetail.class);
 	}
 

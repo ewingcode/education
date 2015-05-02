@@ -58,13 +58,7 @@ public class JasperReportAction extends BaseAction {
 		} catch (Exception ex) {
 			throw ex;
 		} finally {
-			if (session != null) {
-				try {
-					session.close();
-				} catch (Exception ex) {
-					throw ex;
-				}
-			}
+			baseDao.releaseConnectionSession(session);
 		}
 	}
 

@@ -96,6 +96,24 @@ Ext.onReady(function() {
 									maxLength : 10,
 									value:0
 								} ]
+							},{
+								xtype : "container",
+								columnWidth : 1,
+								layout : "form",
+								defaultType : "textfield",
+								defaults : {
+									width : 350,
+									labelStyle : 'text-align:right;'
+								},
+								items : [ {
+									id : "createTime",
+									xtype : "datefield",
+									format : "Y-m-d",
+									fieldLabel : "签单创建时间",
+									allowBlank : false,
+									value:new Date(),
+									maxLength : 10
+								} ]
 							}, {
 								xtype : "container",
 								columnWidth : 1,
@@ -109,7 +127,7 @@ Ext.onReady(function() {
 									id : "startTime",
 									xtype : "datefield",
 									format : "Y-m-d",
-									fieldLabel : "开始时间",
+									fieldLabel : "授课开始时间",
 									allowBlank : false,
 									maxLength : 10,
 									vtype : 'daterange',
@@ -128,7 +146,7 @@ Ext.onReady(function() {
 									id : "endTime",
 									xtype : "datefield",
 									format : "Y-m-d",
-									fieldLabel : "结束时间",
+									fieldLabel : "授课结束时间",
 									allowBlank : false,
 									maxLength : 10,
 									vtype : 'daterange',

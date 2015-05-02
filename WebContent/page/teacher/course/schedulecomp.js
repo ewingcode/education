@@ -97,7 +97,8 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 		region : "center",
 		autoScroll : true,
 		cm : cm,
-		height : 600,
+		height : 300,
+		loadMask : true,
 		clicksToEdit : 1,
 		viewConfig : {
 			forceFit : true,// 填满width.
@@ -151,10 +152,8 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 	var win = new Ext.Window({
 		id : "editScheduleWin",
 		title : '排课计划详细',
-		width : 600,
-		height : 400,
-		minWidth : 500,
-		minHeight : 300,
+		width : 880,
+		height :450, 
 		plain : true,
 		bodyStyle : 'padding:5px;',
 		buttonAlign : 'center', 
@@ -334,10 +333,8 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 	var win = new Ext.Window({
 		id : "editScheduleWin",
 		title : '排课计划',
-		width : 850,
-		height : 500,
-		minWidth : 500,
-		minHeight : 300,
+		width : 880,
+		height : 500, 
 		plain : true,
 		bodyStyle : 'padding:5px;',
 		buttonAlign : 'center', 
@@ -587,10 +584,11 @@ Schedule.showDailySchedule = function(teacherId, date , isReadOnly) {
  * 设置排都课的面板
  * 
  * @param teacherId
+ * @param studentId
  * @return
  */
-Schedule.addSchedulePanel = function(teacherId) {
-
+Schedule.addSchedulePanel = function(teacherId , studentId) {
+ 
 	var settingForm = new Ext.FormPanel(
 			{
 				layout : "form",
@@ -616,24 +614,24 @@ Schedule.addSchedulePanel = function(teacherId) {
 							items : [
 									{
 										xtype : "textfield",
-										id : 'studentId',
+										id : 'studentId', 
 										hidden : true
 									},
 									{
 										xtype : "textfield",
 										id : "studentName",
-										width : "70",
+										width : "70", 
 										readOnly : true
 									},
 									{
 										xtype : "button",
 										id : "choseAssigerBtn",
-										text : "选择",
+										text : "选择", 
 										width : "50",
 										listeners : {
 											"click" : function(d, i, n, e) {
 												new Teacher.selectRefStudent(
-														teacherId,
+														teacherId,studentId,
 														function(studentId,
 																studentName,courseType) {
 															Ext.getCmp('studentId').setValue(studentId);

@@ -27,6 +27,25 @@ public class TeacherAction extends BaseAction {
 		super(TeacherInfo.class);
 	}
 
+	/**
+	 * 删除教师信息
+	 * 
+	 * @throws ActionException
+	 */
+	@Override
+	public void delete() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			Integer teacherId = Integer.valueOf(request
+					.getParameter("teacherId"));
+			teacherService.deleteTeacher(teacherId);
+			responseData = ResponseUtils.success("删除成功！");
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("删除失败！");
+		}
+		this.outResult(responseData);
+	}
 	@Override
 	public String getCondition() {
 		condition = super.getCondition();
@@ -35,7 +54,7 @@ public class TeacherAction extends BaseAction {
 		try {
 			String relAreaSql = sysRightRelService.getAreaRightSql(request);
 			if (!StringUtil.isEmpty(relAreaSql))
-				return SqlUtil.combine(condition , relAreaSql);
+				return SqlUtil.combine(condition, relAreaSql);
 		} catch (SessionException e) {
 			e.printStackTrace();
 		}

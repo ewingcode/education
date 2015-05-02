@@ -148,7 +148,7 @@
 			<ref bean="courseScheduleJobDetail" />
 		</property>
 		<property name="cronExpression">
-			<value>0 0/10 * * * ?</value>
+			<value>0 0/1 * * * ?</value>
 		</property>
 	</bean>
 	  

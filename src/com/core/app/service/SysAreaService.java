@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import com.core.app.bean.CheckTreeObject;
 import com.core.app.model.SysArea;
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 
 /**
  * 

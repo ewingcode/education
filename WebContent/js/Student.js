@@ -23,6 +23,12 @@ Student.selectWin = function(callbackFn) {
 			renderer : function(value) {
 				return SysParam.translate(sexTypeStore, value);
 			} 
+		},{
+			header : "区域",
+			dataIndex : "areaId",
+			renderer : function(value) {
+				return SysArea.translate(value);
+			}
 		} ],
 		defaults : {
 			sortable : true,
@@ -43,7 +49,7 @@ Student.selectWin = function(callbackFn) {
 			fields : [ {
 				name : "id",
 				type : "int"
-			}, "name", "age", "grade", "addr", "sex", "school", "phone",
+			}, "name", "age", "grade", "addr", "sex", "school", "phone","areaId",
 					"homephone", {
 						name : "createTime",
 						type : "date",

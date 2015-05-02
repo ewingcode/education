@@ -21,7 +21,7 @@ OrderList.loadGirdStore = function(dataStore) {
 };
 
 OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
-		isPersonalProc, isModify, isModifyCharger, isDeleteOrder) {
+		isPersonalProc, isModify, isModifyCharger, isDeleteOrder,isSchedule) {
 
 	return new Ext.Toolbar(
 			{
@@ -173,6 +173,42 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
 						},
 						{
 							iconCls : "btn_edit",
+							text : "排课",
+							xtype : "button",
+							hidden : isSchedule ? false : true,
+							scale : 'medium',
+							handler : function() {
+								if (!Common.SingleCheck(gridPanel)) {
+									return;
+								}
+								gridPanel
+										.getSelectionModel()
+										.each(
+												function(e) {
+													var runStatus = e.data.runStatus;
+													if (runStatus != '1') {
+														Common
+																.ErrMegBox('不能排课,签单状态可能为审批或者结束!');
+														return;
+													}
+													var orderId = e.data.id;
+													var student = Student
+															.translate(e.data.studentId);
+													var showPage = _contextPath
+															+ "/page/contract/follow/order_detail.jsp?orderId="
+															+ orderId
+															+ "&isOnlyEdit=true&schedule=true";
+													var tab_id = "busi_tab_order_"
+															+ orderId;
+													Frame.addTab(mainFrame,
+															'签单[' + student
+																	+ ']',
+															tab_id, showPage);
+												});
+							}
+						},
+						{
+							iconCls : "btn_edit",
 							text : "任务处理",
 							xtype : "button",
 							hidden : isPersonalProc ? false : true,
@@ -192,6 +228,11 @@ OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,
 													if (session_userId != curOperator) {
 														Common
 																.ErrMegBox('没权限编辑,你不是当前的签单负责人!');
+														return;
+													}
+													if (e.data.runStatus != '0') {
+														Common
+																.ErrMegBox('没权限编辑,签单已经审批结束!');
 														return;
 													}
 													Ext.Ajax
@@ -391,6 +432,8 @@ OrderList.ColumnModel = function(selectModel, isShort) {
 					dataIndex : "costCourseHour",
 					renderer : function(value, metaData, record, rowIndex,
 							colIndex, store) {
+						if(record.get("costCourseHour")==0)
+							return value;
 						var remainHour = record.get("courseHour")
 								- record.get("costCourseHour") - record.get("adjustHour");
 						if (remainHour < 30) {

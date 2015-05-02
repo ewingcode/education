@@ -6,6 +6,7 @@
 <script>
 	Ext.onReady(function() {
 		var teacherId = jQuery.url.param("teacherId");
+		var studentId = jQuery.url.param("studentId");
 		  var scheduledailyUrl = _contextPath + "/page/teacher/course/scheduledaily.jsp?teacherId="+ teacherId+"&isReadOnly=false";
 		  var scheduleSettingUrl = _contextPath + "/page/teacher/course/schedulesetting.jsp?teacherId="+ teacherId+"&isReadOnly=false";
 		  var tabs = new Ext.TabPanel({  
@@ -51,7 +52,7 @@
 			width : "30%", 
 			defaultType : "textfield",
 			buttonAlign : 'center',
-			items : [ new Schedule.addSchedulePanel(teacherId) ]
+			items : [ new Schedule.addSchedulePanel(teacherId,studentId) ]
 
 		});  
 		new Ext.Viewport({

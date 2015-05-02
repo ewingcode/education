@@ -57,6 +57,7 @@ var EditWindow = function(b) {
 	win.show();
 };
 EditWindow.prototype.editform = function() {
+	var isEdit = this.primaryId!=null ? true : false;
 	if (this.primaryId != null && this.primaryId != "undefined") {
 		this.url = "Public_SysUser_update.action";
 	} else {
@@ -89,8 +90,11 @@ EditWindow.prototype.editform = function() {
 					fieldLabel : "用户名称",
 					allowBlank : false,
 					id : "userName",
+					readOnly:isEdit,
 					listeners : {
 						"blur" : function(field) {
+							 if(isEdit)
+								 return;
 							Ajax.syncRequest(
 									"Public_SysUser_query.action?condition=user_name='"
 											+ field.getValue() + "'", function(

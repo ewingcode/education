@@ -22,18 +22,15 @@ public class BaseModelService {
 	@Resource
 	public BaseDao baseDao;
 
-	@Transactional
-	public void save(Object entity)   {
+	public void save(Object entity) {
 		baseDao.save(entity);
 	}
 
-	@Transactional
-	public void update(Object entity)   {
+	public void update(Object entity) {
 		baseDao.update(entity);
 	}
 
-	@Transactional
-	public void delete(Object entity)   {
+	public void delete(Object entity) {
 		baseDao.delete(entity);
 	}
 
@@ -43,21 +40,19 @@ public class BaseModelService {
 				entityClass);
 	}
 
-	public <T> List<T> find(String queryString, Class<T> entityClass)
-			  {
+	public <T> List<T> find(String queryString, Class<T> entityClass) {
 		return baseDao.find(queryString, entityClass);
 	}
 
-	public <T> T findOne(Integer id, Class<T> entityClass)   {
+	public <T> T findOne(Integer id, Class<T> entityClass) {
 		return baseDao.findOne(id, entityClass);
 	}
 
-	public <T> T queryObject(String sql, Class<T> queryClass)
-			  {
+	public <T> T queryObject(String sql, Class<T> queryClass) {
 		return (T) baseDao.queryObject(sql, queryClass);
 	}
 
-	public List noMappedObjectQuery(String sql)   {
+	public List noMappedObjectQuery(String sql) {
 		return baseDao.noMappedObjectQuery(sql);
 	}
 

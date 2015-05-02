@@ -1,5 +1,6 @@
 Ext.onReady(function() {
 	Order.initData();
+	OrderList.loadGirdStore(store);
 	mainFrame = Frame.busiPage2(formpanel, gridPanel);
 });
 function closeTabPanel(orderId) {

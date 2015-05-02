@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.core.jdbc.BaseDao;
 import com.core.jdbc.util.PageBean;
+import com.util.SqlUtil;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.OrderException;
 import com.web.model.OrderInfoView;
@@ -32,13 +33,14 @@ public class OrderQueryService {
 	 * @ 
 	 * @throws OrderException
 	 */
-	public PageBean findPersonalTasks(int userId, int roleId, int pageSize,
+	public PageBean findPersonalTasks(String conditon,int userId, int roleId, int pageSize,
 			int startIndex) throws OrderException {
 		int chargerType = orderRoleService.getChargerType(roleId);
 		String sql = " from " + OrderInfoView.class.getName()
 				+ " where id in ( select orderId from "
 				+ OrderTrace.class.getName() + " a2 where (user_id=" + userId
 				+ " or role_id=" + chargerType + " ) and a2.operator is null) ";
+		sql = SqlUtil.combine(sql, conditon);
 		return baseDao.pageQuery(sql, pageSize, startIndex, OrderInfoView.class);
 	}
 
@@ -71,7 +73,8 @@ public class OrderQueryService {
 		String sql = " from " + OrderInfoView.class.getName()
 				+ " where id in ( select orderId from "
 				+ OrderTrace.class.getName() + " a2 where a2.operator ="
-				+ userId + ") " + conditon;
+				+ userId + ") "  ;
+		sql = SqlUtil.combine(sql, conditon);
 		return baseDao.pageQuery(sql, orderBy, pageSize, startIndex,
 				OrderInfoView.class);
 	}

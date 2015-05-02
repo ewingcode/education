@@ -30,11 +30,11 @@ public interface BaseDao {
 
 	public void save(Object entity);
 
-	public void update(Object entity);
-
-	public <T> List<T> executeQuery(String sql);
+	public void update(Object entity); 
 
 	public Session getConnectionSession();
+	
+	public void releaseConnectionSession(Session session);
 
 	public <T> List<T> noMappedObjectQuery(String sql);
 

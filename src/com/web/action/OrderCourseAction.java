@@ -23,7 +23,7 @@ public class OrderCourseAction extends BaseAction {
 	private OrderCourseService orderCourseService;
 
 	public OrderCourseAction() {
-		super(OrderCourse.class);
+		super(OrderCourseView.class);
 	}
 
 	/**

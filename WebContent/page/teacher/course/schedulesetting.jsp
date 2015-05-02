@@ -228,7 +228,7 @@
 									listeners : {
 										"click" : function(d, i, n, e) {
 											new Teacher.selectRefStudent(
-													teacherId,
+													teacherId,null,
 													function(studentId,
 															studentName,courseType) {
 														Ext.getCmp('studentId').setValue(studentId);

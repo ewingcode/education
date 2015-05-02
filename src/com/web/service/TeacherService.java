@@ -8,15 +8,16 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.core.app.model.SysUser;
+import com.core.app.service.SysUserService;
 import com.core.jdbc.BaseDao;
-import com.core.jdbc.DaoException;
 import com.web.model.TeacherAbility;
 
 @Repository("teacherService")
 public class TeacherService {
 	@Resource
 	private BaseDao baseDao;
-
+	@Resource
+	private SysUserService sysUserService;
 	@Transactional(rollbackFor = Exception.class)
 	public void addNewTeacher(SysUser sysUser, TeacherAbility teacherAbility) {
 		baseDao.save(sysUser);
@@ -25,6 +26,19 @@ public class TeacherService {
 		baseDao.save(teacherAbility);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTeacher(Integer teacherId) {
+		SysUser sysUser = sysUserService.findOne(teacherId);
+		if (sysUser != null) {
+			List<TeacherAbility> list = baseDao.find(
+					"user_id=" + sysUser.getId(), TeacherAbility.class);
+			if (!list.isEmpty()) {
+				baseDao.delete(list.get(0));
+			}
+			baseDao.delete(sysUser);
+		}
+
+	}
 	@Transactional(rollbackFor = Exception.class)
 	public void editTeacher(SysUser sysUser, TeacherAbility teacherAbility) {
 		baseDao.update(sysUser);
