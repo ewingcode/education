@@ -49,7 +49,7 @@ public class CaptchaServlet extends HttpServlet {
 	 */
 	public static boolean validate(HttpServletRequest request,
 			String dynamicCode) throws Exception {
-		/*Object object = request.getSession().getAttribute(CAPTCHA_IMAGE);
+		 Object object = request.getSession().getAttribute(CAPTCHA_IMAGE);
 		if (object == null)
 			throw new Exception("请刷新验证码");
 		Captcha captcha = (Captcha) request.getSession().getAttribute(
@@ -57,7 +57,7 @@ public class CaptchaServlet extends HttpServlet {
 		if (captcha.isCorrect(dynamicCode)) {
 			return true;
 		}
-		return false;*/
-		return true;
+		return false; 
+		//return true;
 	}
 }

@@ -25,21 +25,18 @@
 				fieldLabel : "账      号",
 				//	cls : "text-user",
 				allowBlank : false,
-				blankText : "账号不能为空",
-				value:"国产007"
+				blankText : "账号不能为空"  
 			}, {
 				name : "password",
 				fieldLabel : "密      码",
 				allowBlank : false,
-				blankText : "密码不能为空",
-				value:"1",
+				blankText : "密码不能为空" ,
 				cls : "text-lock",
 				inputType : "password"
 			}, {
 				name : "checkCode",
 				id : "checkCode",
-				fieldLabel : "验证码",
-				value:"1",
+				fieldLabel : "验证码", 
 				allowBlank : false,
 				hidden : true,
 				cls : "text-code",
@@ -111,7 +108,7 @@
 				a.form.submit( {
 					waitTitle : "请稍候",
 					waitMsg : "正在登录......",
-					url : 'Public_Login_debugLogin.action',
+					url : 'Public_Login_userLogin.action',
 					success : function(h, i) {
 						handleLoginResult(i.result);
 					},

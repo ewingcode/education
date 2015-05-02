@@ -142,7 +142,7 @@
 		<url-pattern>/frame/main/pushlet.srv</url-pattern>
 	</servlet-mapping>
 
-	<!--  filter>
+	<filter>
 		<filter-name>ValidateUserLogin</filter-name>
 		<filter-class>com.core.app.filter.LoginFilter</filter-class> 
 		<init-param>
@@ -153,7 +153,7 @@
 	<filter-mapping>
 		<filter-name>ValidateUserLogin</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping -->
+	</filter-mapping>
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>

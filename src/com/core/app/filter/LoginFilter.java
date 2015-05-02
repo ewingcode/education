@@ -55,8 +55,8 @@ public class LoginFilter implements Filter {
 						String menuUrl = reqUrl.substring(reqUrl
 								.indexOf(contextPath)
 								+ contextPath.length());
-						SysLogTraceThread.getInstance().addToQueue(
-								new SysTrace(userInfo.getId(), menuUrl));
+						/*SysLogTraceThread.getInstance().addToQueue(
+								new SysTrace(userInfo.getId(), menuUrl));*/
 					}
 				} catch (SessionException e) {
 					logger.warn("fail to get user session!");
