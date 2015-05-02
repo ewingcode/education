@@ -23,7 +23,7 @@ Ext.onReady(function() {
 		defaults : {
 			sortable : true,
 			menuDisabled : false,
-			width : 100
+			width : 250
 		}
 	});
 
@@ -167,7 +167,7 @@ Ext.onReady(function() {
 		tbar : toolbar,
 		store : store,
 		trackMouseOver : true,
-		autoExpandColumn : true,
+		autoExpandColumn : false,
 		// disableSelection: false,
 		loadMask : false,
 		region : "center",

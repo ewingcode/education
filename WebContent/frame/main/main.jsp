@@ -115,7 +115,8 @@
 								}, {
 									region : 'west',
 									id : 'menuArea',
-									split : true,
+									split : true, 
+									collapsible: true,
 									width : 200,
 									minSize : 175,
 									maxSize : 400,

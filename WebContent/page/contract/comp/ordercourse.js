@@ -94,9 +94,8 @@ Order.courseList = function(orderId, showCharger,showSchedule) {
 							 var teacherName = SysUser.translate(teacherId);  
 							 var showPage = _contextPath
 								+ "/page/teacher/course/scheduleframe.jsp?teacherId="+teacherId+"&studentId="+studentId ; 
-						     var tab_id = "busi_tab_schedule_"
-								+ teacherId;  
-						     Frame.editPageWindow(showPage, 700, 1200, '排课['+teacherName+']');
+						      
+						     Frame.editPageWindow(showPage, 450, 1100, '排课['+teacherName+']');
 						    
 						}
 					} ]

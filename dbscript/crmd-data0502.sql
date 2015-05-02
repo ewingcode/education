@@ -16,18 +16,6 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`crmdb` /*!40100 DEFAULT CHARACTER SET u
 
 USE `crmdb`;
 
-/*Table structure for table `course_period` */
-
-DROP TABLE IF EXISTS `course_period`;
-
-CREATE TABLE `course_period` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `start_time` int(4) NOT NULL,
-  `end_time` int(4) NOT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='排课时间设置';
-
 /*Data for the table `course_period` */
 
 LOCK TABLES `course_period` WRITE;
@@ -35,23 +23,6 @@ LOCK TABLES `course_period` WRITE;
 insert  into `course_period`(`id`,`start_time`,`end_time`,`create_time`) values (1,800,900,'2015-03-15 10:36:45'),(2,900,1000,'2015-03-15 10:36:45'),(3,1000,1100,'2015-03-15 10:36:45'),(4,1100,1200,'2015-03-15 10:36:45'),(5,1400,1500,'2015-03-15 10:36:45'),(6,1500,1600,'2015-03-15 10:36:45'),(7,1600,1700,'2015-03-15 10:36:45'),(8,1700,1800,'2015-03-15 10:36:45');
 
 UNLOCK TABLES;
-
-/*Table structure for table `flow_task` */
-
-DROP TABLE IF EXISTS `flow_task`;
-
-CREATE TABLE `flow_task` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `process_name` varchar(200) NOT NULL DEFAULT '' COMMENT '流程名称',
-  `task_name` varchar(200) NOT NULL DEFAULT '' COMMENT '任务名称',
-  `assign_type` char(1) DEFAULT NULL COMMENT '指派类型,0:用户,1:角色,2:部门',
-  `assigner` varchar(20) DEFAULT NULL COMMENT '被指派',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `busi_page_name` varchar(50) DEFAULT NULL COMMENT '业务页面对应 follow_busi_page的name字段',
-  `type` char(1) CHARACTER SET ucs2 NOT NULL DEFAULT '' COMMENT '0:开始 1:执行中 2:结束',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='流程定义任务权限列表';
 
 /*Data for the table `flow_task` */
 
@@ -61,22 +32,6 @@ insert  into `flow_task`(`id`,`process_name`,`task_name`,`assign_type`,`assigner
 
 UNLOCK TABLES;
 
-/*Table structure for table `flow_task_transition` */
-
-DROP TABLE IF EXISTS `flow_task_transition`;
-
-CREATE TABLE `flow_task_transition` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `task_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(50) DEFAULT NULL COMMENT '转移动作名称',
-  `to` varchar(50) DEFAULT NULL COMMENT '转向的任务名称',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `need_arrange` char(1) NOT NULL DEFAULT '0' COMMENT '是否需要安排下一步处理人 0:不 1:需要',
-  `to_id` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='流程任务转变列表';
-
 /*Data for the table `flow_task_transition` */
 
 LOCK TABLES `flow_task_transition` WRITE;
@@ -84,21 +39,6 @@ LOCK TABLES `flow_task_transition` WRITE;
 insert  into `flow_task_transition`(`id`,`task_id`,`name`,`to`,`create_time`,`last_update`,`need_arrange`,`to_id`) values (1,1,'待审批','销售主管审批','2012-04-17 20:40:59','2012-12-01 00:00:00','1',2),(2,2,'通过','教务部处理','2012-04-17 20:40:59','2012-12-01 00:00:00','1',3),(3,2,'不通过','签约','2012-04-17 20:40:59','2012-12-01 00:00:00','0',1),(4,3,'分配任务','班主任处理中','2012-04-17 20:40:59','2012-12-01 00:00:00','1',5),(5,5,'确认','教务部审批','2012-04-17 20:40:59','2012-12-01 00:00:00','1',6),(6,5,'拒绝','教务部处理','2012-04-17 20:40:59','2012-12-01 00:00:00','0',3),(8,6,'通过','审批通过','2012-04-17 20:40:59','2012-12-01 00:00:00','0',7),(9,6,'不通过','班主任处理中','2012-04-17 20:40:59','2012-12-01 00:00:00','0',5),(10,7,'判断授课时间','结束','2012-04-17 20:40:59','2012-04-17 20:40:59','2',0),(11,9,'继单','审批通过','2012-04-17 20:40:59','2012-04-17 20:40:59','0',10),(12,10,'判断授课时间','结束','2012-04-17 20:40:59','2012-04-17 20:40:59','0',0);
 
 UNLOCK TABLES;
-
-/*Table structure for table `sys_area` */
-
-DROP TABLE IF EXISTS `sys_area`;
-
-CREATE TABLE `sys_area` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `parentid` int(10) DEFAULT '0' COMMENT '上一层的区域',
-  `iseff` char(1) NOT NULL DEFAULT '0',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `des` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='区域';
 
 /*Data for the table `sys_area` */
 
@@ -108,21 +48,6 @@ insert  into `sys_area`(`id`,`name`,`parentid`,`iseff`,`create_time`,`last_updat
 
 UNLOCK TABLES;
 
-/*Table structure for table `sys_department` */
-
-DROP TABLE IF EXISTS `sys_department`;
-
-CREATE TABLE `sys_department` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `des` varchar(250) DEFAULT NULL,
-  `parentid` int(10) DEFAULT NULL COMMENT '上一层的部门构架',
-  `iseff` char(1) NOT NULL DEFAULT '0',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-
 /*Data for the table `sys_department` */
 
 LOCK TABLES `sys_department` WRITE;
@@ -130,26 +55,6 @@ LOCK TABLES `sys_department` WRITE;
 insert  into `sys_department`(`id`,`name`,`des`,`parentid`,`iseff`,`create_time`,`last_update`) values (1,'教务部',NULL,0,'0','2012-08-14 22:10:09','2012-04-16 20:40:02'),(2,'销售部',NULL,0,'0','2012-08-14 22:10:10','2012-04-16 20:40:13');
 
 UNLOCK TABLES;
-
-/*Table structure for table `sys_menu` */
-
-DROP TABLE IF EXISTS `sys_menu`;
-
-CREATE TABLE `sys_menu` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `url` varchar(100) DEFAULT NULL,
-  `level` char(1) NOT NULL,
-  `parentid` int(10) NOT NULL,
-  `iseff` char(1) NOT NULL DEFAULT '0' COMMENT '0:有效,1:无效',
-  `isleaf` char(1) NOT NULL COMMENT '是否也是 0:不是, 1:是',
-  `des` varchar(100) DEFAULT NULL,
-  `createtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `icon` varchar(100) DEFAULT NULL,
-  `sort` int(10) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8;
 
 /*Data for the table `sys_menu` */
 
@@ -159,23 +64,6 @@ insert  into `sys_menu`(`id`,`name`,`url`,`level`,`parentid`,`iseff`,`isleaf`,`d
 
 UNLOCK TABLES;
 
-/*Table structure for table `sys_param` */
-
-DROP TABLE IF EXISTS `sys_param`;
-
-CREATE TABLE `sys_param` (
-  `param_code` varchar(50) NOT NULL,
-  `param_name` varchar(50) NOT NULL,
-  `param_value` varchar(50) DEFAULT NULL,
-  `root_code` varchar(50) DEFAULT NULL,
-  `des` varchar(250) DEFAULT NULL,
-  `seq` varchar(10) DEFAULT NULL,
-  `iseff` char(1) NOT NULL DEFAULT '0',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`param_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Data for the table `sys_param` */
 
 LOCK TABLES `sys_param` WRITE;
@@ -183,21 +71,6 @@ LOCK TABLES `sys_param` WRITE;
 insert  into `sys_param`(`param_code`,`param_name`,`param_value`,`root_code`,`des`,`seq`,`iseff`,`create_time`,`last_update`) values ('','',NULL,NULL,NULL,NULL,'0','2015-04-11 17:20:51','0000-00-00 00:00:00'),('ACCEPT','确认','0','TASK_OPER',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('APPLY_STATUS','审批结果',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ATTACH_TYPE_A','初期辅导方案','1','ATTACH_TYPE',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ATTACH_TYPE_B','华实模拟协议','2','ATTACH_TYPE',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ATTACH_TYPE_C','全方位测评报告','3','ATTACH_TYPE',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ATTACH_TYPE_D','教学安排表','4','ATTACH_TYPE',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ATTACH_TYPE_F','教学方案','5','ATTACH_TYPE',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('CONTRACT_STATUS','签单状态',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSEHOUR_CANCEL','已取消','1','COURSE_HOUR_STATUS',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSEHOUR_SETTLE','已清算','0','COURSE_HOUR_STATUS',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_DILI','地理','9','ORDER_COURSE',NULL,'9','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_HUAXUE','化学','5','ORDER_COURSE',NULL,'5','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_LISHI','历史','8','ORDER_COURSE',NULL,'8','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_SHENGWU','生物','7','ORDER_COURSE',NULL,'7','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_SHUXUE','数学','2','ORDER_COURSE',NULL,'2','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_WULI','物理','4','ORDER_COURSE',NULL,'4','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_YINGWEN','英文','3','ORDER_COURSE',NULL,'3','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_YUWEN','语文','1','ORDER_COURSE',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('COURSE_ZHENGZHI','政治','6','ORDER_COURSE',NULL,'6','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('CUSTOMER_STATUS','客户当前状态',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('CUSTOMER_STATUS_A','去电','0','CUSTOMER_STATUS',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('CUSTOMER_STATUS_B','未上门','1','CUSTOMER_STATUS',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('CUSTOMER_STATUS_C','已上门','2','CUSTOMER_STATUS',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('EDUADMIN_CONFIRM','教务部审批','5','CONTRACT_STATUS',NULL,'5','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('EDUADMIN_DISPATCH','教务部分配班主任','2','CONTRACT_STATUS',NULL,'2','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('EFFECTIVE','有效','0','ISEFF',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('FORMAL_TEACHER','正式教师','0','TEACHER_TYPE',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('FRIDAY','星期五','6','WEEK',NULL,'6','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('GRADE','年级',NULL,NULL,NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('HIGH_FIVE','高中二年级','11','GRADE',NULL,'11','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('HIGH_FOUR','高中一年级','10','GRADE',NULL,'10','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('HIGH_ONE','初中一年级','7','GRADE',NULL,'7','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('HIGH_SIX','高中三年级','12','GRADE',NULL,'12','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('HIGH_THREE','初中三年级','9','GRADE',NULL,'9','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('HIGH_TWO','初中二年级','8','GRADE',NULL,'8','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('INEFFECTIVE','无效','1','ISEFF',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ISEFF','是否有效',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('JUNIOR_FIVE',' 小学五年级','5','GRADE',NULL,'5','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('JUNIOR_FOUR',' 小学四年级','4','GRADE',NULL,'4','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('JUNIOR_ONE',' 小学一年级','1','GRADE',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('JUNIOR_SIX',' 小学六年级','6','GRADE',NULL,'6','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('JUNIOR_THREE',' 小学三年级','3','GRADE',NULL,'3','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('JUNIOR_TWO',' 小学二年级','2','GRADE',NULL,'2','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('LAERNING','授课中','7','CONTRACT_STATUS',NULL,'7','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('MAINTEACHER_CONFIRM','待班主任确认','3','CONTRACT_STATUS',NULL,'3','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('MAINTEACHER_HANDLE','班主任处理中','4','CONTRACT_STATUS',NULL,'4','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('MAN','男','0','SEXTYPE',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('MARKETEXECUTIVE_HANDLE','销售主管审批','1','CONTRACT_STATUS',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('MONDAY','星期一','2','WEEK',NULL,'2','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('NEW','新签单','0','CONTRACT_STATUS',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('NO','否','0','YESORNO',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('NOTICER_DEPARTMENT','部门','2','NOTICER_TYPE',NULL,'2','0','2012-08-12 22:28:19','2012-08-12 22:28:19'),('NOTICER_PERSONAL','个人','0','NOTICER_TYPE',NULL,'0','0','2012-08-12 22:28:19','2012-08-12 22:28:19'),('NOTICER_TYPE','消息者类型',NULL,NULL,NULL,NULL,'0','2012-08-12 22:28:19','0000-00-00 00:00:00'),('NOTICE_NOREAD','未读','0','NOTICE_STATUS',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('NOTICE_READ','已读','1','NOTICE_STATUS',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('NOTICE_STATUS','公告状态',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('NOTPASS','不通过','2','APPLY_STATUS',NULL,'2','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ORDER_COURSE','签单课程',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ORDER_RUN_STATUS_A','审批中','0','ORDER_RUN_STATUS',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ORDER_RUN_STATUS_C','授课中','1','ORDER_RUN_STATUS',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('ORDER_RUN_STATUS_D','结束','2','ORDER_RUN_STATUS',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('OVER','结束','8','CONTRACT_STATUS',NULL,'8','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('PARTTIME_TEACHER','兼职教师','1','TEACHER_TYPE',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('PASS','通过','1','APPLY_STATUS',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('POSITION','职位',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('REJECT','拒绝','1','TASK_OPER',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('RESIDENT_TYPE','户口类型',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('RESIDENT_TYPE_A','非农业户口','0','RESIDENT_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('RESIDENT_TYPE_B','农业户口','1','RESIDENT_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('RESIDENT_TYPE_C','居民户口','2','RESIDENT_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('SATURDAY','星期六','7','WEEK',NULL,'7','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('SCHEDULE_DETAIL_FINISH','结束','1','SCHEDULE_DETAIL_STATUS',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('SCHEDULE_DETAIL_NOTFINISH','没结束','0','SCHEDULE_DETAIL_STATUS',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('SCHEDULE_END','结束','2','SCHEDULE_STATUS',NULL,'2','0','2015-04-11 17:21:37','2012-03-13 20:50:21'),('SCHEDULE_NOTBEGIN','未开始','0','SCHEDULE_STATUS',NULL,'0','0','2015-04-11 17:23:40','2015-04-11 17:23:40'),('SCHEDULE_RUNNING','开始中','1','SCHEDULE_STATUS',NULL,'1','0','2015-04-11 17:21:29','2012-03-13 20:50:21'),('SELLER','销售','0','POSITION',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('SEXTYPE','性别',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('STUDENT_TYPE','学生类型',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('STUDENT_TYPE_A','普通借读生','0','STUDENT_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('STUDENT_TYPE_B','正式生','1','STUDENT_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('SUNDAY','星期日','1','WEEK',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('TEACHER','教师','1','POSITION',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('TEACHER_CONFIRM','待授课老师确认','6','CONTRACT_STATUS',NULL,'6','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('THURSDAY','星期四','5','WEEK',NULL,'5','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('TUESDAY','星期二','3','WEEK',NULL,'3','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('VISIT_SOURCE_TYPE','访问来源',NULL,NULL,NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('VISIT_SOURCE_TYPE_A','来电','0','VISIT_SOURCE_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('VISIT_SOURCE_TYPE_B','短信','1','VISIT_SOURCE_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('VISIT_SOURCE_TYPE_C','老资料回访','2','VISIT_SOURCE_TYPE',NULL,NULL,'0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('WAIT','待审批','0','APPLY_STATUS',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('WEBNESDAY','星期三','4','WEEK',NULL,'4','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('WOMAN','女','1','SEXTYPE',NULL,'1','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('YES','是','1','YESORNO',NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21'),('YESORNO','是与否',NULL,NULL,NULL,'0','0','2012-03-13 20:50:21','2012-03-13 20:50:21');
 
 UNLOCK TABLES;
-
-/*Table structure for table `sys_right_rel` */
-
-DROP TABLE IF EXISTS `sys_right_rel`;
-
-CREATE TABLE `sys_right_rel` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) NOT NULL COMMENT '关系类型 0:用户 1：角色 2：部门 ',
-  `rel_id` varchar(250) DEFAULT NULL COMMENT '关联对象',
-  `target_id` int(10) unsigned DEFAULT NULL COMMENT '对象ID',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `rel_right` int(1) NOT NULL DEFAULT '0' COMMENT '关系类型 0:菜单 1：区域',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1901 DEFAULT CHARSET=utf8 COMMENT='权限菜单关联';
 
 /*Data for the table `sys_right_rel` */
 
@@ -207,19 +80,6 @@ insert  into `sys_right_rel`(`id`,`type`,`rel_id`,`target_id`,`create_time`,`las
 
 UNLOCK TABLES;
 
-/*Table structure for table `sys_role` */
-
-DROP TABLE IF EXISTS `sys_role`;
-
-CREATE TABLE `sys_role` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `iseff` char(1) NOT NULL DEFAULT '0',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-
 /*Data for the table `sys_role` */
 
 LOCK TABLES `sys_role` WRITE;
@@ -228,249 +88,13 @@ insert  into `sys_role`(`id`,`name`,`iseff`,`create_time`,`last_update`) values 
 
 UNLOCK TABLES;
 
-/*Table structure for table `course_schedule_view` */
+/*Data for the table `sys_user` */
 
-DROP TABLE IF EXISTS `course_schedule_view`;
+LOCK TABLES `sys_user` WRITE;
 
-/*!50001 DROP VIEW IF EXISTS `course_schedule_view` */;
-/*!50001 DROP TABLE IF EXISTS `course_schedule_view` */;
+insert  into `sys_user`(`id`,`user_name`,`dep_id`,`password`,`sex`,`position`,`phone`,`addr`,`zipcode`,`iseff`,`create_time`,`last_update`,`role_id`,`email`,`area_id`,`qq`) values (5,'销售主管一号',2,'1','0',NULL,'212112','111','55','0','2015-03-08 22:34:47','2015-04-30 22:25:46',3,NULL,5,NULL),(7,'销售主管二号',2,'1','1',NULL,'13826031714','guangzhou','33','0','2015-03-08 22:34:47','2012-08-16 22:41:26',3,NULL,4,NULL),(10,'销售一号',2,'1','0',NULL,'212112','111','1@ye.com','0','2015-03-08 22:34:47','2015-04-30 22:18:56',2,NULL,5,NULL),(13,'销售二号',2,'1','1',NULL,'1','1','1','0','2015-03-08 22:34:47','2012-08-16 22:39:24',2,NULL,4,NULL),(14,'教务部主管一号',1,'1','1',NULL,'1','1','31','0','2015-03-08 22:34:47','2015-04-30 22:25:58',4,NULL,5,NULL),(15,'教务部主管二号',1,'1','0',NULL,'1','1','5135','0','2015-03-08 22:34:47','2012-08-16 22:40:54',4,NULL,4,NULL),(16,'班主任一号',1,'1','0',NULL,'11','11','11','0','2015-03-08 22:34:47','2015-04-30 22:26:04',5,NULL,5,NULL),(17,'班主任二号',1,'1','1',NULL,'1','11','1','0','2015-03-08 22:34:47','2012-08-16 22:42:09',5,NULL,4,NULL),(18,'国产007',1,'1','0',NULL,'22','111','22','0','2015-04-24 21:56:53','2015-04-24 21:56:41',1,NULL,4,NULL),(19,'王老师',1,'111111','0',NULL,'1','1',NULL,'0','2015-04-27 15:46:28','2015-04-27 10:38:58',6,'1@163.com',4,NULL),(20,'谢老师',1,'111111','1',NULL,'1','111','1','0','2015-04-27 15:46:33','2015-04-30 22:26:17',6,NULL,5,NULL),(21,'林老师',1,'111111','0',NULL,'1','1','1','0','2015-04-27 15:46:35','2015-04-30 22:26:28',6,NULL,5,NULL),(22,'陈老师',1,'111111','0',NULL,'138','111','2@163.com','0','2015-04-27 15:46:38','2012-10-22 22:44:46',6,'2@163.com',4,NULL),(23,'Kelly',1,'111111','1',NULL,'1','1','1','0','2015-03-08 22:34:47','2012-11-22 20:31:20',6,'1',4,NULL),(24,'t1',1,'111111','0',NULL,'1','1',NULL,'0','2015-05-01 23:12:52','2015-05-01 23:16:19',6,'1@1.com',4,'1'),(25,'t2',1,'111111','0',NULL,'1','1',NULL,'0','2015-05-01 23:13:14','2015-05-01 23:13:14',6,NULL,4,NULL),(27,'test111',NULL,'111',NULL,NULL,NULL,NULL,NULL,NULL,'2015-05-01 23:28:47','2015-05-01 23:28:47',NULL,NULL,1,NULL),(28,'test111',NULL,'111',NULL,NULL,NULL,NULL,NULL,NULL,'2015-05-01 23:30:10','2015-05-01 23:30:10',NULL,NULL,1,NULL);
 
-/*!50001 CREATE TABLE  `course_schedule_view`(
- `id` int(10) ,
- `teacher_id` int(10) unsigned ,
- `student_id` int(10) unsigned ,
- `course_type` char(2) ,
- `date` date ,
- `start_time` int(4) ,
- `end_time` int(4) ,
- `iseff` char(1) ,
- `create_time` timestamp ,
- `last_update` timestamp ,
- `course_name` varchar(50) ,
- `student_name` varchar(50) ,
- `teacher_name` varchar(50) ,
- `is_finish` int(1) 
-)*/;
-
-/*Table structure for table `customer_exchange_view` */
-
-DROP TABLE IF EXISTS `customer_exchange_view`;
-
-/*!50001 DROP VIEW IF EXISTS `customer_exchange_view` */;
-/*!50001 DROP TABLE IF EXISTS `customer_exchange_view` */;
-
-/*!50001 CREATE TABLE  `customer_exchange_view`(
- `id` int(10) ,
- `customer_id` int(10) ,
- `cust_status` char(1) ,
- `source_type` char(1) ,
- `is_book` char(1) ,
- `user_id` int(10) ,
- `content` varchar(1000) ,
- `customer_attach_id` varchar(1000) ,
- `create_time` timestamp ,
- `last_update` timestamp ,
- `book_time` timestamp ,
- `name` varchar(50) ,
- `sex` char(1) ,
- `school` varchar(200) ,
- `classes` varchar(50) ,
- `brithday` varchar(10) ,
- `age` varchar(3) ,
- `student_type` varchar(1) ,
- `resident_type` varchar(1) ,
- `parent_name` varchar(20) ,
- `phone` varchar(50) ,
- `addr` varchar(200) 
-)*/;
-
-/*Table structure for table `order_course_view` */
-
-DROP TABLE IF EXISTS `order_course_view`;
-
-/*!50001 DROP VIEW IF EXISTS `order_course_view` */;
-/*!50001 DROP TABLE IF EXISTS `order_course_view` */;
-
-/*!50001 CREATE TABLE  `order_course_view`(
- `id` int(10) ,
- `order_id` int(10) unsigned ,
- `course_type` char(2) ,
- `charger_id` int(10) unsigned ,
- `status` char(1) ,
- `order_attach_id` int(10) unsigned ,
- `hour` int(10) unsigned ,
- `cost_hour` int(10) ,
- `schedule_hour` int(10) ,
- `create_time` timestamp ,
- `last_update` timestamp ,
- `student_id` int(10) unsigned ,
- `course_name` varchar(50) ,
- `charger_name` varchar(50) ,
- `student_name` varchar(50) 
-)*/;
-
-/*Table structure for table `order_info_daily` */
-
-DROP TABLE IF EXISTS `order_info_daily`;
-
-/*!50001 DROP VIEW IF EXISTS `order_info_daily` */;
-/*!50001 DROP TABLE IF EXISTS `order_info_daily` */;
-
-/*!50001 CREATE TABLE  `order_info_daily`(
- `create_date` varchar(10) ,
- `total` bigint(21) 
-)*/;
-
-/*Table structure for table `order_info_monthly` */
-
-DROP TABLE IF EXISTS `order_info_monthly`;
-
-/*!50001 DROP VIEW IF EXISTS `order_info_monthly` */;
-/*!50001 DROP TABLE IF EXISTS `order_info_monthly` */;
-
-/*!50001 CREATE TABLE  `order_info_monthly`(
- `month` varchar(7) ,
- `total` bigint(21) 
-)*/;
-
-/*Table structure for table `order_info_view` */
-
-DROP TABLE IF EXISTS `order_info_view`;
-
-/*!50001 DROP VIEW IF EXISTS `order_info_view` */;
-/*!50001 DROP TABLE IF EXISTS `order_info_view` */;
-
-/*!50001 CREATE TABLE  `order_info_view`(
- `id` int(10) unsigned ,
- `order_no` varchar(100) ,
- `student_id` int(10) unsigned ,
- `fee` bigint(20) unsigned ,
- `order_type` char(2) ,
- `status` char(20) ,
- `des` varchar(250) ,
- `flow_ins_id` varchar(20) ,
- `start_time` timestamp ,
- `end_time` timestamp ,
- `grade` varchar(10) ,
- `course_hour` int(10) unsigned ,
- `adjust_hour` int(10) unsigned ,
- `cost_course_hour` int(10) unsigned ,
- `schedule_hour` int(10) ,
- `run_status` char(1) ,
- `parent_order_id` int(10) unsigned ,
- `cur_operator` int(10) unsigned ,
- `is_last` char(1) ,
- `iseff` char(1) ,
- `create_time` timestamp ,
- `last_update` timestamp ,
- `area_id` int(11) ,
- `student_name` varchar(50) ,
- `student_age` varchar(3) 
-)*/;
-
-/*Table structure for table `teacher_info` */
-
-DROP TABLE IF EXISTS `teacher_info`;
-
-/*!50001 DROP VIEW IF EXISTS `teacher_info` */;
-/*!50001 DROP TABLE IF EXISTS `teacher_info` */;
-
-/*!50001 CREATE TABLE  `teacher_info`(
- `id` int(10) ,
- `user_name` varchar(50) ,
- `dep_id` int(10) unsigned ,
- `area_id` int(11) ,
- `password` varchar(50) ,
- `sex` char(1) ,
- `position` varchar(10) ,
- `phone` varchar(100) ,
- `addr` varchar(200) ,
- `zipcode` varchar(10) ,
- `iseff` char(1) ,
- `create_time` timestamp ,
- `last_update` timestamp ,
- `role_id` int(10) unsigned ,
- `email` varchar(100) ,
- `course_type` varchar(50) ,
- `grade_type` varchar(45) ,
- `teacher_type` char(1) 
-)*/;
-
-/*Table structure for table `teacher_ref_student` */
-
-DROP TABLE IF EXISTS `teacher_ref_student`;
-
-/*!50001 DROP VIEW IF EXISTS `teacher_ref_student` */;
-/*!50001 DROP TABLE IF EXISTS `teacher_ref_student` */;
-
-/*!50001 CREATE TABLE  `teacher_ref_student`(
- `id` bigint(10) unsigned ,
- `teacher_id` int(10) unsigned ,
- `student_id` int(10) unsigned ,
- `course_type` char(2) ,
- `run_status` char(1) ,
- `name` varchar(50) ,
- `grade` varchar(10) ,
- `sex` char(1) ,
- `age` varchar(3) ,
- `area_id` int(11) 
-)*/;
-
-/*View structure for view course_schedule_view */
-
-/*!50001 DROP TABLE IF EXISTS `course_schedule_view` */;
-/*!50001 DROP VIEW IF EXISTS `course_schedule_view` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `course_schedule_view` AS select `c`.`id` AS `id`,`c`.`teacher_id` AS `teacher_id`,`c`.`student_id` AS `student_id`,`c`.`course_type` AS `course_type`,`c`.`date` AS `date`,`c`.`start_time` AS `start_time`,`c`.`end_time` AS `end_time`,`c`.`iseff` AS `iseff`,`c`.`create_time` AS `create_time`,`c`.`last_update` AS `last_update`,`p`.`param_name` AS `course_name`,`s`.`name` AS `student_name`,`t`.`user_name` AS `teacher_name`,`c`.`is_finish` AS `is_finish` from (((`course_schedule_detail` `c` join `sys_param` `p`) join `student_info` `s`) join `teacher_info` `t`) where ((`p`.`root_code` = 'ORDER_COURSE') and (`p`.`param_value` = `c`.`course_type`) and (`s`.`id` = `c`.`student_id`) and (`t`.`id` = `c`.`teacher_id`)) */;
-
-/*View structure for view customer_exchange_view */
-
-/*!50001 DROP TABLE IF EXISTS `customer_exchange_view` */;
-/*!50001 DROP VIEW IF EXISTS `customer_exchange_view` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `customer_exchange_view` AS select `c`.`id` AS `id`,`c`.`customer_id` AS `customer_id`,`c`.`cust_status` AS `cust_status`,`c`.`source_type` AS `source_type`,`c`.`is_book` AS `is_book`,`c`.`user_id` AS `user_id`,`c`.`content` AS `content`,`c`.`customer_attach_id` AS `customer_attach_id`,`c`.`create_time` AS `create_time`,`c`.`last_update` AS `last_update`,`c`.`book_time` AS `book_time`,`i`.`name` AS `name`,`i`.`sex` AS `sex`,`i`.`school` AS `school`,`i`.`classes` AS `classes`,`i`.`brithday` AS `brithday`,`i`.`age` AS `age`,`i`.`student_type` AS `student_type`,`i`.`resident_type` AS `resident_type`,`i`.`parent_name` AS `parent_name`,`i`.`phone` AS `phone`,`i`.`addr` AS `addr` from (`customer_exchange` `c` left join `customer_info` `i` on((`c`.`customer_id` = `i`.`id`))) */;
-
-/*View structure for view order_course_view */
-
-/*!50001 DROP TABLE IF EXISTS `order_course_view` */;
-/*!50001 DROP VIEW IF EXISTS `order_course_view` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `order_course_view` AS select `c`.`id` AS `id`,`c`.`order_id` AS `order_id`,`c`.`course_type` AS `course_type`,`c`.`charger_id` AS `charger_id`,`c`.`status` AS `status`,`c`.`order_attach_id` AS `order_attach_id`,`c`.`hour` AS `hour`,`c`.`cost_hour` AS `cost_hour`,`c`.`schedule_hour` AS `schedule_hour`,`c`.`create_time` AS `create_time`,`c`.`last_update` AS `last_update`,`o`.`student_id` AS `student_id`,`s`.`param_name` AS `course_name`,`u`.`user_name` AS `charger_name`,`d`.`name` AS `student_name` from ((((`order_course` `c` join `order_info` `o` on(((`c`.`order_id` = `o`.`id`) and (`o`.`run_status` <> 0)))) join `sys_param` `s` on(((`s`.`root_code` = 'ORDER_COURSE') and (`s`.`param_value` = `c`.`course_type`)))) join `sys_user` `u` on((`c`.`charger_id` = `u`.`id`))) join `student_info` `d` on((`d`.`id` = `o`.`student_id`))) */;
-
-/*View structure for view order_info_daily */
-
-/*!50001 DROP TABLE IF EXISTS `order_info_daily` */;
-/*!50001 DROP VIEW IF EXISTS `order_info_daily` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `order_info_daily` AS select date_format(`order_info`.`create_time`,'%Y-%m-%d') AS `create_date`,count(0) AS `total` from `order_info` group by date_format(`order_info`.`create_time`,'%Y-%m-%d') */;
-
-/*View structure for view order_info_monthly */
-
-/*!50001 DROP TABLE IF EXISTS `order_info_monthly` */;
-/*!50001 DROP VIEW IF EXISTS `order_info_monthly` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `order_info_monthly` AS select date_format(`order_info`.`create_time`,'%Y-%m') AS `month`,count(0) AS `total` from `order_info` group by date_format(`order_info`.`create_time`,'%Y-%m') */;
-
-/*View structure for view order_info_view */
-
-/*!50001 DROP TABLE IF EXISTS `order_info_view` */;
-/*!50001 DROP VIEW IF EXISTS `order_info_view` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `order_info_view` AS select `o`.`id` AS `id`,`o`.`order_no` AS `order_no`,`o`.`student_id` AS `student_id`,`o`.`fee` AS `fee`,`o`.`order_type` AS `order_type`,`o`.`status` AS `status`,`o`.`des` AS `des`,`o`.`flow_ins_id` AS `flow_ins_id`,`o`.`start_time` AS `start_time`,`o`.`end_time` AS `end_time`,`o`.`grade` AS `grade`,`o`.`course_hour` AS `course_hour`,`o`.`adjust_hour` AS `adjust_hour`,`o`.`cost_course_hour` AS `cost_course_hour`,`o`.`schedule_hour` AS `schedule_hour`,`o`.`run_status` AS `run_status`,`o`.`parent_order_id` AS `parent_order_id`,`o`.`cur_operator` AS `cur_operator`,`o`.`is_last` AS `is_last`,`o`.`iseff` AS `iseff`,`o`.`create_time` AS `create_time`,`o`.`last_update` AS `last_update`,`s`.`area_id` AS `area_id`,`s`.`name` AS `student_name`,`s`.`age` AS `student_age` from (`order_info` `o` join `student_info` `s` on((`o`.`student_id` = `s`.`id`))) */;
-
-/*View structure for view teacher_info */
-
-/*!50001 DROP TABLE IF EXISTS `teacher_info` */;
-/*!50001 DROP VIEW IF EXISTS `teacher_info` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `teacher_info` AS select `a`.`id` AS `id`,`a`.`user_name` AS `user_name`,`a`.`dep_id` AS `dep_id`,`a`.`area_id` AS `area_id`,`a`.`password` AS `password`,`a`.`sex` AS `sex`,`a`.`position` AS `position`,`a`.`phone` AS `phone`,`a`.`addr` AS `addr`,`a`.`zipcode` AS `zipcode`,`a`.`iseff` AS `iseff`,`a`.`create_time` AS `create_time`,`a`.`last_update` AS `last_update`,`a`.`role_id` AS `role_id`,`a`.`email` AS `email`,`b`.`course_type` AS `course_type`,`b`.`grade_type` AS `grade_type`,`b`.`teacher_type` AS `teacher_type` from (`sys_user` `a` join `teacher_ability` `b`) where (`a`.`id` = `b`.`user_id`) */;
-
-/*View structure for view teacher_ref_student */
-
-/*!50001 DROP TABLE IF EXISTS `teacher_ref_student` */;
-/*!50001 DROP VIEW IF EXISTS `teacher_ref_student` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `teacher_ref_student` AS select crc32(concat(`c`.`charger_id`,`i`.`student_id`,`c`.`course_type`)) AS `id`,`c`.`charger_id` AS `teacher_id`,`i`.`student_id` AS `student_id`,`c`.`course_type` AS `course_type`,`i`.`run_status` AS `run_status`,`s`.`name` AS `name`,`s`.`grade` AS `grade`,`s`.`sex` AS `sex`,`s`.`age` AS `age`,`s`.`area_id` AS `area_id` from ((`order_course` `c` left join `order_info` `i` on((`i`.`id` = `c`.`order_id`))) left join `student_info` `s` on((`i`.`student_id` = `s`.`id`))) where ((`c`.`charger_id` is not null) and (`i`.`student_id` is not null)) group by `c`.`charger_id`,`i`.`student_id`,`c`.`course_type` */;
+UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

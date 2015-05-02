@@ -10,8 +10,8 @@ var EditWindow = function(_primaryId, _courseType, _gradeType) {
 	var editform = this.editform();
 	var win = new Ext.Window({
 		id : "userEditForm",
-		title : '用户编辑',
-		width : 500,
+		title : '教师编辑',
+		width : 700,
 		height : 450,
 		minWidth : 500,
 		minHeight : 300,

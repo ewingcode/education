@@ -47,7 +47,8 @@
 	  	var configPanel = new Ext.Panel({
 			title : '排课设置',
 			region : 'west',
-			autoScroll : true,
+			autoScroll : true, 
+            collapsible: true,
 			split : true,
 			width : "30%", 
 			defaultType : "textfield",

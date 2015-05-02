@@ -840,16 +840,16 @@ Schedule.showCalender = function(teacherId, isReadOnly) {
 			dataIndex : "id",
 			hidden : true
 		}, {
-			header : "星期日",
+			header : "星期日", 
 			dataIndex : "content1"
 		}, {
-			header : "星期一",
+			header : "星期一", 
 			dataIndex : "content2"
 		}, {
-			header : "星期二",
+			header : "星期二", 
 			dataIndex : "content3"
 		}, {
-			header : "星期三",
+			header : "星期三", 
 			dataIndex : "content4"
 		}, {
 			header : "星期四",
@@ -863,8 +863,10 @@ Schedule.showCalender = function(teacherId, isReadOnly) {
 			height : 100
 		} ],
 		defaults : {
-			width : 200,
-			align : "center"
+			width : 155,
+			align : "center",
+			sortable : false,
+			menuDisabled : false  
 		}
 	});
 	var gridPanel = new Ext.grid.EditorGridPanel({
@@ -872,13 +874,10 @@ Schedule.showCalender = function(teacherId, isReadOnly) {
 		store : store,
 		region : "center",
 		autoScroll : true,
+		width:900,
 		cm : cm,
-		height : 700, 
-		clicksToEdit : 1,
-		viewConfig : {
-			forceFit : true,// 填满width.
-			enableRowBody : true,
-			showPreview : false
+		height : 700,  
+		viewConfig : { 
 		}
 	});
 
