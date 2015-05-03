@@ -167,10 +167,10 @@ public class CourseScheduleDetailService {
 	 * 删除排课模板，并且删除没有结束的排课计划
 	 * 
 	 * @param scheduleId
-	 * @throws OrderException
+	 * @throws Exception 
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteScheduleDetail(Integer scheduleId) throws OrderException {
+	public void deleteScheduleDetail(Integer scheduleId) throws Exception {
 		try {
 			CourseSchedule scheduleTemplate = courseScheduleService
 					.findOne(scheduleId);

@@ -26,6 +26,27 @@ public class OrderCourseAction extends BaseAction {
 		super(OrderCourseView.class);
 	}
 
+	
+	/**
+	 * dao查询
+	 * 
+	 * @throws ActionException
+	 */
+	public void query() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			if (entityBean == null)
+				throw new ActionException(
+						"entityClass must be defined in Action");
+			List list = baseModelService.find(getCondition(), entityClass);
+			responseData = ResponseUtils.success("查询成功！");
+			responseData.setResult(list);
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("查询失败！");
+		}
+		this.outResult(responseData);
+	}
 	/**
 	 * dao查询
 	 * 

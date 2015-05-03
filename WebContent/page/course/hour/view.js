@@ -124,7 +124,7 @@ var toolbar = new Ext.Toolbar({
 		}
 	}, {
 		iconCls : "btn_add",
-		text : "回滚课时",
+		text : "撤销课时",
 		xtype : "button",
 		scale : 'medium',
 		handler : function() {

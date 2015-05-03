@@ -15,7 +15,7 @@ public class OrderCourseView implements java.io.Serializable {
 	private String courseType;
 	private Integer chargerId;
 	private Timestamp createTime;
-	private Timestamp lastUpdate; 
+	private Timestamp lastUpdate;
 	private String status;
 	private Integer hour;
 	private Integer costHour;
@@ -24,6 +24,15 @@ public class OrderCourseView implements java.io.Serializable {
 	private String courseName;
 	private Integer studentId;
 	private String studentName;
+	private String orderRunStatus;
+
+	public String getOrderRunStatus() {
+		return orderRunStatus;
+	}
+
+	public void setOrderRunStatus(String orderRunStatus) {
+		this.orderRunStatus = orderRunStatus;
+	}
 
 	public String getCourseName() {
 		return courseName;

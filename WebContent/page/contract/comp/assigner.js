@@ -10,7 +10,7 @@ Assigner.showAssinerField = function(isShow) {
 
 }
 
-Assigner.assingerFiled = function(orderId) {
+Assigner.assingerFiled = function(orderId) { 
 	var orderRoleStore = Order.loadOrderRoleStore();
 	var field = {
 		xtype : 'compositefield',
@@ -36,24 +36,22 @@ Assigner.assingerFiled = function(orderId) {
 					text : "选择指派人",
 					width : "150",
 					listeners : {
-						"click" : function(d, i, n, e) { 
+						"click" : function(d, i, n, e) {  
 							var assigner = '';
 							var roleId =''; 
 							var url = "Busi_OrderView_getAssigner.action?orderId="
 									+ orderId
 									+ "&transitionName="
-									+ $("#transitionName").val();
-
+									+ $("#transitionName").val(); 
 							Ajax.syncRequest(url, function(data) {
-								assigner = data.result; 
+								assigner = data.result;  
 							    for(var i=0;i<orderRoleStore.getTotalCount();i++){
 							    	var rec = orderRoleStore.getAt(i);
 							    	if(rec.get("charger")==assigner){
 							    		roleId = rec.get("roleId");
 							    	} 
 							    } 
-							});
-						 
+							}); 
 							if (roleId != null && roleId != '')
 								new SysRole.selectWin('assignerId',
 										'assignerName', roleId);

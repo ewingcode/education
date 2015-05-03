@@ -31,6 +31,10 @@
         <property name="studentName" type="java.lang.String">
             <column name="student_name"   />
         </property>
+        <property name="orderRunStatus" type="java.lang.String">
+            <column name="order_run_status"   />
+        </property>
+        
         <property name="studentId" type="java.lang.Integer">
             <column name="student_id"   />
         </property>   

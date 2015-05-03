@@ -182,7 +182,7 @@ SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
 		loadMask : true,
 		cm : cm,
 		sm : sm,
-		height : 550,
+		height : 450,
 		viewConfig : {
 			forceFit : true,// 填满width.
 			enableRowBody : true,

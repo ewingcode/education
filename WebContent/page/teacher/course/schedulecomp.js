@@ -334,7 +334,7 @@ Schedule.computeScheduleResult = function(teacherId, studentId, courseType,cours
 		id : "editScheduleWin",
 		title : '排课计划',
 		width : 880,
-		height : 500, 
+		height : 450, 
 		plain : true,
 		bodyStyle : 'padding:5px;',
 		buttonAlign : 'center', 

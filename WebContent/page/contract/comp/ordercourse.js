@@ -94,8 +94,8 @@ Order.courseList = function(orderId, showCharger,showSchedule) {
 							 var teacherName = SysUser.translate(teacherId);  
 							 var showPage = _contextPath
 								+ "/page/teacher/course/scheduleframe.jsp?teacherId="+teacherId+"&studentId="+studentId ; 
-						      
-						     Frame.editPageWindow(showPage, 450, 1100, '排课['+teacherName+']');
+							 window.open(showPage,'排课['+teacherName+']');  
+						    // Frame.editPageWindow(showPage, 500, 1100, '排课['+teacherName+']');
 						    
 						}
 					} ]

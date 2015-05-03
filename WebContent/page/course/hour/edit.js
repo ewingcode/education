@@ -3,7 +3,7 @@ var EditWindow = function(b) {
 	var editform = this.editform();
 	var win = new Ext.Window({
 		id : "depEditForm",
-		title : '考试分数管理',
+		title : '课时管理',
 		width : 500,
 		height : 300,
 		minWidth : 500,
@@ -36,7 +36,7 @@ var removeData = function(b) {
 	Ext.Msg.confirm("信息确认", "您确认要删除该记录吗？", function(c) {
 		if (c == "yes") {
 			Ext.Ajax.request({
-				url : "Busi_OrderCourseHour_rollbackCourseHour.action",
+				url : "Busi_OrderCourseHourLog_rollbackCourseHour.action",
 				params : {
 					courseHourLogId : b,
 					desc: Ext.getCmp("desc").getValue()
@@ -82,7 +82,7 @@ EditWindow.prototype.editform = function() {
 		items : [ {
 			id : "desc",
 			xtype : "textarea",
-			fieldLabel : "删除理由",
+			fieldLabel : "撤销课时理由",
 			allowBlank : false
 		} ]
 	});

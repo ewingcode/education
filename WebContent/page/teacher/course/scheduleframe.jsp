@@ -6,6 +6,7 @@
 <script>
 	Ext.onReady(function() {
 		var teacherId = jQuery.url.param("teacherId");
+		var teacherName = Teacher.translate(teacherId);
 		var studentId = jQuery.url.param("studentId");
 		  var scheduledailyUrl = _contextPath + "/page/teacher/course/scheduledaily.jsp?teacherId="+ teacherId+"&isReadOnly=false";
 		  var scheduleSettingUrl = _contextPath + "/page/teacher/course/schedulesetting.jsp?teacherId="+ teacherId+"&isReadOnly=false";
@@ -45,7 +46,7 @@
 		});
 	
 	  	var configPanel = new Ext.Panel({
-			title : '排课设置',
+			title : '排课设置['+teacherName+']',
 			region : 'west',
 			autoScroll : true, 
             collapsible: true,
@@ -56,7 +57,7 @@
 			items : [ new Schedule.addSchedulePanel(teacherId,studentId) ]
 
 		});  
-		new Ext.Viewport({
+		new Ext.Viewport({ 
 			layout : 'border',
 			items : [ configPanel , shedulePanel ]
 		});

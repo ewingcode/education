@@ -154,7 +154,7 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 		loadMask : true,
 		cm : cm,
 		sm : sm,
-		height : 550,
+		height : 450,
 		viewConfig : {
 			forceFit : true,// 填满width.
 			enableRowBody : true,
@@ -221,7 +221,7 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 		id : "editScheduleWin",
 		title : '教师信息',
 		width : 650,
-		height : 420,
+		height : 500,
 		minWidth : 500,
 		minHeight : 300,
 		plain : true,
@@ -551,7 +551,7 @@ Teacher.selectRefStudent = function(teacherId,studentId, callbackFn) {
 		loadMask : true,
 		cm : cm,
 		sm : sm,
-		height : 550,
+		height : 450,
 		viewConfig : {
 			forceFit : true,// 填满width.
 			enableRowBody : true,

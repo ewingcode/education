@@ -257,7 +257,8 @@ public class OrderCourseService {
 	 * @return
 	 */
 	public List<OrderCourseView> findCourseByStudent(Integer studentId) {
-		String sql = "student_id=" + studentId + "  order by id desc";
+		String sql = "student_id=" + studentId + " and order_run_status!='"
+				+ OrderRunStatus.INAPPLY + "'  order by id desc";
 		return baseDao.find(sql, OrderCourseView.class);
 	}
 
@@ -271,7 +272,8 @@ public class OrderCourseService {
 	public List<OrderCourseView> findChargerForCourse(Integer studentId,
 			Integer courseType) {
 		String sql = "student_id=" + studentId + " and course_type='"
-				+ courseType + "'  order by id desc";
+				+ courseType + "' and order_run_status!='"
+				+ OrderRunStatus.INAPPLY + "'  order by id desc";
 		return baseDao.find(sql, OrderCourseView.class);
 	}
 
