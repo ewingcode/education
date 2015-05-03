@@ -40,6 +40,14 @@ insert  into `flow_task_transition`(`id`,`task_id`,`name`,`to`,`create_time`,`la
 
 UNLOCK TABLES;
 
+/*Data for the table `order_role` */
+
+LOCK TABLES `order_role` WRITE;
+
+insert  into `order_role`(`id`,`charger`,`role_id`) values (1,1,2),(2,2,3),(3,3,4),(4,4,5),(5,5,6);
+
+UNLOCK TABLES;
+
 /*Data for the table `sys_area` */
 
 LOCK TABLES `sys_area` WRITE;
