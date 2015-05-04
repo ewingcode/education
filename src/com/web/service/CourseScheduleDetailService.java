@@ -102,8 +102,7 @@ public class CourseScheduleDetailService {
 			// 挑选出合适的签单课程信息
 			for (OrderCourse orderCourse : orderCourseList) {
 				Integer coursehour = orderCourse.getHour();
-				Integer costcourseHour = orderCourse.getCostHour() == null
-						? 0
+				Integer costcourseHour = orderCourse.getCostHour() == null ? 0
 						: orderCourse.getCostHour();
 				Integer leaveHour = coursehour - costcourseHour;
 				// 如果有剩余的课时，则是合适的签单课程
@@ -167,7 +166,7 @@ public class CourseScheduleDetailService {
 	 * 删除排课模板，并且删除没有结束的排课计划
 	 * 
 	 * @param scheduleId
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteScheduleDetail(Integer scheduleId) throws Exception {
@@ -283,9 +282,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -301,9 +300,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[]{scheduleVo.getStartTime(),
-							scheduleVo.getEndTime()}, new Integer[]{startTime,
-							endTime});
+					new Integer[] { scheduleVo.getStartTime(),
+							scheduleVo.getEndTime() }, new Integer[] {
+							startTime, endTime });
 			if (!isLegalTime)
 				return true;
 		}
@@ -336,20 +335,20 @@ public class CourseScheduleDetailService {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{1000, 1100}));
-		System.out.println(isLegalNewTime(new Integer[]{1000, 1100},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{930, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{2200, 2300}));
-		System.out.println(isLegalNewTime(new Integer[]{2200, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{800, 2300},
-				new Integer[]{900, 1000}));
-		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
-				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 1000, 1100 }));
+		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 930, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 2200, 2300 }));
+		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
+				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
+				new Integer[] { 900, 1000 }));
 
 		System.out.println(930 % 831);
 	}
@@ -432,7 +431,8 @@ public class CourseScheduleDetailService {
 	 */
 	public List<CourseScheduleDetail> getCourseScheduleDetailList(
 			Integer scheduleId) {
-		String sql = "schedule_id = " + scheduleId + " order by is_finish asc,id asc";
+		String sql = "schedule_id = " + scheduleId
+				+ " order by is_finish asc,id asc";
 		return baseDao.find(sql, CourseScheduleDetail.class);
 	}
 
@@ -441,10 +441,11 @@ public class CourseScheduleDetailService {
 	 * 
 	 * @param courseHourLogId
 	 * @throws CourseScheduleException
+	 * @throws OrderException
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public void rollbackCourseHour(Integer courseHourLogId, String desc,
-			Integer operator) throws CourseScheduleException {
+			Integer operator) throws CourseScheduleException, OrderException {
 		OrderCourseHourLog courseHourLog = baseDao.findOne(courseHourLogId,
 				OrderCourseHourLog.class);
 		if (courseHourLog == null)
@@ -461,6 +462,19 @@ public class CourseScheduleDetailService {
 				.getOrderCourseId());
 		// 更新签单的总消耗课时
 		orderService.updateOrderCostHour(courseHourLog.getOrderId());
+		// 查询排课计划详细的信息，更新签单和课程的安排课程时间
+		CourseScheduleDetail courseScheduleDetail = baseDao
+				.findOne(courseHourLog.getScheduleDetailId(),
+						CourseScheduleDetail.class);
+		if (courseScheduleDetail != null) {
+			baseDao.delete(courseScheduleDetail);
+			// 更新签单科目的排课时间
+			orderCourseService.updateCourseScheduleHour(courseScheduleDetail
+					.getOrderCourseId());
+			// 更新签单的已经排课的课时
+			orderService.updateOrderScheduleHour(courseScheduleDetail
+					.getOrderId());
+		}
 
 	}
 
