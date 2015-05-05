@@ -47,11 +47,15 @@ var cm = new Ext.grid.ColumnModel({
 				dataIndex : "costHour"
 			},
 			{
-				header : "状态",
+				header : "课时状态",
 				dataIndex : "status",
 				renderer : function(value) {
 					return SysParam.translate(courseHourStatusStore, value);
 				}
+			},
+			{
+				header : "撤销理由",
+				dataIndex : "reason" 
 			},
 			{
 				header : "上课时间",
@@ -98,7 +102,7 @@ var store = new Ext.data.Store({
 		fields : [ {
 			name : "id",
 			type : "int"
-		}, "orderId", "courseType", "operator", "studentId", "teacherId",
+		}, "orderId", "courseType", "operator", "studentId", "teacherId","reason",
 				"status", "costHour","teachTime", {
 					name : "createTime",
 					type : "date",
@@ -182,6 +186,7 @@ function loadGirdStore() {
 	store.setBaseParam('_QUERY_n_in_student_id', studentIds);
 	store.setBaseParam('_QUERY_d_ge_teach_time', Ext.getCmp(
 			'QUERY_teach_startTime').getValue());
+	store.setBaseParam('_QUERY_s_eq_status', Ext.getCmp('QUERY_status').getValue());
 	store.setBaseParam('_QUERY_d_le_teach_time', Ext.getCmp(
 			'QUERY_teach_endTime').getValue());
 	store.setBaseParam('_ORDERBY', "order by create_time desc");
@@ -211,7 +216,8 @@ var formpanel = new Ext.FormPanel({
 			items : [ {
 				id : "QUERY_name",
 				fieldLabel : "学生名称"
-			} ]
+			}, 
+			new SysParam.ComboBox('课时状态', 'QUERY_status',  'COURSE_HOUR_STATUS')]
 		}, {
 			xtype : "container",
 			columnWidth : 0.33,

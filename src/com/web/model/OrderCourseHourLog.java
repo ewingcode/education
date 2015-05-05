@@ -21,18 +21,18 @@ public class OrderCourseHourLog implements java.io.Serializable {
 	private Date teachTime;
 	private Integer teacherId;
 	private String status;
-	private Integer scheduleId; 
+	private Integer scheduleId;
 	private Integer orderId;
 	private Integer orderCourseId;
 	private Integer scheduleDetailId;
-	private String desc;
+	private String reason;
 
-	public String getDesc() {
-		return desc;
+	public String getReason() {
+		return reason;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	public Integer getScheduleDetailId() {

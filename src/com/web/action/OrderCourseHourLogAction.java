@@ -58,15 +58,15 @@ public class OrderCourseHourLogAction extends BaseAction {
 		ResponseData responseData = null;
 		try {
 			Integer courseHourLogId = Integer.valueOf(request
-					.getParameter("courseHourLogId"));
-			String desc = request.getParameter("desc");
+					.getParameter("courseHourLogId")); 
+			String reason = request.getParameter("reason");
 			UserInfo userInfo = SessionControl.getUserInfo(request);
 			courseScheduleDetailService.rollbackCourseHour(courseHourLogId,
-					desc, userInfo.getId());
+					reason, userInfo.getId());
 			responseData = ResponseUtils.success("删除成功！");
 		} catch (Exception e) {
 			logger.error(e, e);
-			responseData = ResponseUtils.fail("删除失败！");
+			responseData = ResponseUtils.fail("删除失败！"+e.getMessage());
 		}
 		this.outResult(responseData);
 	}

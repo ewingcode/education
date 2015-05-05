@@ -173,8 +173,16 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 	function loadGirdStore() {
 		store.setBaseParam('start', 0);
 		store.setBaseParam('limit', 20);
-		store.setBaseParam('_QUERY_s_rlike_user_name', Ext.getCmp('QUERY_name')
-				.getValue());
+		store.setBaseParam('_QUERY_s_rlike_user_name', Ext
+				.getCmp('QUERY_user_name').getValue());
+		store.setBaseParam('_QUERY_s_like_course_type', Ext
+				.getCmp('QUERY_course_type').getValue());
+		store.setBaseParam('_QUERY_s_like_grade_type', Ext
+				.getCmp('QUERY_grade_type').getValue());
+		store.setBaseParam('_QUERY_s_eq_teacher_type', Ext.getCmp(
+				'QUERY_teacher_type').getValue());
+		store.setBaseParam('_QUERY_n_eq_area_id', Ext.getCmp('QUERY_areaId')
+				.getValue()); 
 		store.reload();
 	}
 	;
@@ -189,21 +197,38 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 			title : '查询条件',
 			// collapsible: true,
 			autoHeight : true,
-			items : [ {
-				xtype : "container",
-				columnWidth : 1,
-				defaultType : "textfield",
-				layout : "form",
-				defaults : {
-					anchor : "96%,96%",
-					labelStyle : 'text-align:right;'
-				},
+			items : [ 
+						{
+							xtype : "container",
+							columnWidth : 0.33,
+							defaultType : "textfield",
+							layout : "form",
+							defaults : {
+								anchor : "96%,96%",
+								labelStyle : 'text-align:right;'
+							},
 
-				items : [ {
-					id : "QUERY_name",
-					fieldLabel : "教师名称"
-				} ]
-			} ]
+							items : [
+									{
+										id : "QUERY_user_name",
+										fieldLabel : "教师名称"
+									},
+									new SysParam.ComboBox('教师类型', 'QUERY_teacher_type',
+											'TEACHER_TYPE'),
+									new SysParam.ComboBox('教学年级', 'QUERY_grade_type',
+											'GRADE') ]
+						}, {
+							xtype : "container",
+							columnWidth : 0.33,
+							defaultType : "textfield",
+							layout : "form",
+							defaults : {
+								anchor : "96%,96%",
+								labelStyle : 'text-align:right;'
+							},
+							items : [ new SysArea.ComboBox('QUERY_areaId', false),
+							          new SysParam.ComboBox('科目', 'QUERY_course_type', 'ORDER_COURSE') ]
+						}  ]
 		} ]
 	});
 	gridPanel.addListener("rowdblclick", function(g, f, h) {
