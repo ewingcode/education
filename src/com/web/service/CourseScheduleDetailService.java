@@ -1,10 +1,14 @@
 package com.web.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.jfree.chart.Effect3D;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,11 +43,11 @@ public class CourseScheduleDetailService {
 	/**
 	 * 是否结束的排课计划
 	 * 
-	 * @param scheduleId
+	 * @param scheduleDetailId
 	 * @return
 	 */
-	public boolean isFinishSchedule(Integer scheduleId) {
-		CourseScheduleDetail courseSchedule = baseDao.findOne(scheduleId,
+	public boolean isFinishSchedule(Integer scheduleDetailId) {
+		CourseScheduleDetail courseSchedule = baseDao.findOne(scheduleDetailId,
 				CourseScheduleDetail.class);
 		return courseSchedule.getIsFinish().equals(
 				CourseScheduleDetailIsFinish.FINISHED.getValue());
@@ -162,6 +166,34 @@ public class CourseScheduleDetailService {
 		orderService.updateOrderScheduleHour(scheduleVo.getOrderId());
 	}
 
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteScheduleDetail(Integer scheduleDetailId)
+			throws OrderException {
+		List<CourseScheduleDetail> scheduleDetailList = baseDao.find("id = "
+				+ scheduleDetailId + " and is_finish="
+				+ CourseScheduleDetailIsFinish.NOTFINISH.getValue(),
+				CourseScheduleDetail.class);
+		Set<Integer> orderCourseIds = new HashSet<Integer>();
+		List<Integer> orderIds = new ArrayList<Integer>();
+		List<Integer> scheduleIds = new ArrayList<Integer>();
+		for (CourseScheduleDetail scheduleDetail : scheduleDetailList) {
+			scheduleDetail.setIseff(IsEff.INEFFECTIVE);
+			baseDao.update(scheduleDetail);
+			orderCourseIds.add(scheduleDetail.getOrderCourseId());
+			orderIds.add(scheduleDetail.getOrderId());
+			scheduleIds.add(scheduleDetail.getScheduleId());
+		}
+		// 更新签单科目的排课时间
+		for (Integer deleteOrderCourseId : orderCourseIds)
+			orderCourseService.updateCourseScheduleHour(deleteOrderCourseId);
+		// 更新签单的已经排课的课时
+		for (Integer deleteOrderId : orderIds)
+			orderService.updateOrderScheduleHour(deleteOrderId);
+		// 更新模板消耗的课时
+		for (Integer deleteScheuleId : scheduleIds)
+			courseScheduleService.updateScheduleCostHour(deleteScheuleId);
+	}
+
 	/**
 	 * 删除排课模板，并且删除没有结束的排课计划
 	 * 
@@ -169,27 +201,40 @@ public class CourseScheduleDetailService {
 	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteScheduleDetail(Integer scheduleId) throws Exception {
+	public void deleteScheduleDetailByScheduleId(Integer scheduleId)
+			throws Exception {
 		try {
 			CourseSchedule scheduleTemplate = courseScheduleService
 					.findOne(scheduleId);
 			if (scheduleTemplate == null)
 				return;
 			List<CourseScheduleDetail> scheduleDetailList = baseDao
-					.find("is_finish="
+					.find("scheduleId = " + scheduleId + " and is_finish="
 							+ CourseScheduleDetailIsFinish.NOTFINISH.getValue(),
 							CourseScheduleDetail.class);
+			Set<Integer> orderCourseIds = new HashSet<Integer>();
+			List<Integer> orderIds = new ArrayList<Integer>();
+			List<Integer> scheduleIds = new ArrayList<Integer>();
 			for (CourseScheduleDetail scheduleDetail : scheduleDetailList) {
-				baseDao.delete(scheduleDetail);
-				// 更新签单科目的排课时间
-				orderCourseService.updateCourseScheduleHour(scheduleDetail
-						.getOrderCourseId());
-				// 更新签单的已经排课的课时
-				orderService.updateOrderScheduleHour(scheduleDetail
-						.getOrderId());
+				scheduleDetail.setIseff(IsEff.INEFFECTIVE);
+				baseDao.update(scheduleDetail);
+				orderCourseIds.add(scheduleDetail.getOrderCourseId());
+				orderIds.add(scheduleDetail.getOrderId());
+				scheduleIds.add(scheduleDetail.getScheduleId());
 			}
+			// 更新签单科目的排课时间
+			for (Integer deleteOrderCourseId : orderCourseIds)
+				orderCourseService
+						.updateCourseScheduleHour(deleteOrderCourseId);
+			// 更新签单的已经排课的课时
+			for (Integer deleteOrderId : orderIds)
+				orderService.updateOrderScheduleHour(deleteOrderId);
+			// 更新模板消耗的课时
+			for (Integer deleteScheuleId : scheduleIds)
+				courseScheduleService.updateScheduleCostHour(deleteScheuleId);
 			scheduleTemplate.setIseff(IsEff.INEFFECTIVE);
 			baseDao.update(scheduleTemplate);
+			courseScheduleService.updateScheduleCostHour(scheduleId);
 		} catch (Exception e) {
 			throw e;
 		}
@@ -200,14 +245,25 @@ public class CourseScheduleDetailService {
 				"order_id=" + orderId + " and is_finish="
 						+ CourseScheduleDetailIsFinish.NOTFINISH.getValue(),
 				CourseScheduleDetail.class);
+		Set<Integer> orderCourseIds = new HashSet<Integer>();
+		List<Integer> orderIds = new ArrayList<Integer>();
+		List<Integer> scheduleIds = new ArrayList<Integer>();
 		for (CourseScheduleDetail scheduleDetail : scheduleDetailList) {
-			baseDao.delete(scheduleDetail);
-			// 更新签单科目的排课时间
-			orderCourseService.updateCourseScheduleHour(scheduleDetail
-					.getOrderCourseId());
-			// 更新签单的已经排课的课时
-			orderService.updateOrderScheduleHour(scheduleDetail.getOrderId());
+			scheduleDetail.setIseff(IsEff.INEFFECTIVE);
+			baseDao.update(scheduleDetail);
+			orderCourseIds.add(scheduleDetail.getOrderCourseId());
+			orderIds.add(scheduleDetail.getOrderId());
+			scheduleIds.add(scheduleDetail.getScheduleId());
 		}
+		// 更新签单科目的排课时间
+		for (Integer deleteOrderCourseId : orderCourseIds)
+			orderCourseService.updateCourseScheduleHour(deleteOrderCourseId);
+		// 更新签单的已经排课的课时
+		for (Integer deleteOrderId : orderIds)
+			orderService.updateOrderScheduleHour(deleteOrderId);
+		// 更新模板消耗的课时
+		for (Integer deleteScheuleId : scheduleIds)
+			courseScheduleService.updateScheduleCostHour(deleteScheuleId);
 	}
 
 	/**
@@ -219,7 +275,9 @@ public class CourseScheduleDetailService {
 		String nowTimeStr = DateFormat.DateToString(new Date(),
 				DateFormat.DATETIME_FORMAT2);
 		return baseDao
-				.find("is_finish="
+				.find("  iseff='"
+						+ IsEff.EFFECTIVE
+						+ "' and is_finish="
 						+ CourseScheduleDetailIsFinish.NOTFINISH.getValue()
 						+ " and CONCAT(DATE_FORMAT(DATE,'%Y%m%d'),LPAD(END_TIME, 4, 0),'00')"
 						+ " <= '" + nowTimeStr + "'",
@@ -276,7 +334,8 @@ public class CourseScheduleDetailService {
 	public boolean existSameScheduleForTeacher(Integer teacherId, Date date,
 			Integer startTime, Integer endTime) {
 		String sql = "from " + CourseScheduleDetail.class.getName()
-				+ " where teacher_id=" + teacherId + " and date='"
+				+ " where teacher_id=" + teacherId + " and iseff='"
+				+ IsEff.EFFECTIVE + "' and date='"
 				+ DateFormat.DateToString(date, DateFormat.DATE_FORMAT) + "'";
 		List<CourseScheduleDetail> scheduleList = baseDao.find(sql,
 				CourseScheduleDetail.class);
@@ -294,7 +353,8 @@ public class CourseScheduleDetailService {
 	public boolean existSameScheduleForStudent(Integer studentId, Date date,
 			Integer startTime, Integer endTime) {
 		String sql = "from " + CourseScheduleDetail.class.getName()
-				+ " where student_id=" + studentId + " and date='"
+				+ " where student_id=" + studentId + " and iseff='"
+				+ IsEff.EFFECTIVE + "' and date='"
 				+ DateFormat.DateToString(date, DateFormat.DATE_FORMAT) + "'";
 		List<CourseScheduleDetail> scheduleList = baseDao.find(sql,
 				CourseScheduleDetail.class);
@@ -325,7 +385,9 @@ public class CourseScheduleDetailService {
 				+ " where teacher_id in ("
 				+ SqlUtil.array2InCondition(teacherIds)
 				+ ")"
-				+ " and date between '"
+				+ " and iseff='"
+				+ IsEff.EFFECTIVE
+				+ "' and date between '"
 				+ DateFormat.DateToString(startScheldueDate,
 						DateFormat.DATE_FORMAT)
 				+ "' and '"
@@ -431,8 +493,7 @@ public class CourseScheduleDetailService {
 	 */
 	public List<CourseScheduleDetail> getCourseScheduleDetailList(
 			Integer scheduleId) {
-		String sql = "schedule_id = " + scheduleId
-				+ " order by  id asc";
+		String sql = "schedule_id = " + scheduleId + " order by  id asc";
 		return baseDao.find(sql, CourseScheduleDetail.class);
 	}
 

@@ -64,7 +64,8 @@ public class CourseScheduleManageAction extends BaseAction {
 				}
 			}
 
-			courseScheduleDetailService.addSchedule(courseSchedule.getTeacherId(),
+			courseScheduleDetailService.addSchedule(
+					courseSchedule.getTeacherId(),
 					courseSchedule.getStudentId(), courseSchedule.getDate(),
 					courseSchedule.getCourseType(),
 					courseSchedule.getStartTime(), courseSchedule.getEndTime());
@@ -137,7 +138,8 @@ public class CourseScheduleManageAction extends BaseAction {
 					.isFinishSchedule(courseSchedule.getId());
 			if (isFinished)
 				throw new CourseScheduleException("排课计划已经结束");
-			baseModelService.delete(entityBean);
+			courseScheduleDetailService.deleteScheduleDetail(courseSchedule
+					.getId());
 			responseData = ResponseUtils.success("删除成功！");
 		} catch (Exception e) {
 			logger.error(e, e);

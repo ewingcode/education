@@ -13,6 +13,9 @@
 		<property name="teacherId" type="java.lang.Integer">
 			<column name="teacher_id" />
 		</property>
+		<property name="orderId" type="java.lang.Integer">
+			<column name="order_id" />
+		</property>
 		<property name="studentId" type="java.lang.Integer">
 			<column name="student_id" />
 		</property>

@@ -85,6 +85,59 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 							renderer : function(value) { 
 								return SysParam.translate(scheduleDetailStatusStore, value);
 							}
+						},
+						{
+							header : "操作",
+							xtype : 'actioncolumn',
+							items : [ {
+								getClass : function(v, meta, rec) { 
+									//只对没有结束的计划提供删除的按钮
+									if(rec.get("isFinish") ==0 )
+									  return "btn_remove";
+								},
+								tooltip : '删除',
+								handler : function(grid, rowIndex, colIndex) {
+									var rec = store.getAt(rowIndex);
+									alert(rec
+											.get('id'));
+									Ext.Msg
+											.confirm(
+													"信息确认",
+													"您确认要删除该记录吗？",
+													function(c) {
+														if (c == "yes") {
+															Ext.Ajax
+																	.request({
+																		url : "Busi_CourseScheduleManage_delete.action",
+																		params : {
+																			id : rec
+																					.get('id')
+																		},
+																		method : "post",
+																		success : function() {
+																			Ext.Msg
+																					.show({
+																						title : '编辑',
+																						msg : '成功删除记录',
+																						buttons : Ext.MessageBox.OK,
+																						icon : Ext.Msg.INFO
+																					});
+																			loadStore();
+																		},
+																		failure : function() {
+																			Ext.MessageBox
+																					.show({
+																						title : "操作信息",
+																						msg : "信息保存出错，请联系管理员！",
+																						buttons : Ext.MessageBox.OK,
+																						icon : "ext-mb-error"
+																					});
+																		}
+																	});
+														}
+													});
+								}
+							} ]
 						} ],
 				defaults : {
 					width : 160,
@@ -495,7 +548,7 @@ Schedule.showDailySchedule = function(teacherId, date , isReadOnly) {
 								},
 								tooltip : '删除',
 								handler : function(grid, rowIndex, colIndex) {
-									var rec = store.getAt(rowIndex);
+									var rec = store.getAt(rowIndex); 
 									Ext.Msg
 											.confirm(
 													"信息确认",

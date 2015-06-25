@@ -6,6 +6,7 @@ import org.junit.Test;
 import com.core.app.jbpm.BaseTest;
 import com.core.factory.SpringCtx;
 import com.web.exception.CourseScheduleException;
+import com.web.exception.OrderException;
 
 /**
  * 
@@ -25,11 +26,11 @@ public class CourseScheduleDetailServiceTest extends BaseTest {
 
 	// @Test
 	public void testDeleteScheduleDetail() throws Exception {
-		courseScheduleDetailService.deleteScheduleDetail(23);
+		courseScheduleDetailService.deleteScheduleDetailByScheduleId(23);
 	}
 
 	@Test
-	public void testRollbackCourseHour() throws CourseScheduleException {
+	public void testRollbackCourseHour() throws CourseScheduleException, OrderException {
 		courseScheduleDetailService.rollbackCourseHour(10,"无上课", 1);
 	}
 

@@ -72,7 +72,7 @@ public class OrderQueryService {
 			int userId, int pageSize, int startIndex)   {
 		String sql = " from " + OrderInfoView.class.getName()
 				+ " where id in ( select orderId from "
-				+ OrderTrace.class.getName() + " a2 where a2.operator ="
+				+ OrderTrace.class.getName() + " a2 where a2.userId ="
 				+ userId + ") "  ;
 		sql = SqlUtil.combine(sql, conditon);
 		return baseDao.pageQuery(sql, orderBy, pageSize, startIndex,

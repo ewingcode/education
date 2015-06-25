@@ -111,7 +111,7 @@ public class CourseScheduleAction extends BaseAction {
 			long totalCostScheduleHour = 0l;
 			for (int i = 0; i < scheduleList.size(); i++) {
 				CourseScheduleDetail courseScheduleDetail = scheduleList.get(i);
-				courseScheduleDetail.setId(i);
+				//courseScheduleDetail.setId(i);
 				Integer hour = courseScheduleDetailService.computeScheduleHour(
 						courseScheduleDetail.getEndTime(),
 						courseScheduleDetail.getStartTime());
@@ -220,7 +220,7 @@ public class CourseScheduleAction extends BaseAction {
 		try {
 			Integer scheduleId = Integer.valueOf(request
 					.getParameter("scheduleId"));
-			courseScheduleDetailService.deleteScheduleDetail(scheduleId);
+			courseScheduleDetailService.deleteScheduleDetailByScheduleId(scheduleId);
 			responseData = ResponseUtils.success("删除成功！");
 		} catch (Exception e) {
 			logger.error(e, e);

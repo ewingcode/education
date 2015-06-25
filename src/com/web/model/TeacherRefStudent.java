@@ -9,6 +9,7 @@ public class TeacherRefStudent implements java.io.Serializable {
 	private Long id;
 	private Integer teacherId;
 	private Integer studentId;
+	private Integer orderId;
 	private String courseType;
 	private String name;
 	private String grade;
@@ -18,6 +19,13 @@ public class TeacherRefStudent implements java.io.Serializable {
 	private Integer areaId;
 
 	// Constructors
+	public Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
+	}
 
 	public Integer getAreaId() {
 		return areaId;
