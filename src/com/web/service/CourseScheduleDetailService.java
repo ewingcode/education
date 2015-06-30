@@ -529,7 +529,8 @@ public class CourseScheduleDetailService {
 				.findOne(courseHourLog.getScheduleDetailId(),
 						CourseScheduleDetail.class);
 		if (courseScheduleDetail != null) {
-			baseDao.delete(courseScheduleDetail);
+			courseScheduleDetail.setIseff(IsEff.INEFFECTIVE);
+			baseDao.update(courseScheduleDetail); 
 			// 更新签单科目的排课时间
 			orderCourseService.updateCourseScheduleHour(courseScheduleDetail
 					.getOrderCourseId());

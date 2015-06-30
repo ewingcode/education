@@ -10,7 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.core.app.model.SysUser;
 import com.core.app.service.SysUserService;
 import com.core.jdbc.BaseDao;
+import com.core.jdbc.util.PageBean;
+import com.util.SqlUtil;
+import com.web.model.OrderTrace;
 import com.web.model.TeacherAbility;
+import com.web.model.TeacherInfo;
+import com.web.model.TeacherRefStudent;
 
 @Repository("teacherService")
 public class TeacherService {
@@ -18,6 +23,7 @@ public class TeacherService {
 	private BaseDao baseDao;
 	@Resource
 	private SysUserService sysUserService;
+
 	@Transactional(rollbackFor = Exception.class)
 	public void addNewTeacher(SysUser sysUser, TeacherAbility teacherAbility) {
 		baseDao.save(sysUser);
@@ -39,6 +45,7 @@ public class TeacherService {
 		}
 
 	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public void editTeacher(SysUser sysUser, TeacherAbility teacherAbility) {
 		baseDao.update(sysUser);
@@ -52,6 +59,25 @@ public class TeacherService {
 			old.setTeacherType(teacherAbility.getTeacherType());
 			baseDao.update(old);
 		}
+	}
+
+	/**
+	 * 查询班主任负责的老师
+	 * 
+	 * @param userId
+	 * @return @
+	 */
+	public PageBean findTeacherForMainTeacher(String conditon, String orderBy,
+			int userId, int pageSize, int startIndex) {
+		String sql = " from " + TeacherInfo.class.getName()
+				+ " where id in ( select teacherId from "
+				+ TeacherRefStudent.class.getName() + " t,"
+				+ OrderTrace.class.getName()
+				+ " o where t.orderId = o.orderId and o.userId =" + userId
+				+ ") ";
+		sql = SqlUtil.combine(sql, conditon);
+		return baseDao.pageQuery(sql, orderBy, pageSize, startIndex,
+				TeacherInfo.class);
 	}
 
 }

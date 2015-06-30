@@ -13,10 +13,11 @@ import com.core.app.action.base.ActionException;
 import com.core.app.action.base.BaseAction;
 import com.core.app.action.base.ResponseData;
 import com.core.app.action.base.ResponseUtils;
+import com.core.app.bean.UserInfo;
+import com.core.app.control.SessionControl;
 import com.core.app.control.SessionException;
 import com.core.app.service.SysParamService;
 import com.core.app.service.SysRightRelService;
-import com.core.jdbc.DaoException;
 import com.core.jdbc.util.PageBean;
 import com.util.DateFormat;
 import com.util.SqlUtil;
@@ -46,6 +47,7 @@ public class CourseScheduleListAction extends BaseAction {
 	private CourseScheduleDetailService courseScheduleDetailService;
 	@Resource
 	private SysParamService sysParamService;
+
 	public CourseScheduleListAction() {
 		super(TeacherInfo.class);
 	}
@@ -139,9 +141,46 @@ public class CourseScheduleListAction extends BaseAction {
 		this.outResult(responseData);
 	}
 
+	/**
+	 * 查询教师排课，只查询班主任负责的签单内的教师。
+	 * 
+	 * @throws ActionException
+	 */
+	public void pageQueryForMainTeacher() throws ActionException {
+		ResponseData responseData = null;
+		try {
+			if (entityBean == null)
+				throw new ActionException(
+						"entityClass must be defined in Action");
+			String start = request.getParameter("start");
+			String limit = request.getParameter("limit");
+			String startTime = request
+					.getParameter("_QUERY_schedule_startTime");
+			String endTime = request.getParameter("_QUERY_schedule_endTime");
+			Date startDate = DateFormat.stringToDate(
+					startTime.replace("T", " "), DateFormat.DATETIME_FORMAT);
+			Date endDate = DateFormat.stringToDate(endTime.replace("T", " "),
+					DateFormat.DATETIME_FORMAT);
+			UserInfo userInfo = SessionControl.getUserInfo(request);
+			PageBean pageBean = teacherService.findTeacherForMainTeacher(
+					bulidConditionSql(), bulidOrderBySql(), userInfo.getId(),
+					Integer.valueOf(limit), Integer.valueOf(start));
+			List<CourseScheduleListDto> scheudleList = getCourseSchduleList(
+					(List<TeacherInfo>) pageBean.getResult(), startDate,
+					endDate);
+			pageBean.setResult(scheudleList);
+			responseData = ResponseUtils.success("查询成功！");
+			responseData.setTotalProperty(pageBean.getTotalCount());
+			responseData.setResult(pageBean.getResult());
+		} catch (Exception e) {
+			logger.error(e, e);
+			responseData = ResponseUtils.fail("查询失败！");
+		}
+		this.outResult(responseData);
+	}
+
 	private List<CourseScheduleListDto> getCourseSchduleList(
-			List<TeacherInfo> teacherInfoList, Date startDate, Date endDate)
-			  {
+			List<TeacherInfo> teacherInfoList, Date startDate, Date endDate) {
 		List<Integer> teacherIds = new ArrayList<Integer>();
 		List<CourseScheduleListDto> scheudleList = new ArrayList<CourseScheduleListDto>();
 
@@ -175,7 +214,8 @@ public class CourseScheduleListAction extends BaseAction {
 					String courseName = schedule.getCourseName();
 					String studentName = schedule.getStudentName();
 					periodSb.append(DateFormat.cutTime(schedule.getStartTime()))
-							.append("-").append(DateFormat.cutTime(schedule.getEndTime()));
+							.append("-")
+							.append(DateFormat.cutTime(schedule.getEndTime()));
 					periodSb.append(" ").append(courseName).append(" ")
 							.append(studentName);
 					periodSb.append("<br>");
@@ -190,6 +230,7 @@ public class CourseScheduleListAction extends BaseAction {
 
 		return scheduleContents;
 	}
+
 	private List<Date> getDateList(Date startDate, Date endDate) {
 		List<Date> dateList = new ArrayList<Date>();
 		Calendar cal = Calendar.getInstance();
@@ -201,5 +242,5 @@ public class CourseScheduleListAction extends BaseAction {
 		}
 		return dateList;
 	}
- 
+
 }

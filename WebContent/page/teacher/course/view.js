@@ -2,6 +2,12 @@
 Ext.onReady(function() { 
 	var isOnlyQuery = false;
 	isOnlyQuery = jQuery.url.param("isOnlyQuery") == 'true' ? true : false;
+	var forMainTeacher = isOnlyQuery = jQuery.url.param("forMain") == 'true' ? true : false;
+	var queryUrl ="";
+	if(forMainTeacher)
+		queryUrl = 'Busi_CourseScheduleList_pageQueryForMainTeacher.action';
+	else
+		queryUrl = 'Busi_CourseScheduleList_pageQuery.action';
 	var sexTypeStore = new SysParam.store("SEXTYPE");
 	var iseffStore = new SysParam.store("ISEFF");
 	var courseStore = new SysParam.store("ORDER_COURSE");
@@ -33,7 +39,7 @@ Ext.onReady(function() {
 	var store = new Ext.data.Store({
 		// autoLoad : true,//是否自动加载
 		proxy : new Ext.data.HttpProxy({
-			url : 'Busi_CourseScheduleList_pageQuery.action'
+			url : queryUrl
 		}),
 		reader : new Ext.data.JsonReader({
 			root : 'result',

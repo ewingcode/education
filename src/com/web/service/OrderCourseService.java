@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
 
+import com.core.app.constant.IsEff;
 import com.core.app.model.SysParam;
 import com.core.app.service.SysParamService;
 import com.core.jdbc.BaseDao;
@@ -71,7 +72,7 @@ public class OrderCourseService {
 		OrderCourse orderCourse = findOrderCourse(orderCourseId);
 		String sql = "select sum((endTime - startTime)/100)  from  "
 				+ CourseScheduleDetail.class.getName()
-				+ " where order_course_id=" + orderCourseId;
+				+ " where iseff = '"+IsEff.EFFECTIVE+"' and order_course_id=" + orderCourseId;
 		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
 		if (totalSchedulehour != null
 				&& totalSchedulehour.intValue() > orderCourse.getHour()) {
