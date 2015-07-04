@@ -21,8 +21,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import com.core.jdbc.util.PageBean;
-import com.web.model.StudentInfo;
+import com.core.jdbc.util.PageBean; 
 
 @Repository("baseDao")
 public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
@@ -306,7 +305,7 @@ public class HibernateDaoImpl extends HibernateDaoSupport implements BaseDao {
 			sql += condition;
 		if (!StringUtils.isEmpty(orderBy))
 			sql += orderBy;
-		return pageQuery(sql, pageSize, startIndex, StudentInfo.class);
+		return pageQuery(sql, pageSize, startIndex, entityClass);
 	}
 
 }

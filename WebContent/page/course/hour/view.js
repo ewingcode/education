@@ -127,7 +127,7 @@ var toolbar = new Ext.Toolbar({
 			loadGirdStore();
 		}
 	}, {
-		iconCls : "btn_add",
+		iconCls : "btn_remove",
 		text : "撤销课时",
 		xtype : "button",
 		scale : 'medium',
@@ -179,7 +179,7 @@ var gridPanel = new Ext.grid.GridPanel({
 	})
 });
 
-function loadGirdStore() {
+function loadGirdStore() { 
 	store.setBaseParam('start', 0);
 	store.setBaseParam('limit', 20);
 	var studentIds = Student.mutipleId($("#QUERY_name").val());
@@ -187,10 +187,11 @@ function loadGirdStore() {
 	store.setBaseParam('_QUERY_d_ge_teach_time', Ext.getCmp(
 			'QUERY_teach_startTime').getValue());
 	store.setBaseParam('_QUERY_s_eq_status', Ext.getCmp('QUERY_status').getValue());
+	store.setBaseParam('_QUERY_s_eq_course_type', Ext.getCmp('QUERY_course_type').getValue()); 
 	store.setBaseParam('_QUERY_d_le_teach_time', Ext.getCmp(
-			'QUERY_teach_endTime').getValue());
-	store.setBaseParam('_ORDERBY', "order by create_time desc");
-	store.reload();
+			'QUERY_teach_endTime').getValue()); 
+	store.setBaseParam('_ORDERBY', "order by teach_time desc");
+	store.load(); 
 };
 
 var formpanel = new Ext.FormPanel({
@@ -247,7 +248,7 @@ var formpanel = new Ext.FormPanel({
 					vtype : 'daterange',
 					startDateField : 'QUERY_teach_startTime'
 				} ]
-			} ]
+			} ,new SysParam.ComboBox('课程', 'QUERY_course_type',  'ORDER_COURSE')]
 		} ]
 	} ]
 });

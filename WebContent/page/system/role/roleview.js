@@ -186,7 +186,7 @@ function loadGirdStore(){
 	store.setBaseParam('start',0); 
 	store.setBaseParam('limit',20); 
 	store.setBaseParam('_QUERY_s_rlike_name',Ext.getCmp('QUERY_name').getValue());  
-	store.reload();   
+	store.load();   
 };
 
  

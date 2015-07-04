@@ -168,7 +168,7 @@ function loadGirdStore(){
 	store.setBaseParam('limit',20); 
 	store.setBaseParam('_QUERY_s_rlike_name',Ext.getCmp('QUERY_name').getValue()); 
 	store.setBaseParam('_ORDERBY',"order by id desc"); 
-	store.reload();  
+	store.load();  
 };
 
  

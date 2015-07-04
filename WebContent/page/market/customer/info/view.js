@@ -261,7 +261,7 @@ function loadGirdStore(){
 	store.setBaseParam('_QUERY_n_rlike_phone',Ext.getCmp('QUERY_phone').getValue()) ; 
 	store.setBaseParam('_QUERY_n_rlike_addr',Ext.getCmp('QUERY_addr').getValue()) ; 
 	store.setBaseParam('_ORDERBY',"order by lastUpdate desc"); 
-	store.reload(); 
+	store.load(); 
 };
 
  

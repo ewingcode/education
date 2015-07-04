@@ -181,7 +181,7 @@ function loadGirdStore(){
 	store.setBaseParam('_QUERY_n_rlike_addr',Ext.getCmp('QUERY_addr').getValue());
 	store.setBaseParam('_QUERY_s_eq_position',Ext.getCmp('QUERY_position').getValue()); 
 	store.setBaseParam('_ORDERBY',"order by id desc"); 
-	store.reload(); 
+	store.load(); 
 };
 
  

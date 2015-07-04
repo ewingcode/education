@@ -145,7 +145,7 @@ function loadGirdStore(){
 	store.setBaseParam('limit',20); 
 	store.setBaseParam('_QUERY_n_eq_receiver_id',session_userId); 
 	 store.setBaseParam('_ORDERBY',"order by create_time desc"); 
-	store.reload(); 
+	store.load(); 
 	 
 };
 

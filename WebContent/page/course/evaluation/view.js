@@ -215,7 +215,7 @@ function loadGirdStore(){
 	store.setBaseParam('_QUERY_d_le_course_time',Ext.getCmp('QUERY_course_endTime')
 			.getValue());  
 	store.setBaseParam('_ORDERBY',"order by create_time desc"); 
-	store.reload(); 
+	store.load(); 
 	 
 };
 
