@@ -158,5 +158,5 @@ var gridPanel = new Ext.grid.GridPanel({
 });
 
 function loadGirdStore() {
-	store.reload();
+	store.load();
 };

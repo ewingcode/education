@@ -114,7 +114,7 @@ Student.selectWin = function(callbackFn) {
 		store.setBaseParam('limit', 20);
 		store.setBaseParam('_QUERY_s_like_name', Ext.getCmp(
 				"QUERY_student_name").getValue());
-		store.reload();
+		store.load();
 	}
 
 	var formpanel = new Ext.FormPanel({

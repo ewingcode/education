@@ -177,7 +177,7 @@ OrderCourse.courseEditGrid = function(orderId, needChooseCharger) {
 
 	function loadGirdStore() {
 		store.setBaseParam('_QUERY_n_eq_order_id', orderId);
-		store.reload();
+		store.load();
 	}
 	if (isEdit)
 		loadGirdStore();

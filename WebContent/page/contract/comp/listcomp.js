@@ -17,7 +17,7 @@ OrderList.loadGirdStore = function(dataStore) {
 	'QUERY_isSchedule').getValue());
 	
 	dataStore.setBaseParam('_ORDERBY', "order by id desc");
-	dataStore.reload();
+	datastore.load();
 };
 
 OrderList.Toolbar = function(formpanel, isEdit, isLast, isDetail,

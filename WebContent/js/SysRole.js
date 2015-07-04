@@ -203,9 +203,9 @@ SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
 			store.setBaseParam('_QUERY_n_in_role_id', roleIds);
 		store.setBaseParam('_QUERY_s_rlike_user_name', Ext.getCmp(
 				'QUERY_user_name').getValue());
-		store.reload();
-	}
-	;
+		store.setBaseParam('_QUERY_s_eq_iseff', 0);
+		store.load();
+	} 
 
 	var formpanel = new Ext.FormPanel({
 		labelAlign : 'left',// 字样显示在顶部

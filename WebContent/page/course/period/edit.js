@@ -30,7 +30,7 @@ var EditWindow = function(b) {
 							icon : Ext.Msg.INFO
 						});
 
-						store.reload();
+						store.load();
 						win.close();
 					},
 					failure : function(i, j) {

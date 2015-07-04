@@ -39,6 +39,9 @@ Assigner.assingerFiled = function(orderId) {
 						"click" : function(d, i, n, e) {  
 							var assigner = '';
 							var roleId =''; 
+						 
+							if($("#transitionName").val()=='请选择')
+								return;
 							var url = "Busi_OrderView_getAssigner.action?orderId="
 									+ orderId
 									+ "&transitionName="

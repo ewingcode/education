@@ -209,7 +209,7 @@ Ext.onReady(function() {
 		store.setBaseParam('_QUERY_schedule_endTime',Ext.getCmp('QUERY_schedule_endTime').getValue());
 		store.setBaseParam('_QUERY_n_eq_area_id', Ext.getCmp('QUERY_areaId')
 				.getValue());
-		store.reload();
+		store.load();
 	};
 
 	var formpanel = new Ext.FormPanel({

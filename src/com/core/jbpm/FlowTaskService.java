@@ -132,6 +132,8 @@ public class FlowTaskService {
 			String transitionName)   {
 		FlowTaskTransition flowTaskTransition = this.getTaskTransition(
 				processName, taskId, transitionName);
+		if(flowTaskTransition==null)
+			return null;
 		return getTask(processName, flowTaskTransition.getToId());
 	}
 
@@ -140,6 +142,8 @@ public class FlowTaskService {
 		FlowTask curTask = this.getTask(processName, taskName);
 		FlowTaskTransition flowTaskTransition = this.getTaskTransition(
 				processName, curTask.getId(), transitionName);
+		if(flowTaskTransition==null)
+			return null;
 		return getTask(processName, flowTaskTransition.getToId());
 	}
 

@@ -183,7 +183,7 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 				'QUERY_teacher_type').getValue());
 		store.setBaseParam('_QUERY_n_eq_area_id', Ext.getCmp('QUERY_areaId')
 				.getValue()); 
-		store.reload();
+		store.load();
 	}
 	;
 
@@ -598,7 +598,7 @@ Teacher.selectRefStudent = function(teacherId,studentId, callbackFn) {
 		store.setBaseParam('_QUERY_n_eq_teacher_id', teacherId);
 		store.setBaseParam('_QUERY_s_like_name', Ext.getCmp(
 				"QUERY_student_name").getValue());
-		store.reload();
+		store.load();
 	}
 
 	var formpanel = new Ext.FormPanel({

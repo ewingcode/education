@@ -242,7 +242,7 @@ function loadGirdStore() {
 			.getValue());
 	store.setBaseParam('_QUERY_n_rlike_addr', Ext.getCmp('QUERY_addr')
 			.getValue());
-	store.reload();
+	store.load();
 };
 
 var formpanel = new Ext.FormPanel({
