@@ -518,9 +518,10 @@ Order.validateCourse = function(oper) {
 							var courseStatus = $("#courseStatus" + courseType)
 									.val();
 							var courseName = $("#courseName" + courseType)
-									.val();
+									.val(); 
 							if ((val == 0 || val == '')
-									&& !(STATUS_REJECT == courseStatus || STATUS_ACCEPT == courseStatus)) {
+									//&& !(STATUS_REJECT == courseStatus || STATUS_ACCEPT == courseStatus)
+									) {
 								Common.ErrMegBox('请选择' + courseName + '的授课老师！');
 								ret = false;
 								return false;
@@ -533,7 +534,10 @@ Order.validateCourse = function(oper) {
 			var inputName = input.attr('id');
 			var courseType = inputName.replace('courseStatus', '');
 			var courseName = $("#courseName" + courseType).val();
-			if (val == '' || !(STATUS_REJECT == val || STATUS_ACCEPT == val)) {
+			
+			if (val == '' 
+				//|| !(STATUS_REJECT == val || STATUS_ACCEPT == val)
+				) {
 
 				Common.ErrMegBox('请对' + courseName + '的信息进行审批！');
 				ret = false;

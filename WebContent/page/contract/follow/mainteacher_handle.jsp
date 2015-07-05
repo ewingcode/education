@@ -38,8 +38,8 @@
 									return;
 								if (!Order.validateAttach(SUBMITTYPE_UPLOAD_FILE))
 									return;
-								if(!Order.validateReplyNotPassCharger())
-								    return; 
+								/* if(!Order.validateReplyNotPassCharger())
+								    return;  */
 							  }  
 							Order.submitForm(jQuery.url.param("isOnlyEdit"),editform, orderId,
 									SUBMITTYPE_UPLOAD_FILE, $("#assignerId")

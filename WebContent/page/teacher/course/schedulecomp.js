@@ -739,7 +739,8 @@ Schedule.addSchedulePanel = function(teacherId , studentId) {
 							allowBlank : false,
 							id : "startDate",
 							xtype : "datefield",
-							format : "Y-m-d"
+							format : "Y-m-d",
+							minValue : new Date()
 						},  
 						{
 							xtype : 'compositefield',
@@ -748,10 +749,11 @@ Schedule.addSchedulePanel = function(teacherId , studentId) {
 							width : "200",
 							items : [ 
 									{ 
-										allowBlank : false,
+										//allowBlank : false,
 										id : "endDate",
 										xtype : "datefield",
-										format : "Y-m-d"
+										format : "Y-m-d",
+										readOnly:true
 									},
 									{
 										xtype : "button",
@@ -760,6 +762,8 @@ Schedule.addSchedulePanel = function(teacherId , studentId) {
 										width : "50",
 										listeners : {
 											"click" : function(d, i, n, e) {
+												if (!settingForm.getForm().isValid())
+													return;
 												Ext.Ajax.request( {
 													url : "Busi_CourseSchedule_computeScheduleEndDate.action",
 													params : { 
