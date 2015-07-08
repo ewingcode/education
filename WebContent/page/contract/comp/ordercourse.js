@@ -313,10 +313,17 @@ Order.courseManage = function(orderId, needChoose, needApproval, isLastOrder) {
 														"#lastCourseChargerId"
 																+ _i_type)
 														.val();
-												// Teacher.assingerWindow(_i_courseChargerId,_i_courseChargerName,_i_lastCourseChargerIdValue);
+												var areaId ; 
+												if(orderId){ 
+													var queryOrderUrl = "Busi_OrderInfo_query.action?condition=id=" + orderId; 
+													Ajax.syncRequest(queryOrderUrl, function(data) {
+														if (data.result && data.result.length == 1)
+															areaId = data.result[0].areaId;
+													}); 
+												}   
 												Teacher.selectWin(
 														_i_courseChargerId,
-														_i_courseChargerName);
+														_i_courseChargerName,areaId);
 											}
 										} ]
 							};

@@ -11,6 +11,7 @@ Assigner.showAssinerField = function(isShow) {
 }
 
 Assigner.assingerFiled = function(orderId) { 
+	
 	var orderRoleStore = Order.loadOrderRoleStore();
 	var field = {
 		xtype : 'compositefield',
@@ -37,27 +38,43 @@ Assigner.assingerFiled = function(orderId) {
 					width : "150",
 					listeners : {
 						"click" : function(d, i, n, e) {  
+							var studentId = $("#studentId").val();
 							var assigner = '';
 							var roleId =''; 
-						 
+							var areaId ='';
 							if($("#transitionName").val()=='请选择')
 								return;
 							var url = "Busi_OrderView_getAssigner.action?orderId="
 									+ orderId
 									+ "&transitionName="
-									+ $("#transitionName").val(); 
+									+ $("#transitionName").val();  
 							Ajax.syncRequest(url, function(data) {
 								assigner = data.result;  
 							    for(var i=0;i<orderRoleStore.getTotalCount();i++){
 							    	var rec = orderRoleStore.getAt(i);
-							    	if(rec.get("charger")==assigner){
+							    	
+							    	if(rec.get("charger")==assigner){ 
 							    		roleId = rec.get("roleId");
 							    	} 
 							    } 
-							}); 
+							});  
+							if(studentId){
+								var queryStudentUrl = "Busi_Student_query.action?condition=id=" + studentId; 
+								Ajax.syncRequest(queryStudentUrl, function(data) {
+									if (data.result && data.result.length == 1)
+										areaId = data.result[0].areaId;
+								}); 
+							}  
+							if(orderId){ 
+								var queryOrderUrl = "Busi_OrderInfo_query.action?condition=id=" + orderId; 
+								Ajax.syncRequest(queryOrderUrl, function(data) {
+									if (data.result && data.result.length == 1)
+										areaId = data.result[0].areaId;
+								}); 
+							}  
 							if (roleId != null && roleId != '')
 								new SysRole.selectWin('assignerId',
-										'assignerName', roleId);
+										'assignerName', roleId , areaId);
 
 						}
 					}

@@ -131,6 +131,7 @@ Ext.onReady(function() {
 									allowBlank : false,
 									maxLength : 10,
 									vtype : 'daterange',
+									minValue: new Date(),
 									endDateField : 'endTime'
 								} ]
 							}, {

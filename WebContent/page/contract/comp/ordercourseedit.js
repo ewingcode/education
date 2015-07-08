@@ -292,9 +292,18 @@ OrderCourse.editCourseWin = function(store, grid, needChooseCharger,
 									width : "100",
 									listeners : {
 										"click" : function(d, i, n, e) {
+											var orderId = $("#orderId").val();
+											var areaId;
+											if(orderId){ 
+												var queryOrderUrl = "Busi_OrderInfo_query.action?condition=id=" + orderId; 
+												Ajax.syncRequest(queryOrderUrl, function(data) {
+													if (data.result && data.result.length == 1)
+														areaId = data.result[0].areaId;
+												}); 
+											}   
 											new Teacher.selectWin(
 													"editChargerId",
-													"editChargerName");
+													"editChargerName",areaId);
 										}
 									}
 								} ]
@@ -311,7 +320,7 @@ OrderCourse.editCourseWin = function(store, grid, needChooseCharger,
 							deferredRender : false,
 							url : "Busi_OrderCourse_findOrderCourse.action?orderCourseId="
 									+ orderCourseId,
-							waitMsg : "正在载入数据...",
+							//waitMsg : "正在载入数据...",
 							success : function(d, e) {
 
 							},

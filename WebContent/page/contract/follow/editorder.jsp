@@ -62,7 +62,11 @@
 										width : 300,
 										labelStyle : 'text-align:right;'
 									},
-									items : [ {
+									items : [{
+										id : "orderId", 
+										hidden:true,
+										value:orderId
+									}, {
 										id : "orderNo",
 										fieldLabel : "合同编号",
 										allowBlank : false,

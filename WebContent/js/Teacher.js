@@ -1,6 +1,6 @@
 Ext.ns("Teacher");
 
-Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
+Teacher.selectWin = function(parentSelectId, parentSelectUserName,areaId, successFn ) {
 
 	var sexTypeStore = new SysParam.store("SEXTYPE"); 
 	var courseStore = new SysParam.store("ORDER_COURSE");
@@ -173,6 +173,9 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 	function loadGirdStore() {
 		store.setBaseParam('start', 0);
 		store.setBaseParam('limit', 20);
+		 
+		if(areaId)
+			store.setBaseParam('_QUERY_n_eq_area_id', areaId);
 		store.setBaseParam('_QUERY_s_rlike_user_name', Ext
 				.getCmp('QUERY_user_name').getValue());
 		store.setBaseParam('_QUERY_s_like_course_type', Ext
@@ -180,9 +183,7 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 		store.setBaseParam('_QUERY_s_like_grade_type', Ext
 				.getCmp('QUERY_grade_type').getValue());
 		store.setBaseParam('_QUERY_s_eq_teacher_type', Ext.getCmp(
-				'QUERY_teacher_type').getValue());
-		store.setBaseParam('_QUERY_n_eq_area_id', Ext.getCmp('QUERY_areaId')
-				.getValue()); 
+				'QUERY_teacher_type').getValue());  
 		store.load();
 	}
 	;
@@ -214,9 +215,7 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 										fieldLabel : "教师名称"
 									},
 									new SysParam.ComboBox('教师类型', 'QUERY_teacher_type',
-											'TEACHER_TYPE'),
-									new SysParam.ComboBox('教学年级', 'QUERY_grade_type',
-											'GRADE') ]
+											'TEACHER_TYPE') ]
 						}, {
 							xtype : "container",
 							columnWidth : 0.33,
@@ -226,8 +225,10 @@ Teacher.selectWin = function(parentSelectId, parentSelectUserName, successFn ) {
 								anchor : "96%,96%",
 								labelStyle : 'text-align:right;'
 							},
-							items : [ new SysArea.ComboBox('QUERY_areaId', false),
-							          new SysParam.ComboBox('科目', 'QUERY_course_type', 'ORDER_COURSE') ]
+							items : [  
+							          new SysParam.ComboBox('科目', 'QUERY_course_type', 'ORDER_COURSE'),
+										new SysParam.ComboBox('教学年级', 'QUERY_grade_type',
+										'GRADE') ]
 						}  ]
 		} ]
 	});

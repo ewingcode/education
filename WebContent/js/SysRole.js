@@ -81,7 +81,8 @@ SysRole.translate = function( roleId) {
 
 
 
-SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
+SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds, areaId) {
+	 
 	var sexTypeStore = new SysParam.store("SEXTYPE");
 	var positionStore = new SysParam.store("POSITION");
 	var iseffStore = new SysParam.store("ISEFF");
@@ -201,6 +202,8 @@ SysRole.selectWin = function(parentSelectId, parentSelectUserName, roleIds) {
 	function loadGirdStore() {
 		if (roleIds != '')
 			store.setBaseParam('_QUERY_n_in_role_id', roleIds);
+		if(areaId)
+			store.setBaseParam('_QUERY_n_eq_area_id', areaId);
 		store.setBaseParam('_QUERY_s_rlike_user_name', Ext.getCmp(
 				'QUERY_user_name').getValue());
 		store.setBaseParam('_QUERY_s_eq_iseff', 0);
