@@ -85,7 +85,7 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 							renderer : function(value) { 
 								return SysParam.translate(scheduleDetailStatusStore, value);
 							}
-						},
+						}, 
 						{
 							header : "操作",
 							xtype : 'actioncolumn',
@@ -97,15 +97,14 @@ Schedule.showScheduleDetailList = function(scheduleId) {
 								},
 								tooltip : '删除',
 								handler : function(grid, rowIndex, colIndex) {
-									var rec = store.getAt(rowIndex);
-									alert(rec
-											.get('id'));
+									var rec = store.getAt(rowIndex); 
 									Ext.Msg
 											.confirm(
 													"信息确认",
 													"您确认要删除该记录吗？",
 													function(c) {
 														if (c == "yes") {
+															 
 															Ext.Ajax
 																	.request({
 																		url : "Busi_CourseScheduleManage_delete.action",

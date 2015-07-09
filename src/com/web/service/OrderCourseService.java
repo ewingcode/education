@@ -35,6 +35,11 @@ public class OrderCourseService {
 	@Resource
 	private SysParamService sysParamService;
 
+	@Resource
+	private CourseScheduleDetailService courseScheduleDetailService;
+	@Resource
+	private OrderCourseHourLogService orderCourseHourLogService;
+
 	public OrderCourse findOrderCourse(Integer orderCourseId) {
 		return baseDao.findOne(orderCourseId, OrderCourse.class);
 	}
@@ -50,14 +55,10 @@ public class OrderCourseService {
 	 */
 	public void updateCourseCostHour(Integer orderCourseId) {
 		OrderCourse orderCourse = findOrderCourse(orderCourseId);
-		String sql = "select sum(costHour) from  "
-				+ OrderCourseHourLog.class.getName()
-				+ " where order_course_id=" + orderCourseId + " and status='"
-				+ CourseHourStatus.ALL_SETTLE.getValue() + "'";
-		Long totalCosthour = baseDao.queryObject(sql, Long.class);
 
-		orderCourse.setCostHour(totalCosthour == null ? 0 : totalCosthour
-				.intValue());
+		Integer totalCosthour = orderCourseHourLogService
+				.getTotalCostHourForCourse(orderCourseId);
+		orderCourse.setCostHour(totalCosthour.intValue());
 		baseDao.update(orderCourse);
 	}
 
@@ -70,10 +71,9 @@ public class OrderCourseService {
 	public void updateCourseScheduleHour(Integer orderCourseId)
 			throws OrderException {
 		OrderCourse orderCourse = findOrderCourse(orderCourseId);
-		String sql = "select sum((endTime - startTime)/100)  from  "
-				+ CourseScheduleDetail.class.getName()
-				+ " where iseff = '"+IsEff.EFFECTIVE+"' and order_course_id=" + orderCourseId;
-		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
+		Integer totalSchedulehour = courseScheduleDetailService
+				.getTotalScheduleHourForCourse(orderCourseId);
+
 		if (totalSchedulehour != null
 				&& totalSchedulehour.intValue() > orderCourse.getHour()) {
 			SysParam courseTypeSysParam = sysParamService.getParamByValue(
@@ -82,8 +82,7 @@ public class OrderCourseService {
 			throw new OrderException("计划时间不能大于科目["
 					+ courseTypeSysParam.getParamName() + "]总课时!");
 		}
-		orderCourse.setScheduleHour(totalSchedulehour == null ? 0
-				: totalSchedulehour.intValue());
+		orderCourse.setScheduleHour(totalSchedulehour);
 		baseDao.update(orderCourse);
 	}
 
@@ -241,7 +240,8 @@ public class OrderCourseService {
 			hour += orderCourse.getHour();
 			costHour += orderCourse.getCostHour() == null ? 0 : orderCourse
 					.getCostHour();
-			scheduleHour += orderCourse.getScheduleHour() == null ? 0
+			scheduleHour += orderCourse.getScheduleHour() == null
+					? 0
 					: orderCourse.getScheduleHour();
 		}
 

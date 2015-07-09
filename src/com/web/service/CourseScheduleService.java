@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.core.app.constant.IsEff;
 import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
+import com.web.constant.CourseHourStatus;
 import com.web.constant.CourseScheduleStatus;
 import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
@@ -29,7 +30,8 @@ public class CourseScheduleService {
 	private BaseDao baseDao;
 	@Resource
 	private CourseScheduleDetailService courseScheduleDetailService;
-
+	@Resource
+	private OrderCourseHourLogService orderCourseHourLogService;
 	/**
 	 * 计算出排课列表
 	 * 
@@ -125,13 +127,14 @@ public class CourseScheduleService {
 		CourseSchedule scheduleTemplate = findOne(scheduleId);
 		if (scheduleTemplate == null)
 			return;
-		String sql = "select sum(costHour) from  "
-				+ OrderCourseHourLog.class.getName() + " where schedule_id ="
-				+ scheduleId;
-		Long totalCosthour = baseDao.queryObject(sql, Long.class);
+		Integer totalCosthour = orderCourseHourLogService
+				.getTotalCostHour(scheduleId);
+		Integer totalSchedulehour = courseScheduleDetailService
+				.getTotalScheduleHour(scheduleId);
 		scheduleTemplate.setTotalCostHour(totalCosthour.intValue());
+		scheduleTemplate.setTotalCourseHour(totalSchedulehour);
 		if (scheduleTemplate.getTotalCourseHour() > scheduleTemplate
-				.getTotalCostHour())
+				.getTotalCostHour() && scheduleTemplate.getTotalCostHour() > 0)
 			scheduleTemplate.setStatus(CourseScheduleStatus.RUNNING.getValue());
 		else if (scheduleTemplate.getTotalCourseHour() == scheduleTemplate
 				.getTotalCostHour())

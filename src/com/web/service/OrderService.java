@@ -76,8 +76,9 @@ public class OrderService {
 				+ OrderCourse.class.getName() + " where order_id=" + orderId
 				+ " group by order_id";
 		Long totalCosthour = baseDao.queryObject(sql, Long.class);
-		orderInfo.setCostCourseHour(totalCosthour == null ? 0 : totalCosthour
-				.intValue());
+		if(totalCosthour==null)
+			totalCosthour = 0l;
+		orderInfo.setCostCourseHour(totalCosthour.intValue());
 
 		if (orderInfo.getCostCourseHour() >= orderInfo.getTotalCourseHour()) {
 			orderInfo.setRunStatus(OrderRunStatus.OVER);
@@ -98,6 +99,8 @@ public class OrderService {
 		String sql = "select sum(scheduleHour) from  "
 				+ OrderCourse.class.getName() + " where order_id=" + orderId;
 		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
+		if(totalSchedulehour==null)
+			totalSchedulehour = 0l;
 		if (totalSchedulehour != null
 				&& totalSchedulehour.intValue() > orderInfo
 						.getTotalCourseHour())

@@ -94,25 +94,19 @@ public class CourseScheduleDetailService {
 			Integer fitOrderCourseId = null;
 
 			int costHour = computeScheduleHour(endTime, startTime);
-			if (orderCourseList == null) {
-				// 获取学生所有的签单课程信息
-				String sql = " order_id in  (select id from  "
-						+ OrderInfo.class.getName() + " a where a.studentId="
-						+ studentId + " and a.runStatus='"
-						+ OrderRunStatus.RUNNING + "' ) and course_type='"
-						+ courseType + "' order by order_id asc";
-				orderCourseList = baseDao.find(sql, OrderCourse.class);
-			}
+
 			// 挑选出合适的签单课程信息
 			for (OrderCourse orderCourse : orderCourseList) {
 				Integer coursehour = orderCourse.getHour();
-				Integer costcourseHour = orderCourse.getCostHour() == null ? 0
-						: orderCourse.getCostHour();
-				Integer leaveHour = coursehour - costcourseHour;
+				Integer scheduleHour = orderCourse.getScheduleHour() == null
+						? 0
+						: orderCourse.getScheduleHour();
+				Integer leaveHour = coursehour - scheduleHour;
 				// 如果有剩余的课时，则是合适的签单课程
 				if (leaveHour >= costHour) {
 					fitOrderCourseId = orderCourse.getId();
 					fitOrderId = orderCourse.getOrderId();
+					orderCourse.setScheduleHour(scheduleHour + costHour);
 					break;
 				}
 			}
@@ -150,8 +144,16 @@ public class CourseScheduleDetailService {
 	public boolean addSchedule(Integer teacherId, Integer studentId, Date date,
 			String courseType, Integer startTime, Integer endTime)
 			throws CourseScheduleException, OrderException {
+		String sql = " order_id in  (select id from  "
+				+ OrderInfo.class.getName() + " a where a.studentId="
+				+ studentId + " and a.runStatus='" + OrderRunStatus.RUNNING
+				+ "' ) and course_type='" + courseType
+				+ "' order by order_id asc";
+		List<OrderCourse> orderCourseList = baseDao
+				.find(sql, OrderCourse.class);
 		CourseScheduleDetail scheduleVo = validateCourseSchedule(teacherId,
-				studentId, date, courseType, startTime, endTime, null, true);
+				studentId, date, courseType, startTime, endTime,
+				orderCourseList, true);
 		addSchedule(scheduleVo);
 		return true;
 	}
@@ -341,9 +343,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[] { scheduleVo.getStartTime(),
-							scheduleVo.getEndTime() }, new Integer[] {
-							startTime, endTime });
+					new Integer[]{scheduleVo.getStartTime(),
+							scheduleVo.getEndTime()}, new Integer[]{startTime,
+							endTime});
 			if (!isLegalTime)
 				return true;
 		}
@@ -360,9 +362,9 @@ public class CourseScheduleDetailService {
 				CourseScheduleDetail.class);
 		for (CourseScheduleDetail scheduleVo : scheduleList) {
 			boolean isLegalTime = isLegalNewTime(
-					new Integer[] { scheduleVo.getStartTime(),
-							scheduleVo.getEndTime() }, new Integer[] {
-							startTime, endTime });
+					new Integer[]{scheduleVo.getStartTime(),
+							scheduleVo.getEndTime()}, new Integer[]{startTime,
+							endTime});
 			if (!isLegalTime)
 				return true;
 		}
@@ -397,20 +399,20 @@ public class CourseScheduleDetailService {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 1000, 1100 }));
-		System.out.println(isLegalNewTime(new Integer[] { 1000, 1100 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 930, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 2200, 2300 }));
-		System.out.println(isLegalNewTime(new Integer[] { 2200, 2300 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 800, 2300 },
-				new Integer[] { 900, 1000 }));
-		System.out.println(isLegalNewTime(new Integer[] { 900, 1000 },
-				new Integer[] { 900, 1000 }));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{1000, 1100}));
+		System.out.println(isLegalNewTime(new Integer[]{1000, 1100},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{930, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{2200, 2300}));
+		System.out.println(isLegalNewTime(new Integer[]{2200, 2300},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{800, 2300},
+				new Integer[]{900, 1000}));
+		System.out.println(isLegalNewTime(new Integer[]{900, 1000},
+				new Integer[]{900, 1000}));
 
 		System.out.println(930 % 831);
 	}
@@ -493,7 +495,8 @@ public class CourseScheduleDetailService {
 	 */
 	public List<CourseScheduleDetail> getCourseScheduleDetailList(
 			Integer scheduleId) {
-		String sql = "schedule_id = " + scheduleId + " order by  id asc";
+		String sql = "schedule_id = " + scheduleId + " and iseff='"
+				+ IsEff.EFFECTIVE + "' order by  id asc";
 		return baseDao.find(sql, CourseScheduleDetail.class);
 	}
 
@@ -530,7 +533,7 @@ public class CourseScheduleDetailService {
 						CourseScheduleDetail.class);
 		if (courseScheduleDetail != null) {
 			courseScheduleDetail.setIseff(IsEff.INEFFECTIVE);
-			baseDao.update(courseScheduleDetail); 
+			baseDao.update(courseScheduleDetail);
 			// 更新签单科目的排课时间
 			orderCourseService.updateCourseScheduleHour(courseScheduleDetail
 					.getOrderCourseId());
@@ -541,4 +544,36 @@ public class CourseScheduleDetailService {
 
 	}
 
+	/**
+	 * 获取指定排课计划中所有的生效的排课总时间
+	 * 
+	 * @param scheduleId
+	 * @return
+	 */
+	public Integer getTotalScheduleHour(Integer scheduleId) {
+		String sql = "select sum((endTime - startTime)/100)  from  "
+				+ CourseScheduleDetail.class.getName() + " where iseff = '"
+				+ IsEff.EFFECTIVE + "' and schedule_id=" + scheduleId;
+		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
+		if (totalSchedulehour == null)
+			totalSchedulehour = 0l;
+		return totalSchedulehour.intValue();
+	}
+
+	/**
+	 * 获取指定科目排课的总时间
+	 * 
+	 * @param orderCourseId
+	 * @return
+	 */
+	public Integer getTotalScheduleHourForCourse(Integer orderCourseId) {
+		String sql = "select sum((endTime - startTime)/100)  from  "
+				+ CourseScheduleDetail.class.getName() + " where iseff = '"
+				+ IsEff.EFFECTIVE + "' and order_course_id=" + orderCourseId;
+		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
+		if (totalSchedulehour == null)
+			totalSchedulehour = 0l;
+		return totalSchedulehour.intValue();
+
+	}
 }
