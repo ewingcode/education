@@ -688,7 +688,7 @@ Schedule.addSchedulePanel = function(teacherId , studentId) {
 																studentName,courseType) {
 															Ext.getCmp('studentId').setValue(studentId);
 															Ext.getCmp('studentName').setValue(studentName);
-															var url = 'Busi_CourseScheduleDetail_getOrderCourseForStudent.action?studentId=' + studentId+"&courseType="+courseType;
+															var url = 'Busi_CourseScheduleDetail_getOrderCourseForStudent.action?studentId=' + studentId+"&courseType="+courseType+"&teacherId="+teacherId;
 															Ajax.syncRequest(url, function(data) {
 																var courseHour = data.result.hour;
 																var costHour = data.result.costHour;

@@ -14,15 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.core.app.constant.IsEff;
 import com.core.jdbc.BaseDao;
 import com.util.DateFormat;
-import com.web.constant.CourseHourStatus;
 import com.web.constant.CourseScheduleStatus;
-import com.web.constant.OrderRunStatus;
 import com.web.exception.CourseScheduleException;
 import com.web.model.CourseSchedule;
 import com.web.model.CourseScheduleDetail;
 import com.web.model.OrderCourse;
-import com.web.model.OrderCourseHourLog;
-import com.web.model.OrderInfo;
 
 @Repository("courseScheduleService")
 public class CourseScheduleService {
@@ -32,6 +28,8 @@ public class CourseScheduleService {
 	private CourseScheduleDetailService courseScheduleDetailService;
 	@Resource
 	private OrderCourseHourLogService orderCourseHourLogService;
+	@Resource
+	private OrderCourseService orderCourseService;
 	/**
 	 * 计算出排课列表
 	 * 
@@ -52,14 +50,9 @@ public class CourseScheduleService {
 		String weekDayStr = scheduleTempldate.getWeekDays();
 		String[] weekDays = weekDayStr.split(",");
 		List<Date> scheduleDateList = DateFormat.getDateList(startDay, endDay);
-		// 获取学生所有的签单课程信息
-		String sql = " order_id in  (select id from  "
-				+ OrderInfo.class.getName() + " a where a.studentId="
-				+ studentId + " and a.runStatus='" + OrderRunStatus.RUNNING
-				+ "' ) and course_type='" + courseType
-				+ "' order by order_id asc";
-		List<OrderCourse> orderCourseList = baseDao
-				.find(sql, OrderCourse.class);
+
+		List<OrderCourse> orderCourseList = orderCourseService
+				.getOrderCourseForStudent(teacherId, studentId, courseType);
 		Calendar cal = Calendar.getInstance();
 		for (Date d : scheduleDateList) {
 			if (filterDateList != null && filterDateList.contains(d))

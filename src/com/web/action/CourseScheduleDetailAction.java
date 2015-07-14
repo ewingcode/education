@@ -152,7 +152,8 @@ public class CourseScheduleDetailAction extends BaseAction {
 		for (TeacherInfo t : teacherInfoList) {
 			teacherIds.add(t.getId());
 		}
-		List<Date> scheduleDateList = DateFormat.getDateList(startDate, endDate);
+		List<Date> scheduleDateList = DateFormat
+				.getDateList(startDate, endDate);
 
 		List<CourseScheduleView> scheduleHis = courseScheduleDetailService
 				.getTeacherSchedule(teacherIds, startDate, endDate);
@@ -196,8 +197,6 @@ public class CourseScheduleDetailAction extends BaseAction {
 		return scheduleContents;
 	}
 
-	
-
 	/**
 	 * 获取学生的签单课程信息
 	 * 
@@ -208,9 +207,11 @@ public class CourseScheduleDetailAction extends BaseAction {
 		try {
 			Integer studentId = Integer.valueOf(request
 					.getParameter("studentId"));
+			Integer teacherId = Integer.valueOf(request
+					.getParameter("teacherId"));
 			String courseType = request.getParameter("courseType");
-			OrderCourse orderCourse = orderCourseService
-					.getOrderCourseForStudent(studentId, courseType);
+			OrderCourse orderCourse = orderCourseService.getOrderCourse(
+					teacherId, studentId, courseType);
 			responseData = ResponseUtils.success("查询成功！");
 			responseData.setResult(orderCourse);
 		} catch (Exception e) {

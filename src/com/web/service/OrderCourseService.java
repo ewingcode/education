@@ -8,18 +8,14 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
 
-import com.core.app.constant.IsEff;
 import com.core.app.model.SysParam;
 import com.core.app.service.SysParamService;
 import com.core.jdbc.BaseDao;
-import com.web.constant.CourseHourStatus;
 import com.web.constant.OrderCourseStatus;
 import com.web.constant.OrderRunStatus;
 import com.web.constant.SysParamConstant;
 import com.web.exception.OrderException;
-import com.web.model.CourseScheduleDetail;
 import com.web.model.OrderCourse;
-import com.web.model.OrderCourseHourLog;
 import com.web.model.OrderCourseView;
 import com.web.model.OrderInfo;
 
@@ -134,8 +130,13 @@ public class OrderCourseService {
 					throw new OrderException("修改的课程时间不能低于已花课时");
 				if (courseHour < orderCourse.getScheduleHour())
 					throw new OrderException("修改的课程时间不能低于已设置排课课时");
-				if (chargerId != null)
+				if (chargerId != null
+						&& !chargerId.equals(orderCourse.getChargerId())) {
+					// 如果是换授课老师，则删除原来教师还没有上的排课计划
+					courseScheduleDetailService
+							.deleteScheduleByOrderCourseId(orderCourseId);
 					orderCourse.setChargerId(chargerId);
+				}
 				orderCourse.setHour(courseHour);
 				baseDao.update(orderCourse);
 			} else {
@@ -222,16 +223,11 @@ public class OrderCourseService {
 	 * @param courseType
 	 * @return
 	 */
-	public OrderCourse getOrderCourseForStudent(Integer studentId,
+	public OrderCourse getOrderCourse(Integer teacherId, Integer studentId,
 			String courseType) {
-		OrderCourse totalOrderCourse = new OrderCourse();
-		String sql = " order_id in  (select id from  "
-				+ OrderInfo.class.getName() + " a where a.studentId="
-				+ studentId + " and a.runStatus='" + OrderRunStatus.RUNNING
-				+ "' )  and course_type='" + courseType
-				+ "' order by order_id asc";
-		List<OrderCourse> orderCourseList = baseDao
-				.find(sql, OrderCourse.class);
+		OrderCourse totalOrderCourse = new OrderCourse(); 
+		List<OrderCourse> orderCourseList = getOrderCourseForStudent(teacherId,
+				studentId, courseType);
 		Integer hour = 0;
 		Integer costHour = 0;
 		Integer scheduleHour = 0;
@@ -251,6 +247,23 @@ public class OrderCourseService {
 		return totalOrderCourse;
 	}
 
+	/**
+	 * 获取指定课程的签单课程信息
+	 * 
+	 * @param teacherId
+	 * @param studentId
+	 * @param courseType
+	 * @return
+	 */
+	public List<OrderCourse> getOrderCourseForStudent(Integer teacherId,
+			Integer studentId, String courseType) {
+		String sql = " order_id in  (select id from  "
+				+ OrderInfo.class.getName() + " a where a.studentId="
+				+ studentId + "  and a.runStatus='" + OrderRunStatus.RUNNING
+				+ "' ) and course_type='" + courseType + "' and charger_id = "
+				+ teacherId + " order by order_id asc";
+		return baseDao.find(sql, OrderCourse.class);
+	}
 	/**
 	 * 获取学生所有的签单科目信息
 	 * 
