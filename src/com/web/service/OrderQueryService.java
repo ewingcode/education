@@ -29,29 +29,28 @@ public class OrderQueryService {
 	 * 待处理的任务
 	 * 
 	 * @param userId
-	 * @return
-	 * @ 
+	 * @return @
 	 * @throws OrderException
 	 */
-	public PageBean findPersonalTasks(String conditon,int userId, int roleId, int pageSize,
-			int startIndex) throws OrderException {
-		int chargerType = orderRoleService.getChargerType(roleId);
+	public PageBean findPersonalTasks(String conditon, int userId, int roleId,
+			int pageSize, int startIndex) throws OrderException {
+		//int chargerType = orderRoleService.getChargerType(roleId);
 		String sql = " from " + OrderInfoView.class.getName()
 				+ " where id in ( select orderId from "
 				+ OrderTrace.class.getName() + " a2 where (user_id=" + userId
-				+ " or role_id=" + chargerType + " ) and a2.operator is null) ";
+				+ "   ) and a2.operator is null) ";
 		sql = SqlUtil.combine(sql, conditon);
-		return baseDao.pageQuery(sql, pageSize, startIndex, OrderInfoView.class);
+		return baseDao
+				.pageQuery(sql, pageSize, startIndex, OrderInfoView.class);
 	}
 
 	/**
 	 * 获取正在进行的签单
 	 * 
 	 * @param studentId
-	 * @return
-	 * @ 
+	 * @return @
 	 */
-	public OrderInfoView findLearnOrder(int studentId)   {
+	public OrderInfoView findLearnOrder(int studentId) {
 		List<OrderInfoView> orderList = baseDao.find("student_id=" + studentId
 				+ " and run_status='" + OrderRunStatus.RUNNING + "'",
 				OrderInfoView.class);
@@ -65,15 +64,14 @@ public class OrderQueryService {
 	 * 已完成的历史人物
 	 * 
 	 * @param userId
-	 * @return
-	 * @ 
+	 * @return @
 	 */
 	public PageBean findPersonalTaskHis(String conditon, String orderBy,
-			int userId, int pageSize, int startIndex)   {
+			int userId, int pageSize, int startIndex) {
 		String sql = " from " + OrderInfoView.class.getName()
 				+ " where id in ( select orderId from "
-				+ OrderTrace.class.getName() + " a2 where a2.userId ="
-				+ userId + ") "  ;
+				+ OrderTrace.class.getName() + " a2 where (a2.userId =" + userId
+				+ " or a2.operator=" + userId + ") and a2.operator is not null) ";
 		sql = SqlUtil.combine(sql, conditon);
 		return baseDao.pageQuery(sql, orderBy, pageSize, startIndex,
 				OrderInfoView.class);
@@ -84,11 +82,9 @@ public class OrderQueryService {
 	 * 
 	 * @param userId
 	 * @param studentId
-	 * @return
-	 * @ 
+	 * @return @
 	 */
-	public List<OrderInfoView> queryRelOrder(int userId, int studentId)
-			  {
+	public List<OrderInfoView> queryRelOrder(int userId, int studentId) {
 		String sql = " from  " + OrderInfoView.class.getName()
 				+ " where student_id=" + studentId;
 		if (userId != 0) {
@@ -106,11 +102,9 @@ public class OrderQueryService {
 	 * 
 	 * @param userId
 	 * @param studentId
-	 * @return
-	 * @ 
+	 * @return @
 	 */
-	public OrderInfoView queryLastestOrder(int userId, int studentId)
-			  {
+	public OrderInfoView queryLastestOrder(int userId, int studentId) {
 		List<OrderInfoView> orderlist = queryRelOrder(userId, studentId);
 		OrderInfoView lastestOrder = null;
 		for (OrderInfoView orderInfo : orderlist) {

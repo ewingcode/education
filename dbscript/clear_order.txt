@@ -1,19 +1,12 @@
- 
- delete from order_info  where  id =2;
-delete from order_attach  where order_id =2;
-delete from order_course where order_id =2;
-delete from order_course_hour  where order_id =2;
-delete from order_course_score  where order_id =2;
-delete from order_course_evaluation where order_id =2;
-delete from order_trace  where order_id =2;
-delete from order_exchange  where order_id =2;
-delete from order_rel_his where order_id =2;
-
-
-delete from order_info; 
-delete from order_course ;
-delete from `course_schedule` ;
-delete from `course_schedule_detail` ; 
-delete from `order_course_hour_log`;
-delete from order_trace ; 
-delete from order_rel_his ;
+DELETE FROM order_info;
+DELETE FROM order_course;
+DELETE FROM order_course_hour_log;
+DELETE FROM course_schedule; 
+DELETE FROM course_schedule_detail; 
+DELETE FROM `order_rel_his`;
+DELETE FROM `order_trace`;
+DELETE FROM notice;
+DELETE FROM notice_his;
+DELETE FROM `order_exchange`;
+DELETE FROM  `order_course_score`;
+DELETE FROM   `order_course_evaluation`;

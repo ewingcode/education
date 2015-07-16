@@ -76,7 +76,7 @@ public class OrderService {
 				+ OrderCourse.class.getName() + " where order_id=" + orderId
 				+ " group by order_id";
 		Long totalCosthour = baseDao.queryObject(sql, Long.class);
-		if(totalCosthour==null)
+		if (totalCosthour == null)
 			totalCosthour = 0l;
 		orderInfo.setCostCourseHour(totalCosthour.intValue());
 
@@ -99,13 +99,14 @@ public class OrderService {
 		String sql = "select sum(scheduleHour) from  "
 				+ OrderCourse.class.getName() + " where order_id=" + orderId;
 		Long totalSchedulehour = baseDao.queryObject(sql, Long.class);
-		if(totalSchedulehour==null)
+		if (totalSchedulehour == null)
 			totalSchedulehour = 0l;
 		if (totalSchedulehour != null
 				&& totalSchedulehour.intValue() > orderInfo
 						.getTotalCourseHour())
 			throw new OrderException("计划时间不能大于签单总课时");
-		orderInfo.setScheduleHour(totalSchedulehour == null ? 0
+		orderInfo.setScheduleHour(totalSchedulehour == null
+				? 0
 				: totalSchedulehour.intValue());
 		baseDao.update(orderInfo);
 	}
@@ -130,7 +131,8 @@ public class OrderService {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean deleteOrderInfo(Integer orderId) throws OrderException {
 		OrderInfo orderInfo = findOne(orderId);
-		if (orderInfo != null) {
+		if (orderInfo != null
+				&& orderInfo.getRunStatus().equals(OrderRunStatus.INAPPLY)) {
 			orderInfo.setIseff(IsEff.INEFFECTIVE);
 			baseDao.update(orderInfo);
 			courseScheduleDetailService.deleteScheduleByOrderId(orderId);
@@ -159,9 +161,9 @@ public class OrderService {
 		baseDao.update(orderInfo);
 		orderAttachService.batchSaveOrderAttach(orderInfo, attachMap);
 		orderCourseService.saveOrderCourse(orderInfo.getId(), courses);
-	 	logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
+		logOrderTrace(PROCESS_NAME, NoticeWay.NOSEND,
 				TransitionArrangeType.UNARRANGE, null, startFlowTask,
-				orderInfo, operator, operator, null); 
+				orderInfo, operator, operator, null);
 
 		orderTransfer(operator, assignerId, orderInfo.getId(), transitionName);
 		// 直接提交到销售部主管
@@ -252,7 +254,7 @@ public class OrderService {
 			String transitionName) throws Exception {
 		int orderId = order.getId();
 		int preTaskId = preTask != null ? preTask.getId() : 0;
-		OrderTrace preOrderTrace = new OrderTrace();
+		OrderTrace preOrderTrace = null;
 		if (preTask != null) {
 			preOrderTrace = orderTraceService.getUnCompleteTrace(orderId,
 					preTaskId);
@@ -272,13 +274,7 @@ public class OrderService {
 		order.setCurOperator(operator);
 		if (curTask.getType() != null
 				&& curTask.getType().equals(FlowTaskType.END)) {
-			/*
-			 * boolean existOrder = existLearnOrder(order.getStudentId()); if
-			 * (existOrder) { order.setRunStatus(OrderRunStatus.INWAITING); }
-			 * else {
-			 */
 			order.setRunStatus(OrderRunStatus.RUNNING);
-			// }
 		}
 		baseDao.update(order);
 		OrderTrace curOrderTrace = new OrderTrace();
@@ -406,7 +402,7 @@ public class OrderService {
 	public boolean editOrder(int operator, OrderInfo orderInfo,
 			Map<OrderAttach, File> attachMap, String[] courseArray,
 			boolean isOnlyEdit) throws Exception {
-		orderInfo.setIsLast(OrderIsLast.NOTLAST); 
+		orderInfo.setIsLast(OrderIsLast.NOTLAST);
 		orderInfo.setOrderType(OrderType.LAST);
 		if (isOnlyEdit) {
 			baseDao.update(orderInfo);
@@ -447,19 +443,4 @@ public class OrderService {
 
 	}
 
-	/**
-	 * 删除相关的签单信息。
-	 * 
-	 * @param orderId
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public void cancelOrder(int orderId) {
-		baseDao.executeSql("delete from order_info where id=" + orderId);
-		baseDao.executeSql("delete from order_course where order_id=" + orderId);
-		baseDao.executeSql("delete from order_course where order_id=" + orderId);
-		baseDao.executeSql("delete from order_attach where order_id=" + orderId);
-		baseDao.executeSql("delete from order_rel_his where order_id="
-				+ orderId);
-		baseDao.executeSql("delete from order_trace where order_id=" + orderId);
-	}
 }

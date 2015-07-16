@@ -70,7 +70,7 @@ public class TeacherService {
 	public PageBean findTeacherForMainTeacher(String conditon, String orderBy,
 			int userId, int pageSize, int startIndex) {
 		String sql = " from " + TeacherInfo.class.getName()
-				+ " where id in ( select teacherId from "
+				+ " where id in ( select t.teacherId from "
 				+ TeacherRefStudent.class.getName() + " t,"
 				+ OrderTrace.class.getName()
 				+ " o where t.orderId = o.orderId and o.userId =" + userId
