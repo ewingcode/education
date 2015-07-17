@@ -20,7 +20,7 @@ public class SysMenuService {
 
 	public void queryMenuChildTree(CheckTreeObject parentTree, int parentId,
 			Set<Integer> menuRelList)   {
-		List menuList = baseDao.find("parentid=" + parentId, SysMenu.class);
+		List menuList = baseDao.find("parentid=" + parentId+" order by sort", SysMenu.class);
 		if (menuList.isEmpty()) {
 			parentTree.setLeaf(true);
 			return;
